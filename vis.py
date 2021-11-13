@@ -9,6 +9,6 @@ def interface():
     """draws interface of the game with buttons and game-play window"""
 
 
-def game_field(field: Field):
+def game_field(screen, field: Field):
     pass # FixMe
     """draws field on the screen in game-play window"""
