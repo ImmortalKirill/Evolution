@@ -29,6 +29,10 @@ def step(Field):
                     pole[x][y].live += 1
     Field.cells = pole.copy()
             
+            
+            
+if __name__ == "__main__":
+    print("This module is not for direct call!")
 
         
             
