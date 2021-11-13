@@ -9,6 +9,8 @@ HEIGHT = 800
 WIDTH = 800
 
 FPS = 30
+field = Field()
+field.new_field(5, 5)
 def main():
     """main function of the game, everything starts here"""
     pygame.init()
@@ -26,8 +28,12 @@ def main():
             Game = True
         # loop for main game
         while Game:  # Fixme
+            step(field)
             Game = False
         Main = False
     pygame.quit()
+    
+    
+main()
 
 

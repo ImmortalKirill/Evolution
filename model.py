@@ -8,8 +8,8 @@ def step(Field):
     Method generate new field by basics rules
     '''
     pole = Field.cells.copy()
-    for x in range(1, pole.size_x - 1, 1): # FixMe Now program doesn't work with borders
-        for y in range(1, pole.size_y - 1, 1):
+    for x in range(1, Field.size_x - 1, 1): # FixMe Now program doesn't work with borders
+        for y in range(1, Field.size_y - 1, 1):
             # counting number of neighbors
             neighbors = 0
             if pole[x + 1][y].live:
@@ -29,6 +29,10 @@ def step(Field):
                     pole[x][y].live += 1
     Field.cells = pole.copy()
             
+            
+            
+if __name__ == "__main__":
+    print("This module is not for direct call!")
 
         
             

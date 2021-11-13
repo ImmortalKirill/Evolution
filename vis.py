@@ -12,3 +12,8 @@ def interface():
 def game_field(screen, field: Field):
     pass # FixMe
     """draws field on the screen in game-play window"""
+    
+    
+    
+if __name__ == "__main__":
+    print("This module is not for direct call!")
