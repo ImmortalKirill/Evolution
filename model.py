@@ -12,14 +12,11 @@ def step(Field):
         for y in range(1, Field.size_y - 1, 1):
             # counting number of neighbors
             neighbors = 0
-            if pole[x + 1][y].live:
-                neighbors += 1
-            if pole[x - 1][y].live:
-                neighbors += 1
-            if pole[x][y + 1].live:
-                neighbors += 1
-            if pole[x][y - 1].live:
-                neighbors += 1
+            for i in (-1, 0, 1):
+                for j in (-1, 0, 1):
+                    if pole[x+i][y+j].live:
+                        neighbors += 1
+
             # checking future for cell
             if pole[x][y].live > 0:
                 if neighbors < 2 or neighbors == 4:
