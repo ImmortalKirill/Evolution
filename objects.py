@@ -18,7 +18,7 @@ class Field():
         cells = self.cells = [[]]        
         x_center = self.x_center = 0
         y_center = self.y_center = 0
-        scale = self.scale = 1
+        scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
         
@@ -34,6 +34,10 @@ class Field():
         self.y_center = y / 2
         self.size_x = x
         self.size_y = y
+    def change_cors(self, vector):
+        """shift of center coordinates on vector(x, y)"""
+        self.x_center += vector[0]
+        self.y_center += vector[1]
 
         
 if __name__ == "__main__":
