@@ -24,6 +24,7 @@ class Field():
         
         
     def new_field(self, x, y):
+        """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
         for i in range(x):
             for l in range(y):
