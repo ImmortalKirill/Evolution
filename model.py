@@ -28,7 +28,11 @@ def step(Field):
                 if neighbors == 3:
                     pole[x][y].live += 1
     Field.cells = pole.copy()
-            
+
+def change_scale(field, par):
+    """changes scale of field, increases it if par = 1, decreases it if par = -1"""
+    change_step = 10
+    field.scale += par*change_step
             
             
 if __name__ == "__main__":
