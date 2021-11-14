@@ -1,4 +1,4 @@
-from model import change_scale
+from model import change_scale, mouse_pos_check
 import pygame
 
 
@@ -12,12 +12,7 @@ def zoom(event: pygame.MOUSEBUTTONDOWN, field):
         change_scale(field, -1)
 
 
-def mouse_pos_check(mouse_pos, rect):
-    """checks if mouse is on rect(left up angle, width, height)"""
-    if abs(mouse_pos[0] - (rect[0])) <= rect[2] / 2 and abs(mouse_pos[1] - (rect[1])) <= rect[3] / 2:
-        return True
-    else:
-        return False
+
 
 
 def event_manage(event, field, pressed_mouse, game_window):
@@ -28,12 +23,17 @@ def event_manage(event, field, pressed_mouse, game_window):
             if event.button == 1:
                 pressed_mouse = True
             # checking if we need to zoom map
+            print(event.button)
             zoom(event, field)
-        else:  # managing interface, not now
+        else:  # FixMe managing interface, haven't done
             pass
     elif event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
             pressed_mouse = False
+    elif event.type == pygame.MOUSEMOTION:  # changing field coors
+        if pressed_mouse and mouse_pos_check(pygame.mouse.get_pos(), game_window):
+            field.change_cors([event.rel[i]*0.1*(-1)**(i+1) for i in (0, 1)])
+
     return field, pressed_mouse
 
 
