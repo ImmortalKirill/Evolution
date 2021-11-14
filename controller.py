@@ -23,7 +23,7 @@ def mouse_pos_check(mouse_pos, rect):
 def event_manage(event, field, pressed_mouse, game_window):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
-        if mouse_pos_check(pygame.mouse_pos(), game_window):  # if mouse on game window
+        if mouse_pos_check(pygame.mouse.get_pos(), game_window):  # if mouse on game window
             # if pressed button is left mouse button
             if event.button == 1:
                 pressed_mouse = True
