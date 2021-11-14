@@ -1,10 +1,11 @@
+from random import randint
 class Cell():
     """ class of one cell on a Field"""
     def __init__(self):
         live = self.live = 1
         x = self.x = 0
         y = self.y = 0
-    
+        self.color = (255, 255, 255)
         
     def new_cell(self, x0, y0):
         x = self.x = x0
@@ -29,7 +30,9 @@ class Field():
         for i in range(x):
             for l in range(y):
                 self.cells[i][l] = Cell()
-                self.cells[i][l].new_cell(i, l)  
+                self.cells[i][l].new_cell(i, l)
+                if randint(0, 2):
+                    self.cells[i][l].live = 0
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
