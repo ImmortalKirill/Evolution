@@ -35,7 +35,7 @@ def game():
             if event.type == pygame.QUIT:
                 Game = False
             else:
-                field, pressed_mouse = event_manage(event, field, pressed_mouse, game_window)
+                field, pressed_mouse = event_manage(event, field, pressed_mouse, game_window)a        step(field)
 
 
 def main():
