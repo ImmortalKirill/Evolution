@@ -20,15 +20,17 @@ def game():
     global Game, Main, screen
     # creating initial field
     field = Field()
-    field.new_field(5, 5)
+    field.new_field(100, 100)
     clock = pygame.time.Clock()
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     while Game:
+        #print(field.x_center, field.y_center)
         clock.tick(FPS)
         screen.fill(BLACK)
         # drawing game screen
-        draw_game(screen, field)
+        draw_game(screen, field, game_window)
+        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 Game = False
