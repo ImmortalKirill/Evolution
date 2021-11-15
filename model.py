@@ -1,4 +1,5 @@
 import math
+from objects import *
 
 
 def step(Field):
@@ -7,24 +8,34 @@ def step(Field):
     
     Method generate new field by basics rules
     '''
-    pole = Field.cells.copy()
+
+    pole = [[0] * Field.size_y for i in range(Field.size_x)]
+    for x in range(Field.size_x):
+        for y in range(Field.size_y):
+            object1 = Cell()
+            object1.new_cell(x, y)
+            object1.live = Field.cells[x][y].live
+            pole[x][y] = object1
     for x in range(1, Field.size_x - 1, 1): # FixMe Now program doesn't work with borders
         for y in range(1, Field.size_y - 1, 1):
             # counting number of neighbors
             neighbors = 0
-            for i in (-1, 0, 1):
-                for j in (-1, 0, 1):
-                    if pole[x+i][y+j].live:
+            for i in range(-1, 2, 1):
+                for j in range(-1, 2, 1):
+                    if Field.cells[x + i][y + j].live:
                         neighbors += 1
-
+            if Field.cells[x][y].live:
+                neighbors -= 1
             # checking future for cell
-            if pole[x][y].live > 0:
-                if neighbors < 2 or neighbors == 4:
+            if Field.cells[x][y].live:
+                if neighbors < 2 or neighbors > 3:
                     pole[x][y].live -= 1
             else:
                 if neighbors == 3:
                     pole[x][y].live += 1
+    print(Field.cells == pole)
     Field.cells = pole.copy()
+    
 
 def change_scale(field, par):
     """changes scale of field, increases it if par = 1, decreases it if par = -1"""
@@ -36,7 +47,7 @@ def change_scale(field, par):
 def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all field
     """calculates optimal grid size to display it in game_window
     look of grid: (coordinate of top left corner, number of rows and colons, size of 1 cell)"""
-    game_window_x_center = game_window[0] + game_window[2]/2
+    game_window_x_center = game_window[0] + game_window[2] / 2
     game_window_y_center = game_window[1] + game_window[3] / 2
     cell_size = field.scale
     grid = [0, 0, 0, 0, 0]

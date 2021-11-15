@@ -16,6 +16,8 @@ def game_field(screen, field: Field, game_window):
     grid = find_grid(field, game_window)
     draw_grid(screen, grid)
     draw_life_cells(screen, field, grid)
+    
+    
 def draw_grid(screen, grid):
     """draws grid on screen
     look of grid: (coordinate of top left corner, number of colons and rows)"""
@@ -29,6 +31,8 @@ def draw_grid(screen, grid):
                          (grid[0], grid[1] + i*grid[4]),
                          (grid[0] + grid[4]*grid[2], grid[1] + i*grid[4]), 2
                          )
+        
+        
 def draw_life_cells(screen, field, grid):
     """draws life cells in field on grid"""
     for i in range(grid[2]):
@@ -38,6 +42,8 @@ def draw_life_cells(screen, field, grid):
                 pygame.draw.rect(screen, cell.color,
                                  (grid[4]*cell.x + grid[0], grid[1]+grid[4]*grid[3] - (cell.y+1)*grid[4],
                                   grid[4], grid[4]), 0)
+                
+                
 def draw_game(screen, field, game_window):
     """draws game screen on par screen with field"""
     game_field(screen, field, game_window)
