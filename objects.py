@@ -20,7 +20,7 @@ class Cell():
 class Button:
     """class of buttons"""
 
-    def __init__(self, screen, x, y, color, height, width, color, text, pushed):
+    def __init__(self, screen, x, y, color, height, width, text, pushed):
         """x,y - coordinates of left top corner
         color - color of bottom
         text - text on the bottom"""
