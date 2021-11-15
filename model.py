@@ -16,7 +16,7 @@ def step(Field):
             object1.new_cell(x, y)
             object1.live = Field.cells[x][y].live
             pole[x][y] = object1
-    for x in range(0, Field.size_x, 1): # FixMe Now program doesn't work with borders
+    for x in range(0, Field.size_x, 1): 
         for y in range(0, Field.size_y, 1):
             # counting number of neighbors
             neighbors = 0
@@ -50,14 +50,23 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     game_window_x_center = game_window[0] + game_window[2] / 2
     game_window_y_center = game_window[1] + game_window[3] / 2
     cell_size = field.scale
-    grid = [0, 0, 0, 0, 0]
-    grid[0] = game_window_x_center - field.x_center*field.scale
+    grid = [0, 0, 0, 0, 0, 0, 0]
+    grid[0] = game_window_x_center - field.x_center * field.scale
     grid[1] = game_window_y_center + field.scale * (-field.size_y + math.ceil(field.y_center) -
                                                    1 + (field.y_center - math.floor(field.y_center))
                                                    )
-    grid[2] = field.size_x
+    if math.ceil(game_window[2]) > field.size_x:
+        grid[2] = field.size_x
+    else:
+        grid[2] = math.ceil(game_window[2])
     grid[3] = field.size_y
+    if math.ceil(game_window[3]) > field.size_y:
+        grid[3] = field.size_y
+    else:
+        grid[3] = math.ceil(game_window[3]) // field.scale
     grid[4] = field.scale
+    grid[5] = 0
+    grid[6] = 0
     return grid
 
 def mouse_pos_check(mouse_pos, rect):
