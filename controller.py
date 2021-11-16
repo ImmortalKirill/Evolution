@@ -23,7 +23,6 @@ def event_manage(event, field, pressed_mouse, interface):
             if event.button == 1:
                 pressed_mouse = True
             # checking if we need to zoom map
-            print(event.button)
             zoom(event, field)
         else:  # FixMe managing interface, haven't done
             pass
