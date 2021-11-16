@@ -1,5 +1,5 @@
 import pygame
-from vis import *
+from vis import draw_game
 from model import *
 from objects import *
 from controller import *
@@ -22,6 +22,8 @@ def game():
     field = Field()
     field.new_field(100, 100)
     clock = pygame.time.Clock()
+    # creating interface
+    interface = Interface(WIDTH, HEIGHT, game_window)
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     while Game:
@@ -29,13 +31,13 @@ def game():
         clock.tick(FPS)
         screen.fill(BLACK)
         # drawing game screen
-        draw_game(screen, field, game_window)
+        draw_game(screen, field, interface)
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 Game = False
             else:
-                field, pressed_mouse = event_manage(event, field, pressed_mouse, game_window)
+                field, pressed_mouse, interface = event_manage(event, field, pressed_mouse, interface)
         step(field)
 
 
