@@ -38,6 +38,9 @@ class Button:
     def draw(self, screen):
         rect(screen, self.color, [self.x, self.y, self.width, self.height])
 
+class Bar(Button):
+    """class of moving bars"""
+    pass
 
 class Interface:
     """creates class with all buttons"""
@@ -47,9 +50,27 @@ class Interface:
         self.game_window = game_window
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
+        # self.pause = Button()
+        # self.play = Button()
+        self.background_color = (0, 0, 0)
     def draw(self, screen):
         """draws interface"""
-        pass
+        # drawing interface background
+        # top rect
+        pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 0)
+        # left rect
+        pygame.draw.rect(screen, self.background_color, [0, 0, self.game_window[0], self.HEIGHT], 0)
+        # down rect
+        pygame.draw.rect(screen, self.background_color, [0, self.game_window[1] + self.game_window[3],
+                        self.WIDTH, self.HEIGHT - self.game_window[1] - self.game_window[3]], 0
+                         )
+        # right rect
+        pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
+                        self.WIDTH - self.game_window[0] - self.game_window[2], self.HEIGHT], 0
+                         )
+        # drawing buttons
+        # self.pause.draw(screen)
+        # self.play.draw(screen)
 
 
 
