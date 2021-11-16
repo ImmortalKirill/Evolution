@@ -18,7 +18,8 @@ def game_field(screen, field: Field, interface_game_window):
     draw_life_cells(screen, field, grid)
 def draw_grid(screen, grid):
     """draws grid on screen
-    look of grid: (coordinate of top left corner, number of colons and rows)"""
+    look of grid: (coordinate of top left corner, number of colons and rows
+                    (x, y) - coordinates of top left cell))"""
     for i in range(grid[2]+1):
         pygame.draw.line(screen, (255, 255, 255),
                          (grid[0] + i*grid[4], grid[1]),
@@ -35,7 +36,7 @@ def draw_life_cells(screen, field, grid):
     """draws life  in field on grid"""
     for i in range(grid[2]):
         for j in range(grid[3]):
-            cell = field.cells[i][j]
+            cell = field.cells[grid[5][0]+i][grid[5][1] - j - 1]
             if cell.live:
                 pygame.draw.ellipse(screen, cell.color,
                                  (grid[4]*cell.x + grid[0], grid[1]+grid[4]*grid[3] - (cell.y+1)*grid[4],
