@@ -22,21 +22,40 @@ class Cell():
 class Button:
     """class of buttons"""
 
-    def __init__(self, x, y, color, height, width, text, pushed):
+    def __init__(self, screen, bg_rect: list, text_color, bg_color, text, angle, pushed):
         """x,y - coordinates of left top corner
         color - color of bottom
-        text - text on the bottom"""
-        self.x = x
-        self.y = y
-        self.height = height
-        self.width = width
+        text - text on the bottom
+        bg_rect = list [x, y, width, height] where x,y - coordinates of left top angle of rect of background
+        text_rect = list [x, y, width, height] where x,y - coordinates of left top angle of rect of text"""
+        self.screen = screen
+        # self.x = x
+        # self.y = y
+        # self.height = height
+        # self.width = width
         self.pushed = pushed
-        self.color = color
+        self.text_color = text_color
         self.text = text
+        self.bg_color = bg_color
+        self.bg_rect = bg_rect
+        self.text_rect = [0, 0, 0, 0]
+        self.angle = angle
 
+    def draw(self):
+        """draws button with text"""
+        rect(self.screen, self.bg_color, self.bg_rect)
+        font = pygame.freetype.SysFont("Arial", 18)  # FIXME text
 
-    def draw(self, screen):
-        rect(screen, self.color, [self.x, self.y, self.width, self.height])
+        font.render_to(self.screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
+                       bgcolor=self.bg_color, rotation=self.angle, size=24)
+
+        text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=24)
+
+        self.text_rect[0] = text_rect_fig.left
+        self.text_rect[1] = text_rect_fig.top
+        self.text_rect[2] = text_rect_fig.width
+        self.text_rect[3] = text_rect_fig.height
+        print(self.text_rect)
 
 
 class Interface:
