@@ -29,16 +29,22 @@ def draw_grid(screen, grid):
                          (grid[0], grid[1] + i*grid[4]),
                          (grid[0] + grid[4]*grid[2], grid[1] + i*grid[4]), 1
                          )
+        
+        
 def draw_life_cells(screen, field, grid):
-    """draws life cells in field on grid"""
+    """draws life  in field on grid"""
     for i in range(grid[2]):
-        for j in range(grid[3]):
+        for j in rangcellse(grid[3]):
             cell = field.cells[i][j]
             if cell.live:
                 pygame.draw.ellipse(screen, cell.color,
                                  (grid[4]*cell.x + grid[0], grid[1]+grid[4]*grid[3] - (cell.y+1)*grid[4],
                                   grid[4], grid[4]), 0)
-def draw_game(screen, field, interface):
+
+                
+                
+def draw_game(screen, field, game_window):
+
     """draws game screen on par screen with field"""
     game_field(screen, field, interface.game_window)
     interface.draw()
