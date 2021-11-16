@@ -33,6 +33,7 @@ def game():
         # drawing game screen
         draw_game(screen, field, interface)
         pygame.display.update()
+        # event processing
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 Game = False

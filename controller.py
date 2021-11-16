@@ -31,6 +31,7 @@ def event_manage(event, field, pressed_mouse, interface):
             pressed_mouse = False
     elif event.type == pygame.MOUSEMOTION:  # changing field coors
         if pressed_mouse and mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):
+            # moving the map
             field.change_cors([event.rel[i]*0.1*(-1)**(i+1) for i in (0, 1)])
 
     return field, pressed_mouse, interface
