@@ -22,11 +22,10 @@ class Cell():
 class Button:
     """class of buttons"""
 
-    def __init__(self, screen, x, y, color, height, width, text, pushed):
+    def __init__(self, x, y, color, height, width, text, pushed):
         """x,y - coordinates of left top corner
         color - color of bottom
         text - text on the bottom"""
-        self.screen = screen
         self.x = x
         self.y = y
         self.height = height
@@ -36,18 +35,21 @@ class Button:
         self.text = text
 
 
-    def draw(self):
-        rect(self.screen, self.color, [self.x, self.y, self.width, self.height])
+    def draw(self, screen):
+        rect(screen, self.color, [self.x, self.y, self.width, self.height])
 
 
-    class Interface:
-        """creates class with all buttons"""
+class Interface:
+    """creates class with all buttons"""
 
-        def __init__(self, pause, play):
-            self.game_window = [0, 0, 0, 0]
-            self.pause = pause
-            self.play = play
-
+    def __init__(self, WIDTH,  HEIGHT, game_window):
+        """WIDTH, HEIGHT - size of the game"""
+        self.game_window = game_window
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
+    def draw(self, screen):
+        """draws interface"""
+        pass
 
 
 

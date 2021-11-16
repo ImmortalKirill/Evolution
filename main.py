@@ -23,7 +23,7 @@ def game():
     field.new_field(100, 100)
     clock = pygame.time.Clock()
     # creating interface
-    interface = Interface()
+    interface = Interface(WIDTH, HEIGHT, game_window)
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     while Game:

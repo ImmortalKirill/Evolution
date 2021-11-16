@@ -45,7 +45,8 @@ def change_scale(field, par):
             
 def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all field
     """calculates optimal grid size to display it in game_window
-    look of grid: (coordinate of top left corner, number of rows and colons, size of 1 cell)
+    look of grid: (coordinate of top left corner, number of rows and colons, size of 1 cell,
+                    (x, y) - coordinates of top left cell)
     game_window - array of coordinates of left upper corner, lenth and height of window"""
     game_window_x_center = game_window[0] + game_window[2] / 2
     game_window_y_center = game_window[1] + game_window[3] / 2
@@ -65,8 +66,7 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     else:
         grid[3] = math.ceil(game_window[3]) // field.scale
     grid[4] = field.scale
-    grid[5] = 0
-    grid[6] = 0
+    grid[5] = (0, field.size_y)
     return grid
 
 def mouse_pos_check(mouse_pos, rect):

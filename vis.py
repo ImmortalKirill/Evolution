@@ -34,7 +34,7 @@ def draw_grid(screen, grid):
 def draw_life_cells(screen, field, grid):
     """draws life  in field on grid"""
     for i in range(grid[2]):
-        for j in rangcellse(grid[3]):
+        for j in range(grid[3]):
             cell = field.cells[i][j]
             if cell.live:
                 pygame.draw.ellipse(screen, cell.color,
@@ -43,11 +43,11 @@ def draw_life_cells(screen, field, grid):
 
                 
                 
-def draw_game(screen, field, game_window):
+def draw_game(screen, field, interface):
 
     """draws game screen on par screen with field"""
     game_field(screen, field, interface.game_window)
-    interface.draw()
+    interface.draw(screen)
     
 if __name__ == "__main__":
     print("This module is not for direct call!")
