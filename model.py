@@ -51,7 +51,7 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     game_window_x_center = game_window[0] + game_window[2] / 2
     game_window_y_center = game_window[1] + game_window[3] / 2
     cell_size = field.scale
-    grid = [0, 0, 0, 0, 0, 0, 0]
+    grid = [0, 0, 0, 0, 0, 0]
     grid[0] = game_window_x_center - field.x_center * field.scale
     grid[1] = game_window_y_center + field.scale * (-field.size_y + math.ceil(field.y_center) -
                                                    1 + (field.y_center - math.floor(field.y_center))
@@ -59,14 +59,21 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     if math.ceil(game_window[2]) > field.size_x:
         grid[2] = field.size_x
     else:
-        grid[2] = math.ceil(game_window[2])
+        grid[2] = math.ceil(game_window[2]) // field.scale
     grid[3] = field.size_y
     if math.ceil(game_window[3]) > field.size_y:
         grid[3] = field.size_y
     else:
         grid[3] = math.ceil(game_window[3]) // field.scale
     grid[4] = field.scale
-    grid[5] = (0, field.size_y)
+    #grid[5] = (0, field.size_y)
+    a = math.ceil(field.x_center) // field.scale - grid[2] // 2
+    b = math.ceil(field.y_center) // field.scale - grid[3] // 2
+    if a > field.size_x or a < 0:
+        a = 0
+    if b > field.size_y or b <= 0:
+        b = field.size_y
+    grid[5] = (a, b)
     return grid
 
 def mouse_pos_check(mouse_pos, rect):
