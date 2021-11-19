@@ -69,7 +69,7 @@ class Interface:
         self.HEIGHT = height
         # self.pause = Button()
         # self.play = Button()
-        self.background_color = (0, 0, 0)
+        self.background_color = (100, 100, 100)
     def draw(self, screen):
         """draws interface"""
         # drawing interface background
