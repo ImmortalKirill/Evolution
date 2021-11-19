@@ -27,7 +27,7 @@ def game():
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     # game speed
-    speed = 2
+    speed = 1
     # counter of loops if the game
     loop_counter = 0
     while Game:
@@ -43,7 +43,7 @@ def game():
             if event.type == pygame.QUIT:
                 Game = False
             else:
-                field, pressed_mouse, interface = event_manage(event, field, pressed_mouse, interface)
+                field, pressed_mouse, interface, speed = event_manage(event, field, pressed_mouse, interface, speed)
         for i in range(get_steps(loop_counter, speed)):
             step(field)
 

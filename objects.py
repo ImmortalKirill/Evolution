@@ -1,5 +1,6 @@
 from random import randint
 import pygame
+import pygame.freetype
 from pygame.draw import *
 
 
@@ -38,10 +39,13 @@ class Button:
         self.bg_rect = bg_rect
         self.text_rect = [0, 0, 0, 0]
         self.angle = angle
+        # pressed = 0 if not pressed and 1 if pressed
+        self.pressed = 0
 
     def draw(self, screen):
         """draws button with text on the screen"""
         rect(screen, self.bg_color, self.bg_rect)
+
         font = pygame.freetype.SysFont("Arial", 18)  # FIXME text
 
         font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
@@ -53,10 +57,12 @@ class Button:
         self.text_rect[1] = text_rect_fig.top
         self.text_rect[2] = text_rect_fig.width
         self.text_rect[3] = text_rect_fig.height
-        print(self.text_rect)
-
+    def change_press(self):
+        """changes state of button"""
+        self.pressed += 1
+        self.pressed = self.pressed % 2
 class Bar(Button):
-    """class of moving bars, inherits everything from """
+    """class of moving bars, inherits everything from class Button but  also has attribute fillness"""
     pass
 
 class Interface:
@@ -67,8 +73,8 @@ class Interface:
         self.game_window = game_window
         self.WIDTH = width
         self.HEIGHT = height
-        # self.pause = Button()
-        # self.play = Button()
+        # FixME This should be a real button with position
+        self.pause = Button([0, 0, 20, 20], (0, 0, 0), (255, 255, 255), 'Pause', 0)
         self.background_color = (100, 100, 100)
     def draw(self, screen):
         """draws interface"""
@@ -86,8 +92,7 @@ class Interface:
                         self.WIDTH - self.game_window[0] - self.game_window[2], self.HEIGHT], 0
                          )
         # drawing buttons
-        # self.pause.draw(screen)
-        # self.play.draw(screen)
+        self.pause.draw(screen)
 
 
 

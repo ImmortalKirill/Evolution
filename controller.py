@@ -15,7 +15,7 @@ def zoom(event: pygame.MOUSEBUTTONDOWN, field):
 
 
 
-def event_manage(event, field, pressed_mouse, interface):
+def event_manage(event, field, pressed_mouse, interface, speed):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
         if mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):  # if mouse on game window
@@ -24,8 +24,13 @@ def event_manage(event, field, pressed_mouse, interface):
                 pressed_mouse = True
             # checking if we need to zoom map
             zoom(event, field)
-        else:  # FixMe managing interface, haven't done
-            pass
+        else:  # FixMe managing interface, haven't done managing another buttons
+            # if mouse on button pause
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.pause.bg_rect):
+                interface.pause.change_press()
+                speed = -speed
+
+
     elif event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
             pressed_mouse = False
@@ -34,7 +39,7 @@ def event_manage(event, field, pressed_mouse, interface):
             # moving the map
             field.change_cors([event.rel[i]*0.1*(-1)**(i+1) for i in (0, 1)])
 
-    return field, pressed_mouse, interface
+    return field, pressed_mouse, interface, speed
 
 
 if __name__ == "__main__":

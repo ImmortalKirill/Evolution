@@ -84,8 +84,11 @@ def mouse_pos_check(mouse_pos, rect):
         return False
 
 def get_steps(loop_counter, speed):
-    """calculates number of steps we should do in this loop"""
-    return 1
+    """calculates number of steps we should do in this loop
+    par speed: if speed < 0 return 0 else it's fps of the game"""
+    if speed < 0:
+        return 0
+    else: return speed
 if __name__ == "__main__":
     print("This module is not for direct call!")
 
