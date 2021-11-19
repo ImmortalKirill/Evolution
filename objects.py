@@ -46,7 +46,7 @@ class Button:
         """draws button with text on the screen"""
         rect(screen, self.bg_color, self.bg_rect)
 
-        font = pygame.freetype.SysFont("Arial", 18)  # FIXME text
+        font = pygame.freetype.SysFont("Arial", 10)  # FIXME text
 
         font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
                        bgcolor=self.bg_color, rotation=self.angle, size=24)
@@ -73,8 +73,10 @@ class Interface:
         self.game_window = game_window
         self.WIDTH = width
         self.HEIGHT = height
+        # Buttons of Interface
         # FixME This should be a real button with position
-        self.pause = Button([0, 0, 20, 20], (0, 0, 0), (255, 255, 255), 'Pause', 0)
+        self.pause = Button([0, 0, 100, 30], (0, 0, 0), (255, 255, 255), 'Pause', 0)
+        self.cell_spawn = Button([0, 600, 100, 30], (0, 0, 0), (255, 255, 255), 'Spawn', 0)
         self.background_color = (100, 100, 100)
     def draw(self, screen):
         """draws interface"""

@@ -29,6 +29,9 @@ def event_manage(event, field, pressed_mouse, interface, speed):
             if mouse_pos_check(pygame.mouse.get_pos(), interface.pause.bg_rect):
                 interface.pause.change_press()
                 speed = -speed
+            # if mouse on button spawn new cells
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.cell_spawn.bg_rect):
+                interface.cell_spawn.change_press()
 
 
     elif event.type == pygame.MOUSEBUTTONUP:

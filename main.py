@@ -28,7 +28,7 @@ def game():
     pressed_mouse = False
     # game speed
     speed = 1
-    # counter of loops if the game
+    # counter of loops in the game
     loop_counter = 0
     while Game:
         clock.tick(FPS)
