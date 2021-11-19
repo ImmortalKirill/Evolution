@@ -83,6 +83,9 @@ def mouse_pos_check(mouse_pos, rect):
     else:
         return False
 
+def get_steps(loop_counter, speed):
+    """calculates number of steps we should do in this loop"""
+    return 1
 if __name__ == "__main__":
     print("This module is not for direct call!")
 
