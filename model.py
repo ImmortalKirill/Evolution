@@ -52,27 +52,35 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     game_window_y_center = game_window[1] + game_window[3] / 2
     cell_size = field.scale
     grid = [0, 0, 0, 0, 0, 0]
-    grid[0] = game_window_x_center - field.x_center * field.scale
-    grid[1] = game_window_y_center + field.scale * (-field.size_y + math.ceil(field.y_center) -
-                                                   1 + (field.y_center - math.floor(field.y_center))
-                                                   )
-    if math.ceil(game_window[2]) > field.size_x:
+    grid[0] = game_window_x_center - field.x_center * field.scale #old version
+    grid[1] = game_window_y_center + field.scale * (-field.size_y + math.ceil(field.y_center) - 1 + (field.y_center - math.floor(field.y_center))) #old version
+    #grid[0] = game_window[0]
+    #grid[1] = game_window[1]
+    
+    if math.ceil(game_window[2]) > field.size_x: #old version
+    #if math.ceil(game_window[2]) // field.scale > field.size_x:
         grid[2] = field.size_x
     else:
         grid[2] = math.ceil(game_window[2]) // field.scale
-    grid[3] = field.size_y
-    if math.ceil(game_window[3]) > field.size_y:
+    
+    if math.ceil(game_window[3]) > field.size_y: #old version
+    #if math.ceil(game_window[3]) // field.scale > field.size_y:
         grid[3] = field.size_y
     else:
         grid[3] = math.ceil(game_window[3]) // field.scale
+        
     grid[4] = field.scale
+    
     a = math.ceil(field.x_center) // field.scale - grid[2] // 2
-    b = math.ceil(field.y_center) // field.scale - grid[3] // 2
+    b = math.ceil(field.y_center) // field.scale + grid[3] // 2
     if a > field.size_x or a < 0:
         a = 0
     if b > field.size_y or b <= 0:
         b = field.size_y
     grid[5] = (a, b)
+    
+    #grid[0] = field.x_center * field.scale - game_window_x_center
+    #grid[1] = field.y_center * field.scale + game_window_x_center
     return grid
 
 def mouse_pos_check(mouse_pos, rect):
@@ -88,6 +96,8 @@ def get_steps(loop_counter, speed):
     if speed < 0:
         return 0
     else: return speed
+    
+    
 if __name__ == "__main__":
     print("This module is not for direct call!")
 
