@@ -66,7 +66,6 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     else:
         grid[3] = math.ceil(game_window[3]) // field.scale
     grid[4] = field.scale
-    #grid[5] = (0, field.size_y)
     a = math.ceil(field.x_center) // field.scale - grid[2] // 2
     b = math.ceil(field.y_center) // field.scale - grid[3] // 2
     if a > field.size_x or a < 0:
