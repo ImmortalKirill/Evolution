@@ -10,7 +10,7 @@ HEIGHT = 800
 WIDTH = 800
 
 # window with game, rectangle(left up angle cors, width, height)
-game_window = (0, 0, 800, 700)
+game_window = (50, 50, 500, 500)
 FPS = 30
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
@@ -26,9 +26,14 @@ def game():
     interface = Interface(WIDTH, HEIGHT, game_window)
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
+    # game speed
+    speed = 1
+    # counter of loops in the game
+    loop_counter = 0
     while Game:
-        #print(field.x_center, field.y_center)
         clock.tick(FPS)
+
+        loop_counter += 1
         screen.fill(BLACK)
         # drawing game screen
         draw_game(screen, field, interface)
@@ -38,8 +43,9 @@ def game():
             if event.type == pygame.QUIT:
                 Game = False
             else:
-                field, pressed_mouse, interface = event_manage(event, field, pressed_mouse, interface)
-        step(field)
+                field, pressed_mouse, interface, speed = event_manage(event, field, pressed_mouse, interface, speed)
+        for i in range(get_steps(loop_counter, speed)):
+            step(field)
 
 
 def main():

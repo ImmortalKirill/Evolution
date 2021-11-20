@@ -6,11 +6,6 @@ def menu_draw():
     """ draws menu of the game with play button"""
 
 
-def draw_interface():
-    pass # FixMe
-    """draws interface of the game with buttons and game-play window"""
-
-
 def game_field(screen, field: Field, interface_game_window):
     """draws field on the screen in game-play window"""
     grid = find_grid(field, interface_game_window)
