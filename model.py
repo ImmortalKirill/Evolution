@@ -119,7 +119,10 @@ def find_cell(pos, field, game_window):
             y = -math.ceil((pos[1] - y_center) / field.scale) + math.floor(field.y_center) + 1
         else:
             y = math.floor((y_center - pos[1]) / field.scale) + math.floor(field.y_center) + 1
-        return x, y
+        if x < 0 or y < 0 or x > field.size_x or y > field.size_y:
+            return (None, None)
+        else:
+            return x, y
 
 
     return 0, 0
