@@ -95,7 +95,7 @@ class Interface:
                          )
         # drawing buttons
         self.pause.draw(screen)
-
+        self.cell_spawn.draw(screen)
 
 
 class Field():
