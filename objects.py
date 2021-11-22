@@ -61,9 +61,76 @@ class Button:
         """changes state of button"""
         self.pressed += 1
         self.pressed = self.pressed % 2
-class Bar(Button):
-    """class of moving bars, inherits everything from class Button but  also has attribute fillness"""
-    pass
+
+
+# Takes rectangle's size, position and a point. Returns true if that
+# point is inside the rectangle and false if it isnt.
+def pointInRectanlge(px, py, rw, rh, rx, ry):
+    if px > rx and px < rx + rw:
+        if py > ry and py < ry + rh:
+            return True
+    return False
+
+
+# Blueprint to make sliders in the game
+class Slider:
+    def __init__(self, position: tuple, upper_value: int = 100, current_value_points: int = 30,
+                 text: str = "Parameter",
+                 outline_size: tuple = (300, 20)) -> None:
+        """position - tuple of left top angle coors of slider - (x, y)
+        upper_value - maximum value that parameter can reach
+        current_value_points - value on slider in points of pygame
+        text - name of changed parameter
+        outline_size - tuple of width and height of the slider
+        """
+        self.position = position
+        self.outline_size = outline_size
+        self.text = text
+        self.current_value_points = current_value_points
+        self.upper_value = upper_value
+        self.font = 0
+
+    # returns the current value of the slider
+    def get_value(self) -> float:
+        return self.current_value_points / (self.outline_size[0] / self.upper_value)
+
+    # renders slider and the text showing the value of the slider
+    def render(self, display: pygame.display) -> None:
+        # draw outline and slider rectangles
+        pygame.draw.rect(display, (0, 0, 0), (self.position[0], self.position[1],
+                                              self.outline_size[0], self.outline_size[1]), 1)
+
+        pygame.draw.rect(display, (0, 0, 0), (self.position[0], self.position[1],
+                                              self.current_value_points, self.outline_size[1] - 3))
+
+        # determine size of font
+        self.font = pygame.font.Font(pygame.font.get_default_font(), int((50 / 100) * self.outline_size[1]))
+
+        # create text surface with value
+        valueSurf = self.font.render(f"{self.text}: {round(self.get_value())}", True, (255, 0, 0))
+
+        # centre text
+        textx = self.position[0] + (self.outline_size[0] / 2) - (valueSurf.get_rect().width / 2)
+        texty = self.position[1] + (self.outline_size[1]) + 3 * (valueSurf.get_rect().height / 2)
+
+        display.blit(valueSurf, (textx, texty))
+
+    # allows users to change value of the slider by dragging it.
+    def change_value(self) -> None:
+        # If mouse is pressed and mouse is inside the slider
+        mousePos = pygame.mouse.get_pos()
+        if pointInRectanlge(mousePos[0], mousePos[1]
+                , self.outline_size[0], self.outline_size[1], self.position[0], self.position[1]):
+            if pygame.mouse.get_pressed()[0]:
+                # the size of the slider
+                self.current_value_points = mousePos[0] - self.position[0]
+
+                # limit the size of the slider
+                if self.current_value_points < 1:
+                    self.current_value_points = 0
+                if self.current_value_points > self.outline_size[0]:
+                    self.current_value_points = self.outline_size[0]
+
 
 class Interface:
     """creates class with all buttons"""
@@ -75,14 +142,16 @@ class Interface:
         self.HEIGHT = height
         # Buttons of Interface
         # FixME This should be a real button with position
-        self.pause = Button([0, 0, 100, 30], (0, 0, 0), (255, 255, 255), 'Pause', 0)
+        self.pause = Button([0, 0, 100, 30], (0, 0, 0), (255, 255, 255), '||', 0)
         self.cell_spawn = Button([0, 600, 100, 30], (0, 0, 0), (255, 255, 255), 'Spawn', 0)
+        self.slider = Slider((200, 600))
         self.background_color = (100, 100, 100)
+
     def draw(self, screen):
         """draws interface"""
         # drawing interface background
         # top rect
-        pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 0)
+        pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 100)
         # left rect
         pygame.draw.rect(screen, self.background_color, [0, 0, self.game_window[0], self.HEIGHT], 0)
         # down rect
@@ -96,6 +165,7 @@ class Interface:
         # drawing buttons
         self.pause.draw(screen)
         self.cell_spawn.draw(screen)
+        self.slider.render(screen)
 
 
 class Field():

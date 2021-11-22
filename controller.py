@@ -34,6 +34,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
             # if mouse on button spawn new cells
             if mouse_pos_check(pygame.mouse.get_pos(), interface.cell_spawn.bg_rect):
                 interface.cell_spawn.change_press()
+            interface.slider.change_value()
 
 
 
