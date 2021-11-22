@@ -89,6 +89,9 @@ def get_steps(loop_counter, speed):
     if speed < 0:
         return 0
     else: return speed
+def find_cell(pos, field, game_window):
+    """finds coordinate of the cells which contains pos = (x,y) coordinate in pygame cors """
+    return 0, 0
 if __name__ == "__main__":
     print("This module is not for direct call!")
 
