@@ -121,10 +121,20 @@ def get_steps(loop_counter, speed):
     par speed: if speed < 0 return 0 else it's fps of the game"""
     if speed < 0:
         return 0
-    else: return speed
+    else:
+        return speed
+    
+    
 def find_cell(pos, field, game_window):
     """finds coordinate of the cells which contains pos = (x,y) coordinate in pygame cors """
-    return 0, 0
+    if (pos[0] > game_window[0] + game_window[2] or pos[0] < game_window[0]
+        or pos[1] > game_window[1] + game_window[3] or pos[1] < game_window[1]):
+        return (None, None)
+    else:
+        x = math.ceil(field.x_center) - math.ceil(field.x_center * field.scale - pos[0]) // field.scale
+        y = field.size_y - (math.ceil(field.y_center) - math.ceil(field.y_center * field.scale - pos[1]) // field.scale)
+        print(x, y)
+        return x, y
 
 
 if __name__ == "__main__":
