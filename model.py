@@ -131,9 +131,21 @@ def find_cell(pos, field, game_window):
         or pos[1] > game_window[1] + game_window[3] or pos[1] < game_window[1]):
         return (None, None)
     else:
-        x = math.ceil(field.x_center) - math.ceil(field.x_center * field.scale - pos[0]) // field.scale
-        y = field.size_y - (math.ceil(field.y_center) - math.ceil(field.y_center * field.scale - pos[1]) // field.scale)
-        print(x, y)
+        game_window_x_center = game_window[0] + game_window[2] / 2
+        game_window_y_center = game_window[1] + game_window[3] / 2
+        
+        x_center = game_window_x_center - field.x_center % 1 * field.scale
+        y_center = game_window_y_center + field.y_center % 1 * field.scale
+        
+        if pos[0] > x_center:
+            x = math.floor((pos[0] - x_center) / field.scale) + math.floor(field.x_center)
+        else:
+            x = -math.ceil((x_center - pos[0]) / field.scale) + math.floor(field.x_center)
+            
+        if pos[1] > y_center:
+            y = -math.ceil((pos[1] - y_center) / field.scale) + math.floor(field.y_center)
+        else:
+            y = math.floor((y_center - pos[1]) / field.scale) + math.floor(field.y_center)
         return x, y
 
 
