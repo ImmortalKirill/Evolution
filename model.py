@@ -72,14 +72,41 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     
     a = math.ceil(field.x_center) * field.scale 
     b = field.size_y - (math.ceil(field.y_center - game_window[1]) // field.scale - grid[3] // 2)
+
+    #grid[0] = game_window[0]
+    #grid[1] = game_window[1]
+
+    if math.ceil(game_window[2]) > field.size_x: #old version
+    #if math.ceil(game_window[2]) // field.scale > field.size_x:
+        grid[2] = field.size_x
+    else:
+        grid[2] = math.ceil(game_window[2]) // field.scale
+
+    if math.ceil(game_window[3]) > field.size_y: #old version
+    #if math.ceil(game_window[3]) // field.scale > field.size_y:
+        grid[3] = field.size_y
+    else:
+        grid[3] = math.ceil(game_window[3]) // field.scale
+
+    grid[4] = field.scale
+
+    a = math.ceil(field.x_center) // field.scale - grid[2] // 2
+    b = math.ceil(field.y_center) // field.scale + grid[3] // 2
+
     if a > field.size_x or a < 0:
         a = 0
     if b > field.size_y or b < 0:
         b = field.size_y
     grid[5] = (a, b)
+
     grid[5] = (0, field.size_y)
     #grid[0] = (field.x_center - game_window[0] - game_window[2] / 2) // field.scale * field.scale
     #grid[1] = (field.size_y - (field.y_center - game_window[1] - game_window[3] / 2)) // field.scale * field.scale
+
+
+    #grid[0] = field.x_center * field.scale - game_window_x_center
+    #grid[1] = field.y_center * field.scale + game_window_x_center
+
     return grid
 
 def mouse_pos_check(mouse_pos, rect):
@@ -95,8 +122,11 @@ def get_steps(loop_counter, speed):
     if speed < 0:
         return 0
     else: return speed
-    
-    
+def find_cell(pos, field, game_window):
+    """finds coordinate of the cells which contains pos = (x,y) coordinate in pygame cors """
+    return 0, 0
+
+
 if __name__ == "__main__":
     print("This module is not for direct call!")
 

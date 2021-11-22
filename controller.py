@@ -1,4 +1,4 @@
-from model import change_scale, mouse_pos_check
+from model import change_scale, mouse_pos_check, find_cell
 import pygame
 
 
@@ -24,6 +24,10 @@ def event_manage(event, field, pressed_mouse, interface, speed):
                 pressed_mouse = True
             # checking if we need to zoom map
             zoom(event, field)
+            # if mode is cell_spawn
+            if interface.cell_spawn.pressed:
+                x_cell, y_cell = find_cell(pygame.mouse.get_pos(), field, interface.game_window)
+                field.cells[x_cell][y_cell].live = 1
         else:  # FixMe managing interface, haven't done managing another buttons
             # if mouse on button pause
             if mouse_pos_check(pygame.mouse.get_pos(), interface.pause.bg_rect):
@@ -32,6 +36,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
             # if mouse on button spawn new cells
             if mouse_pos_check(pygame.mouse.get_pos(), interface.cell_spawn.bg_rect):
                 interface.cell_spawn.change_press()
+
 
 
     elif event.type == pygame.MOUSEBUTTONUP:
