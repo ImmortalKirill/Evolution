@@ -12,22 +12,20 @@ def zoom(event: pygame.MOUSEBUTTONDOWN, field):
         change_scale(field, -1)
 
 
-
-
-
 def event_manage(event, field, pressed_mouse, interface, speed):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
-        if mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):  # if mouse on game window
+        if mouse_pos_check(event.pos, interface.game_window):  # if mouse on game window
             # if pressed button is left mouse button
             if event.button == 1:
                 pressed_mouse = True
             # checking if we need to zoom map
             zoom(event, field)
             # if mode is cell_spawn
-            if interface.cell_spawn.pressed:
-                x_cell, y_cell = find_cell(pygame.mouse.get_pos(), field, interface.game_window)
-                field.cells[x_cell][y_cell].live = 1
+            if interface.cell_spawn.pressed and event.button == 3:
+                x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
+                if type(x_cell) != None:
+                    field.cells[x_cell][y_cell].live = 1
         else:  # FixMe managing interface, haven't done managing another buttons
             # if mouse on button pause
             if mouse_pos_check(pygame.mouse.get_pos(), interface.pause.bg_rect):
@@ -45,7 +43,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
     elif event.type == pygame.MOUSEMOTION:  # changing field coors
         if pressed_mouse and mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):
             # moving the map
-            field.change_cors([event.rel[i]*0.1*(-1)**(i+1) for i in (0, 1)])
+            field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
 
     return field, pressed_mouse, interface, speed
 
