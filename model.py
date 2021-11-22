@@ -99,7 +99,7 @@ def get_steps(loop_counter, speed):
     
 def find_cell(pos, field, game_window):
     """finds coordinate of the cells which contains pos = (x,y) coordinate in pygame cors """
-<<<<<<< HEAD
+
     if (pos[0] > game_window[0] + game_window[2] or pos[0] < game_window[0]
         or pos[1] > game_window[1] + game_window[3] or pos[1] < game_window[1]):
         return (None, None)
@@ -116,12 +116,12 @@ def find_cell(pos, field, game_window):
             x = -math.ceil((x_center - pos[0]) / field.scale) + math.floor(field.x_center)
             
         if pos[1] > y_center:
-            y = -math.ceil((pos[1] - y_center) / field.scale) + math.floor(field.y_center)
+            y = -math.ceil((pos[1] - y_center) / field.scale) + math.floor(field.y_center) + 1
         else:
-            y = math.floor((y_center - pos[1]) / field.scale) + math.floor(field.y_center)
+            y = math.floor((y_center - pos[1]) / field.scale) + math.floor(field.y_center) + 1
         return x, y
 
-=======
+
     return 0, 0
 def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, par_of_change):
     """changes coordinates from field coors to pygame coors
@@ -139,7 +139,7 @@ def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, p
         X = game_window_x_center + x - field_x_center*cell_size
         Y = game_window_y_center - (y - field_y_center*cell_size)
         return X, Y
->>>>>>> cef9dd156f508fefb0506b29566604edf6ad0098
+
 
 if __name__ == "__main__":
     print("This module is not for direct call!")
