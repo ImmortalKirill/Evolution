@@ -1,5 +1,5 @@
 from objects import *
-from model import find_grid
+from model import find_grid, change_coords
 import pygame
 def menu_draw():
     pass # FixMe
@@ -28,13 +28,13 @@ def draw_grid(screen, grid):
         
         
 def draw_life_cells(screen, field, grid):
-    """draws life  in field on grid"""
+    """draws life cells of a field on grid"""
     for i in range(grid[2]):
         for j in range(grid[3]):
-            cell = field.cells[grid[5][0]+i][grid[5][1] - j - 1]
-            if cell.live:
+            cell = field.cells[grid[5][0]+i][grid[5][1] - j]
+            if cell.live > 0:
                 pygame.draw.ellipse(screen, cell.color,
-                                 (grid[4]*cell.x + grid[0], grid[1]+grid[4]*grid[3] - (cell.y+1)*grid[4],
+                                 (grid[4]*i + grid[0], grid[1] + j*grid[4],
                                   grid[4], grid[4]), 0)
 
                 

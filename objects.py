@@ -23,7 +23,7 @@ class Cell():
 class Button:
     """class of buttons"""
 
-    def __init__(self, bg_rect: list, text_color, bg_color, text, angle):
+    def __init__(self, bg_rect: list, text_color, bg_color, text, text_pressed='', angle=0):
         """x,y - coordinates of left top corner
         color - color of bottom
         text - text on the bottom
@@ -41,6 +41,8 @@ class Button:
         self.angle = angle
         # pressed = 0 if not pressed and 1 if pressed
         self.pressed = 0
+        self.pressed_color = (200, 200, 200)
+        self.text_pressed = text_pressed
 
     def draw(self, screen):
         """draws button with text on the screen"""
@@ -48,8 +50,12 @@ class Button:
 
         font = pygame.freetype.SysFont("Arial", 10)  # FIXME text
 
-        font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
+        if (self.pressed == 0) or (self.text_pressed == '0'):
+            font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
                        bgcolor=self.bg_color, rotation=self.angle, size=24)
+        else:
+            font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text_pressed,
+                           fgcolor=self.text_color, bgcolor=self.pressed_color, size=24)
 
         text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=24)
 
@@ -57,13 +63,77 @@ class Button:
         self.text_rect[1] = text_rect_fig.top
         self.text_rect[2] = text_rect_fig.width
         self.text_rect[3] = text_rect_fig.height
+
     def change_press(self):
         """changes state of button"""
         self.pressed += 1
         self.pressed = self.pressed % 2
-class Bar(Button):
-    """class of moving bars, inherits everything from class Button but  also has attribute fillness"""
-    pass
+
+
+# Takes rectangle's size, position and a point. Returns true if that
+# point is inside the rectangle and false if it isnt.
+def pointInRectanlge(px, py, rw, rh, rx, ry):
+    if px > rx and px < rx + rw:
+        if py > ry and py < ry + rh:
+            return True
+    return False
+
+
+class Slider(Button):
+    def __init__(self, bg_rect, text_color=(0,0,0), bg_color=(0,0,0), text='Parameter', text_pressed='', angle=0,
+                 upper_value: int = 100, current_value_points: int = 30):
+        """position - tuple of left top angle coors of slider - (x, y)
+        upper_value - maximum value that parameter can reach
+        current_value_points - value on slider in points of pygame
+        text - name of changed parameter
+        outline_size - tuple of width and height of the slider
+        """
+        super().__init__(bg_rect, text_color, bg_color, text, text_pressed, angle)
+        self.current_value_points = current_value_points
+        self.upper_value = upper_value
+        self.font = 0
+
+    # returns the current value of the slider
+    def get_value(self) -> float:
+        return self.current_value_points / (self.bg_rect[2] / self.upper_value)
+
+    # renders slider and the text showing the value of the slider
+    def draw(self, display: pygame.display) -> None:
+        # draw outline and slider rectangles
+        pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
+                                              self.bg_rect[2], self.bg_rect[3]), 1)
+
+        pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
+                                              self.current_value_points, self.bg_rect[3] - 3))
+
+        # determine size of font
+        self.font = pygame.font.Font(pygame.font.get_default_font(), int((50 / 100) * self.bg_rect[3]))
+
+        # create text surface with value
+        valueSurf = self.font.render(f"{self.text}: {round(self.get_value())}", True, self.text_color)
+
+        # centre text
+        textx = self.bg_rect[0] + (self.bg_rect[2] / 2) - (valueSurf.get_rect().width / 2)
+        texty = self.bg_rect[1] + (self.bg_rect[3]) + 3 * (valueSurf.get_rect().height / 2)
+
+        display.blit(valueSurf, (textx, texty))
+
+    # allows users to change value of the slider by dragging it.
+    def change_value(self) -> None:
+        # If mouse is pressed and mouse is inside the slider
+        mousePos = pygame.mouse.get_pos()
+        if pointInRectanlge(mousePos[0], mousePos[1]
+                , self.bg_rect[2], self.bg_rect[3], self.bg_rect[0], self.bg_rect[1]):
+            if pygame.mouse.get_pressed()[0]:
+                # the size of the slider
+                self.current_value_points = mousePos[0] - self.bg_rect[0]
+
+                # limit the size of the slider
+                if self.current_value_points < 1:
+                    self.current_value_points = 0
+                if self.current_value_points > self.bg_rect[2]:
+                    self.current_value_points = self.bg_rect[2]
+
 
 class Interface:
     """creates class with all buttons"""
@@ -75,14 +145,16 @@ class Interface:
         self.HEIGHT = height
         # Buttons of Interface
         # FixME This should be a real button with position
-        self.pause = Button([0, 0, 100, 30], (0, 0, 0), (255, 255, 255), 'Pause', 0)
-        self.cell_spawn = Button([0, 600, 100, 30], (0, 0, 0), (255, 255, 255), 'Spawn', 0)
+        self.pause = Button([10, 600, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
+        self.cell_spawn = Button([50, 600, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
+        self.slider = Slider([200, 600, 300, 30])
         self.background_color = (100, 100, 100)
+
     def draw(self, screen):
         """draws interface"""
         # drawing interface background
         # top rect
-        pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 0)
+        pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 100)
         # left rect
         pygame.draw.rect(screen, self.background_color, [0, 0, self.game_window[0], self.HEIGHT], 0)
         # down rect
@@ -96,6 +168,7 @@ class Interface:
         # drawing buttons
         self.pause.draw(screen)
         self.cell_spawn.draw(screen)
+        self.slider.draw(screen)
 
 
 class Field():
