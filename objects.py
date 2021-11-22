@@ -23,7 +23,7 @@ class Cell():
 class Button:
     """class of buttons"""
 
-    def __init__(self, bg_rect: tuple, text_color, bg_color, text, angle):
+    def __init__(self, bg_rect: list, text_color, bg_color, text, text_pressed='', angle=0):
         """x,y - coordinates of left top corner
         color - color of bottom
         text - text on the bottom
@@ -41,6 +41,8 @@ class Button:
         self.angle = angle
         # pressed = 0 if not pressed and 1 if pressed
         self.pressed = 0
+        self.pressed_color = (200, 200, 200)
+        self.text_pressed = text_pressed
 
     def draw(self, screen):
         """draws button with text on the screen"""
@@ -48,8 +50,12 @@ class Button:
 
         font = pygame.freetype.SysFont("Arial", 10)  # FIXME text
 
-        font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
+        if (self.pressed == 0) or (self.text_pressed == '0'):
+            font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
                        bgcolor=self.bg_color, rotation=self.angle, size=24)
+        else:
+            font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text_pressed,
+                           fgcolor=self.text_color, bgcolor=self.pressed_color, size=24)
 
         text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=24)
 
@@ -57,6 +63,7 @@ class Button:
         self.text_rect[1] = text_rect_fig.top
         self.text_rect[2] = text_rect_fig.width
         self.text_rect[3] = text_rect_fig.height
+
     def change_press(self):
         """changes state of button"""
         self.pressed += 1
@@ -73,7 +80,7 @@ def pointInRectanlge(px, py, rw, rh, rx, ry):
 
 
 class Slider(Button):
-    def __init__(self, bg_rect, text_color=(0,0,0), bg_color=(0,0,0), text='Parameter', angle=0,
+    def __init__(self, bg_rect, text_color=(0,0,0), bg_color=(0,0,0), text='Parameter', text_pressed='', angle=0,
                  upper_value: int = 100, current_value_points: int = 30):
         """position - tuple of left top angle coors of slider - (x, y)
         upper_value - maximum value that parameter can reach
@@ -81,7 +88,7 @@ class Slider(Button):
         text - name of changed parameter
         outline_size - tuple of width and height of the slider
         """
-        super().__init__(bg_rect, text_color, bg_color, text, angle)
+        super().__init__(bg_rect, text_color, bg_color, text, text_pressed, angle)
         self.current_value_points = current_value_points
         self.upper_value = upper_value
         self.font = 0
@@ -91,7 +98,7 @@ class Slider(Button):
         return self.current_value_points / (self.bg_rect[2] / self.upper_value)
 
     # renders slider and the text showing the value of the slider
-    def render(self, display: pygame.display) -> None:
+    def draw(self, display: pygame.display) -> None:
         # draw outline and slider rectangles
         pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
                                               self.bg_rect[2], self.bg_rect[3]), 1)
@@ -138,9 +145,9 @@ class Interface:
         self.HEIGHT = height
         # Buttons of Interface
         # FixME This should be a real button with position
-        self.pause = Button([0, 0, 100, 30], (0, 0, 0), (255, 255, 255), '||', 0)
-        self.cell_spawn = Button([0, 600, 100, 30], (0, 0, 0), (255, 255, 255), 'Spawn', 0)
-        self.slider = Slider((200, 600, 300, 30))
+        self.pause = Button([10, 600, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
+        self.cell_spawn = Button([50, 600, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
+        self.slider = Slider([200, 600, 300, 30])
         self.background_color = (100, 100, 100)
 
     def draw(self, screen):
@@ -161,7 +168,7 @@ class Interface:
         # drawing buttons
         self.pause.draw(screen)
         self.cell_spawn.draw(screen)
-        self.slider.render(screen)
+        self.slider.draw(screen)
 
 
 class Field():
