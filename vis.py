@@ -43,7 +43,7 @@ def draw_game(screen, field, interface):
 
     """draws game screen on par screen with field"""
     game_field(screen, field, interface.game_window)
-    interface.draw(screen)
+    #interface.draw(screen)
     
 if __name__ == "__main__":
     print("This module is not for direct call!")
