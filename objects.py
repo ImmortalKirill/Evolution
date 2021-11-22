@@ -23,7 +23,7 @@ class Cell():
 class Button:
     """class of buttons"""
 
-    def __init__(self, bg_rect: list, text_color, bg_color, text, angle):
+    def __init__(self, bg_rect: tuple, text_color, bg_color, text, angle):
         """x,y - coordinates of left top corner
         color - color of bottom
         text - text on the bottom
@@ -72,46 +72,42 @@ def pointInRectanlge(px, py, rw, rh, rx, ry):
     return False
 
 
-# Blueprint to make sliders in the game
-class Slider:
-    def __init__(self, position: tuple, upper_value: int = 100, current_value_points: int = 30,
-                 text: str = "Parameter",
-                 outline_size: tuple = (300, 20)) -> None:
+class Slider(Button):
+    def __init__(self, bg_rect, text_color=(0,0,0), bg_color=(0,0,0), text='Parameter', angle=0,
+                 upper_value: int = 100, current_value_points: int = 30):
         """position - tuple of left top angle coors of slider - (x, y)
         upper_value - maximum value that parameter can reach
         current_value_points - value on slider in points of pygame
         text - name of changed parameter
         outline_size - tuple of width and height of the slider
         """
-        self.position = position
-        self.outline_size = outline_size
-        self.text = text
+        super().__init__(bg_rect, text_color, bg_color, text, angle)
         self.current_value_points = current_value_points
         self.upper_value = upper_value
         self.font = 0
 
     # returns the current value of the slider
     def get_value(self) -> float:
-        return self.current_value_points / (self.outline_size[0] / self.upper_value)
+        return self.current_value_points / (self.bg_rect[2] / self.upper_value)
 
     # renders slider and the text showing the value of the slider
     def render(self, display: pygame.display) -> None:
         # draw outline and slider rectangles
-        pygame.draw.rect(display, (0, 0, 0), (self.position[0], self.position[1],
-                                              self.outline_size[0], self.outline_size[1]), 1)
+        pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
+                                              self.bg_rect[2], self.bg_rect[3]), 1)
 
-        pygame.draw.rect(display, (0, 0, 0), (self.position[0], self.position[1],
-                                              self.current_value_points, self.outline_size[1] - 3))
+        pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
+                                              self.current_value_points, self.bg_rect[3] - 3))
 
         # determine size of font
-        self.font = pygame.font.Font(pygame.font.get_default_font(), int((50 / 100) * self.outline_size[1]))
+        self.font = pygame.font.Font(pygame.font.get_default_font(), int((50 / 100) * self.bg_rect[3]))
 
         # create text surface with value
-        valueSurf = self.font.render(f"{self.text}: {round(self.get_value())}", True, (255, 0, 0))
+        valueSurf = self.font.render(f"{self.text}: {round(self.get_value())}", True, self.text_color)
 
         # centre text
-        textx = self.position[0] + (self.outline_size[0] / 2) - (valueSurf.get_rect().width / 2)
-        texty = self.position[1] + (self.outline_size[1]) + 3 * (valueSurf.get_rect().height / 2)
+        textx = self.bg_rect[0] + (self.bg_rect[2] / 2) - (valueSurf.get_rect().width / 2)
+        texty = self.bg_rect[1] + (self.bg_rect[3]) + 3 * (valueSurf.get_rect().height / 2)
 
         display.blit(valueSurf, (textx, texty))
 
@@ -120,16 +116,16 @@ class Slider:
         # If mouse is pressed and mouse is inside the slider
         mousePos = pygame.mouse.get_pos()
         if pointInRectanlge(mousePos[0], mousePos[1]
-                , self.outline_size[0], self.outline_size[1], self.position[0], self.position[1]):
+                , self.bg_rect[2], self.bg_rect[3], self.bg_rect[0], self.bg_rect[1]):
             if pygame.mouse.get_pressed()[0]:
                 # the size of the slider
-                self.current_value_points = mousePos[0] - self.position[0]
+                self.current_value_points = mousePos[0] - self.bg_rect[0]
 
                 # limit the size of the slider
                 if self.current_value_points < 1:
                     self.current_value_points = 0
-                if self.current_value_points > self.outline_size[0]:
-                    self.current_value_points = self.outline_size[0]
+                if self.current_value_points > self.bg_rect[2]:
+                    self.current_value_points = self.bg_rect[2]
 
 
 class Interface:
@@ -144,7 +140,7 @@ class Interface:
         # FixME This should be a real button with position
         self.pause = Button([0, 0, 100, 30], (0, 0, 0), (255, 255, 255), '||', 0)
         self.cell_spawn = Button([0, 600, 100, 30], (0, 0, 0), (255, 255, 255), 'Spawn', 0)
-        self.slider = Slider((200, 600))
+        self.slider = Slider((200, 600, 300, 30))
         self.background_color = (100, 100, 100)
 
     def draw(self, screen):
