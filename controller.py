@@ -24,7 +24,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
             # if mode is cell_spawn
             if interface.cell_spawn.pressed and event.button == 3:
                 x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
-                if type(x_cell) != None:
+                if x_cell != None:
                     field.cells[x_cell][y_cell].live = 1
         else:  # FixMe managing interface, haven't done managing another buttons
             # if mouse on button pause

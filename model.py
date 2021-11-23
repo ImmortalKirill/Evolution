@@ -99,30 +99,12 @@ def get_steps(loop_counter, speed):
     
 def find_cell(pos, field, game_window):
     """finds coordinate of the cells which contains pos = (x,y) coordinate in pygame cors """
-<<<<<<< HEAD
-    if (pos[0] > game_window[0] + game_window[2] or pos[0] < game_window[0]
-        or pos[1] > game_window[1] + game_window[3] or pos[1] < game_window[1]):
-        return (None, None)
-    else:
-        game_window_x_center = game_window[0] + game_window[2] / 2
-        game_window_y_center = game_window[1] + game_window[3] / 2
-        
-        x_center = game_window_x_center - field.x_center % 1 * field.scale
-        y_center = game_window_y_center + field.y_center % 1 * field.scale
-        
-        if pos[0] > x_center:
-            x = math.floor((pos[0] - x_center) / field.scale) + math.floor(field.x_center)
-        else:
-            x = -math.ceil((x_center - pos[0]) / field.scale) + math.floor(field.x_center)
-            
-        if pos[1] > y_center:
-            y = -math.ceil((pos[1] - y_center) / field.scale) + math.floor(field.y_center)
-        else:
-            y = math.floor((y_center - pos[1]) / field.scale) + math.floor(field.y_center)
-        return x, y
 
-=======
-    return 0, 0
+    x, y = change_coords(pos, field.scale, field.x_center, field.y_center, game_window, 0)
+    if math.floor(x) >= field.size_x or math.floor(x) < 0 or math.ceil(y) >= field.size_y or math.ceil(y) <  0:
+        return None, None
+    else:
+        return math.floor(x), math.ceil(y)
 def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, par_of_change):
     """changes coordinates from field coors to pygame coors
     par of change = 1 if Field coors in pygame, 0 if Pygame coors in field"""
@@ -132,14 +114,13 @@ def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, p
         x_in_center = pos[0] - game_window_x_center
         y_in_center = pos[1] - game_window_y_center
         x_in_field = x_in_center/cell_size + field_x_center
-        y_in_field = -(y_in_center/cell_size + field_y_center)
+        y_in_field = - y_in_center/cell_size + field_y_center
         return x_in_field, y_in_field
     elif par_of_change == 1:
         x, y = (pos[0]*cell_size, pos[1]*cell_size)
         X = game_window_x_center + x - field_x_center*cell_size
         Y = game_window_y_center - (y - field_y_center*cell_size)
         return X, Y
->>>>>>> cef9dd156f508fefb0506b29566604edf6ad0098
 
 if __name__ == "__main__":
     print("This module is not for direct call!")
