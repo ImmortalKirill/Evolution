@@ -147,6 +147,7 @@ class Interface:
         # FixME This should be a real button with position
         self.pause = Button([10, 600, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
         self.cell_spawn = Button([50, 600, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
+        self.clear = Button([90, 600, 30, 30], (0, 0, 0), (255, 255, 255), '0', '0')
         self.slider = Slider([200, 600, 300, 30])
         self.background_color = (100, 100, 100)
 
@@ -169,6 +170,7 @@ class Interface:
         self.pause.draw(screen)
         self.cell_spawn.draw(screen)
         self.slider.draw(screen)
+        self.clear.draw(screen)
 
 
 class Field():
@@ -190,10 +192,7 @@ class Field():
                 self.cells[i][l] = Cell()
                 self.cells[i][l].new_cell(i, l)
                 if randint(0, 2):
-                    self.cells[i][l].live = 1
-        self.cells[5][5].live = 1
-        self.cells[5][4].live = 1
-        self.cells[5][3].live = 1        
+                    self.cells[i][l].live = 1 
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x

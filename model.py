@@ -8,7 +8,9 @@ def step(Field):
     
     Method generate new field by basics rules
     '''
-
+    neighbors_live = 3
+    neighbors_exist_start = 2
+    neighbors_exist_end = 3
     pole = [[0] * Field.size_y for i in range(Field.size_x)]
     for x in range(Field.size_x):
         for y in range(Field.size_y):
@@ -28,10 +30,10 @@ def step(Field):
                 neighbors -= 1
             # checking future for cell
             if Field.cells[x][y].live:
-                if neighbors < 2 or neighbors > 3:
+                if neighbors < neighbors_exist_start or neighbors > neighbors_exist_end:
                     pole[x][y].live -= 1
             else:
-                if neighbors == 3:
+                if neighbors == neighbors_live:
                     pole[x][y].live += 1
     Field.cells = pole.copy()
     
