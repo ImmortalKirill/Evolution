@@ -145,7 +145,7 @@ class Interface:
         self.HEIGHT = height
         # Buttons of Interface
         # FixME This should be a real button with position
-        self.clear = Button([90, 600, 30, 30], (0, 0, 0), (255, 255, 255), '0', '0')
+        self.clear = Button([600, 700, 30, 30], (0, 0, 0), (255, 255, 255), '0', '0')
         self.pause = Button([0, 700, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
         self.cell_spawn = Button([50, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
         self.slider = Slider(bg_rect = [200, 700, 300, 30], text = 'speed')
@@ -155,7 +155,7 @@ class Interface:
         """draws interface"""
         # drawing interface background
         # top rect
-        pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 100)
+        pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 0)
         # left rect
         pygame.draw.rect(screen, self.background_color, [0, 0, self.game_window[0], self.HEIGHT], 0)
         # down rect
@@ -170,7 +170,7 @@ class Interface:
         self.pause.draw(screen)
         self.cell_spawn.draw(screen)
         self.slider.draw(screen)
-
+        self.clear.draw(screen)
 
 class Field():
     """ class Field, consists of cells"""
