@@ -10,7 +10,7 @@ HEIGHT = 800
 WIDTH = 800
 
 # window with game, rectangle(left up angle cors, width, height)
-game_window = (50, 50, 500, 500)
+game_window = (0, 0, 800, 700)
 FPS = 30
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
@@ -32,6 +32,7 @@ def game():
     loop_counter = 0
     while Game:
         clock.tick(FPS)
+        print(speed)
 
         loop_counter += 1
         screen.fill(BLACK)
