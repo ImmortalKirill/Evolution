@@ -39,7 +39,11 @@ def event_manage(event, field, pressed_mouse, interface, speed):
                 for i in range(field.size_x):
                     for j in range(field.size_y):
                         field.cells[i][j].live = 0
-            interface.slider.change_value()
+                        
+            # if mouse on slider change view of slider
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.slider.bg_rect):
+                interface.slider.change_value() 
+                speed = round(interface.slider.get_value())
 
 
 
