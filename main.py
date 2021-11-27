@@ -27,12 +27,11 @@ def game():
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     # game speed
-    speed = 1
+    speed = 100
     # counter of loops in the game
     loop_counter = 0
     while Game:
         clock.tick(FPS)
-        print(speed)
 
         loop_counter += 1
         screen.fill(BLACK)
@@ -45,7 +44,7 @@ def game():
                 Game = False
             else:
                 field, pressed_mouse, interface, speed = event_manage(event, field, pressed_mouse, interface, speed)
-        for i in range(get_steps(loop_counter, speed)):
+        if get_steps(loop_counter, speed):
             step(field)
 
 
