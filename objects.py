@@ -196,6 +196,7 @@ class Field():
                 self.cells[i][l].new_cell(i, l)
                 if randint(0, 2):
                     self.cells[i][l].live = 1
+                    self.color = (0, 225, 0)
         self.cells[5][5].live = 1
         self.cells[5][4].live = 1
         self.cells[5][3].live = 1
