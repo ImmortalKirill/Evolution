@@ -69,13 +69,7 @@ class Button:
         self.pressed = self.pressed % 2
 
 
-# Takes rectangle's size, position and a point. Returns true if that
-# point is inside the rectangle and false if it isnt.
-def pointInRectanlge(px, py, rw, rh, rx, ry):
-    if px > rx and px < rx + rw:
-        if py > ry and py < ry + rh:
-            return True
-    return False
+from model import mouse_pos_check
 
 
 class Slider(Button):
@@ -121,7 +115,7 @@ class Slider(Button):
     def change_value(self) -> None:
         # If mouse is pressed and mouse is inside the slider
         mousePos = pygame.mouse.get_pos()
-        if pointInRectanlge(mousePos[0], mousePos[1], self.bg_rect[2], self.bg_rect[3], self.bg_rect[0], self.bg_rect[1]):
+        if mouse_pos_check(mousePos, self.bg_rect):
             if pygame.mouse.get_pressed()[0]:
                 # the size of the slider
                 self.current_value_points = mousePos[0] - self.bg_rect[0]
