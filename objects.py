@@ -80,7 +80,7 @@ def pointInRectanlge(px, py, rw, rh, rx, ry):
 
 class Slider(Button):
     def __init__(self, bg_rect, text_color=(0, 0, 0), bg_color=(0, 0, 0), text='Parameter', text_pressed='', angle=0,
-                 upper_value: int = 100, current_value_points: int = 30):
+                 upper_value: int = 10, current_value_points: int = 30):
         """position - tuple of left top angle coors of slider - (x, y)
         upper_value - maximum value that parameter can reach
         current_value_points - value on slider in points of pygame
@@ -94,7 +94,7 @@ class Slider(Button):
 
     # returns the current value of the slider
     def get_value(self) -> float:
-        return self.current_value_points / (self.bg_rect[2] / self.upper_value)
+        return round(self.current_value_points / (self.bg_rect[2] / self.upper_value))
 
     # renders slider and the text showing the value of the slider
     def draw(self, display: pygame.display) -> None:
@@ -109,7 +109,7 @@ class Slider(Button):
         self.font = pygame.font.Font(pygame.font.get_default_font(), int((50 / 100) * self.bg_rect[3]))
 
         # create text surface with value
-        valueSurf = self.font.render(f"{self.text}: {round(self.get_value())}", True, self.text_color)
+        valueSurf = self.font.render(f"{self.text}: {self.get_value()}", True, self.text_color)
 
         # centre text
         textx = self.bg_rect[0] + (self.bg_rect[2] / 2) - (valueSurf.get_rect().width / 2)
