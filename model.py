@@ -14,10 +14,11 @@ def step(Field):
     pole = [[0] * Field.size_y for i in range(Field.size_x)]
     for x in range(Field.size_x):
         for y in range(Field.size_y):
-            object1 = Cell()
-            object1.new_cell(x, y)
-            object1.live = Field.cells[x][y].live
-            pole[x][y] = object1
+            #object1 = Cell()
+            #object1.new_cell(x, y)
+            #object1.live = Field.cells[x][y].live
+            #pole[x][y] = object1
+            pole[x][y] = Field.cells[x][y].live
     for x in range(0, Field.size_x, 1): 
         for y in range(0, Field.size_y, 1):
             # counting number of neighbors
@@ -31,11 +32,16 @@ def step(Field):
             # checking future for cell
             if Field.cells[x][y].live:
                 if neighbors < neighbors_exist_start or neighbors > neighbors_exist_end:
-                    pole[x][y].live -= 1
+                    #pole[x][y].live -= 1
+                    pole[x][y] -= 1
             else:
                 if neighbors == neighbors_live:
-                    pole[x][y].live += 1
-    Field.cells = pole.copy()
+                    pole[x][y] += 1
+                    #pole[x][y].live += 1
+    #Field.cells = pole.copy()
+    for x in range(0, Field.size_x, 1): 
+        for y in range(0, Field.size_y, 1):
+            Field.cells[x][y].live = pole[x][y]
     
 
 def change_scale(field, par):
