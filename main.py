@@ -20,7 +20,7 @@ def game():
     global Game, Main, screen
     # creating initial field
     field = Field()
-    field.new_field(100, 100)
+    field.new_field(200, 200)
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
