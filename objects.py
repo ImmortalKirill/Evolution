@@ -13,7 +13,6 @@ class Cell():
         y = self.y = 0
         self.color = (255, 255, 255)
         max_live = self.max_live = 1
-        
 
     def new_cell(self, x0, y0):
         x = self.x = x0
@@ -52,7 +51,7 @@ class Button:
 
         if (self.pressed == 0) or (self.text_pressed == '0'):
             font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
-                       bgcolor=self.bg_color, rotation=self.angle, size=24)
+                           bgcolor=self.bg_color, rotation=self.angle, size=24)
         else:
             font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text_pressed,
                            fgcolor=self.text_color, bgcolor=self.pressed_color, size=24)
@@ -80,7 +79,7 @@ def pointInRectanlge(px, py, rw, rh, rx, ry):
 
 
 class Slider(Button):
-    def __init__(self, bg_rect, text_color=(0,0,0), bg_color=(0,0,0), text='Parameter', text_pressed='', angle=0,
+    def __init__(self, bg_rect, text_color=(0, 0, 0), bg_color=(0, 0, 0), text='Parameter', text_pressed='', angle=0,
                  upper_value: int = 100, current_value_points: int = 30):
         """position - tuple of left top angle coors of slider - (x, y)
         upper_value - maximum value that parameter can reach
@@ -101,10 +100,10 @@ class Slider(Button):
     def draw(self, display: pygame.display) -> None:
         # draw outline and slider rectangles
         pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
-                                              self.bg_rect[2], self.bg_rect[3]), 1)
+                                                  self.bg_rect[2], self.bg_rect[3]), 1)
 
         pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
-                                              self.current_value_points, self.bg_rect[3] - 3))
+                                                  self.current_value_points, self.bg_rect[3] - 3))
 
         # determine size of font
         self.font = pygame.font.Font(pygame.font.get_default_font(), int((50 / 100) * self.bg_rect[3]))
@@ -122,23 +121,25 @@ class Slider(Button):
     def change_value(self) -> None:
         # If mouse is pressed and mouse is inside the slider
         mousePos = pygame.mouse.get_pos()
-        if pointInRectanlge(mousePos[0], mousePos[1]
-                , self.bg_rect[2], self.bg_rect[3], self.bg_rect[0], self.bg_rect[1]):
+        if pointInRectanlge(mousePos[0], mousePos[1], self.bg_rect[2], self.bg_rect[3], self.bg_rect[0], self.bg_rect[1]):
             if pygame.mouse.get_pressed()[0]:
                 # the size of the slider
                 self.current_value_points = mousePos[0] - self.bg_rect[0]
 
-                # limit the size of the slider
+        # limit the size of the slider
                 if self.current_value_points < 1:
                     self.current_value_points = 0
                 if self.current_value_points > self.bg_rect[2]:
                     self.current_value_points = self.bg_rect[2]
 
 
+
+
+
 class Interface:
     """creates class with all buttons"""
 
-    def __init__(self, width,  height, game_window):
+    def __init__(self, width, height, game_window):
         """WIDTH, HEIGHT - size of the game"""
         self.game_window = game_window
         self.WIDTH = width
@@ -148,7 +149,7 @@ class Interface:
         self.clear = Button([600, 700, 30, 30], (0, 0, 0), (255, 255, 255), '0', '0')
         self.pause = Button([0, 700, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
         self.cell_spawn = Button([50, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
-        self.slider = Slider(bg_rect = [200, 700, 300, 30], text = 'speed')
+        self.slider = Slider(bg_rect=[200, 700, 300, 30], text='speed')
         self.background_color = (100, 100, 100)
 
     def draw(self, screen):
@@ -160,17 +161,20 @@ class Interface:
         pygame.draw.rect(screen, self.background_color, [0, 0, self.game_window[0], self.HEIGHT], 0)
         # down rect
         pygame.draw.rect(screen, self.background_color, [0, self.game_window[1] + self.game_window[3],
-                        self.WIDTH, self.HEIGHT - self.game_window[1] - self.game_window[3]], 0
+                                                         self.WIDTH,
+                                                         self.HEIGHT - self.game_window[1] - self.game_window[3]], 0
                          )
         # right rect
         pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
-                        self.WIDTH - self.game_window[0] - self.game_window[2], self.HEIGHT], 0
+                                                         self.WIDTH - self.game_window[0] - self.game_window[2],
+                                                         self.HEIGHT], 0
                          )
         # drawing buttons
         self.pause.draw(screen)
         self.cell_spawn.draw(screen)
         self.slider.draw(screen)
         self.clear.draw(screen)
+
 
 class Field():
     """ class Field, consists of cells"""
@@ -194,12 +198,11 @@ class Field():
                     self.cells[i][l].live = 1
         self.cells[5][5].live = 1
         self.cells[5][4].live = 1
-        self.cells[5][3].live = 1        
+        self.cells[5][3].live = 1
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
         self.size_y = y
-
 
     def change_cors(self, vector):
         """shift of center coordinates on vector(x, y)"""

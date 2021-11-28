@@ -40,12 +40,6 @@ def event_manage(event, field, pressed_mouse, interface, speed):
                     for j in range(field.size_y):
                         field.cells[i][j].live = 0
 
-            # if mouse on slider change view of slider
-            if mouse_pos_check(pygame.mouse.get_pos(), interface.slider.bg_rect):
-                interface.slider.change_value()
-                speed = round(interface.slider.get_value())
-
-
 
     elif event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
@@ -54,6 +48,10 @@ def event_manage(event, field, pressed_mouse, interface, speed):
         if pressed_mouse and mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
+
+    if pygame.mouse.get_pressed():
+        if mouse_pos_check(pygame.mouse.get_pos(), interface.slider.bg_rect):
+            interface.slider.change_value()
 
     return field, pressed_mouse, interface, speed
 
