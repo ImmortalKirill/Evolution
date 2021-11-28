@@ -1,5 +1,4 @@
 from model import change_scale, mouse_pos_check, find_cell
-import math
 import pygame
 
 
@@ -40,10 +39,11 @@ def event_manage(event, field, pressed_mouse, interface, speed):
                 for i in range(field.size_x):
                     for j in range(field.size_y):
                         field.cells[i][j].live = 0
+
+            # if mouse on slider change view of slider
             if mouse_pos_check(pygame.mouse.get_pos(), interface.slider.bg_rect):
                 interface.slider.change_value()
-                speed = interface.slider.get_value()
-                speed = 10 - math.floor(speed/10)
+                speed = round(interface.slider.get_value())
 
 
 

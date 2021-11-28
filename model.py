@@ -90,16 +90,16 @@ def mouse_pos_check(mouse_pos, rect):
     else:
         return False
 
+
 def get_steps(loop_counter, speed):
     """calculates number of steps we should do in this loop
-    par speed: if speed <= 0 return 0 else it's number from 1 to 10
-    speed = x means that field_step will work each x game loop  """
-    if speed <= 0:
+    par speed: if speed < 0 return 0 else it's fps of the game"""
+    if speed < 0:
         return 0
+    elif speed == 100 or loop_counter % (100 - speed) == 0:
+        return 1
     else:
-        if loop_counter%speed == 0:
-            return 1
-        else: return 0
+        return 0
     
     
 def find_cell(pos, field, game_window):
