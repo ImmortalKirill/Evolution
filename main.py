@@ -27,7 +27,7 @@ def game():
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     # game speed
-    speed = 100
+    speed = 10
     # counter of loops in the game
     loop_counter = 0
     while Game:
