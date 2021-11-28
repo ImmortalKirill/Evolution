@@ -96,7 +96,7 @@ def get_steps(loop_counter, speed):
     par speed: if speed < 0 return 0 else it's fps of the game"""
     if speed < 0:
         return 0
-    elif speed == 100 or loop_counter % (100 - speed) == 0:
+    elif speed == 100 or loop_counter % (10 - math.floor(speed/10)) == 0:
         return 1
     else:
         return 0
