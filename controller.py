@@ -52,7 +52,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
     if pygame.mouse.get_pressed():
         if mouse_pos_check(pygame.mouse.get_pos(), interface.slider.bg_rect):
             interface.slider.change_value()
-            speed = interface.slider.get_value()*10
+            speed = interface.slider.get_value()
 
     return field, pressed_mouse, interface, speed
 

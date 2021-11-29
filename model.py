@@ -96,9 +96,9 @@ def mouse_pos_check(mouse_pos, rect):
 def get_steps(loop_counter, speed):
     """calculates number of steps we should do in this loop
     par speed: if speed < 0 return 0 else it's fps of the game"""
-    if speed < 0:
+    if speed <= 0:
         return 0
-    elif speed == 100 or loop_counter % (10 - math.floor(speed/10)) == 0:
+    elif speed == 10 or loop_counter % (11 - speed) == 0:
         return 1
     else:
         return 0
