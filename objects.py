@@ -14,7 +14,7 @@ class Cell():
         self.color = (255, 255, 255)
         max_live = self.max_live = 1
         self.genes = [0, 0]
-        self.humidity = self.genes[0]
+        self.humadity = self.genes[0]
         # radioactive resistance
         self.rad_res = self.genes[1]
 
@@ -184,22 +184,22 @@ class Field():
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
-        live_cells = [[]]
+        humadity = self.humadity = [[]]
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
-        self.live_cells = [[0] * y for l in range(x)]
+        self.humadity = [[0] * y for l in range(x)]
         for i in range(x):
             for l in range(y):
                 self.cells[i][l] = Cell()
                 self.cells[i][l].new_cell(i, l)
                 if randint(0, 2):
                     self.cells[i][l].live = 1
-                    self.live_cells[i][l] = 1
-        self.cells[5][5].live = 1
-        self.cells[5][4].live = 1
-        self.cells[5][3].live = 1
+                    self.cells[i][l].humadity = 10
+        for i in range(x // 2):
+            for l in range(y):
+                self.humadity[i][l] = 10
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
