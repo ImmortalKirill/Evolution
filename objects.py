@@ -12,17 +12,22 @@ class Cell():
         x = self.x = 0
         y = self.y = 0
         self.color = (255, 255, 255)
+        self.color_bg = (0, 0, 0)
         max_live = self.max_live = 1
         self.genes = [0, 0]
-        self.humidity = self.genes[0]
+        self.humidity = 0
         # radioactive resistance
-        self.rad_res = self.genes[1]
+        self.radioactivity = 0
 
     def new_cell(self, x0, y0):
         x = self.x = x0
         y = self.y = y0
-
-
+    def change_colors(self):
+        """changes color of cell and cell_bg according to genes"""
+        self.color = (round(255*(self.genes[1] + 100)/200), 0, round(255*(self.genes[0] + 100)/200))
+        self.color_bg = (round(255*(self.radioactivity + 100)/200),
+                         0,
+                         round(255*(self.humidity + 100)/200))
 class Button:
     """class of buttons"""
 

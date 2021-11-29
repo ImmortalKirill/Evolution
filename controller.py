@@ -27,6 +27,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
                 if x_cell != None:
                     field.cells[x_cell][y_cell].live = 1
         else:
+
             # if mouse on button pause
             if mouse_pos_check(pygame.mouse.get_pos(), interface.pause.bg_rect):
                 interface.pause.change_press()
@@ -48,8 +49,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
         if pressed_mouse and mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
-
-    if pygame.mouse.get_pressed():
+    if pressed_mouse:
         if mouse_pos_check(pygame.mouse.get_pos(), interface.slider.bg_rect):
             interface.slider.change_value()
             speed = interface.slider.get_value()

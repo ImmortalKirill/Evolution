@@ -9,8 +9,8 @@ def menu_draw():
 def game_field(screen, field: Field, interface_game_window):
     """draws field on the screen in game-play window"""
     grid = find_grid(field, interface_game_window)
-    draw_grid(screen, grid)
     draw_life_cells(screen, field, grid)
+    draw_grid(screen, grid)
 def draw_grid(screen, grid):
     """draws grid on screen
     look of grid: (coordinate of top left corner, number of colons and rows
@@ -32,10 +32,17 @@ def draw_life_cells(screen, field, grid):
     for i in range(grid[2]):
         for j in range(grid[3]):
             cell = field.cells[grid[5][0]+i][grid[5][1] - j]
+            pygame.draw.rect(screen, cell.color_bg,
+                                 (grid[4]*i + grid[0], grid[1] + j*grid[4],
+                                  grid[4], grid[4]), 0)
             if cell.live > 0:
                 pygame.draw.ellipse(screen, cell.color,
                                  (grid[4]*i + grid[0], grid[1] + j*grid[4],
                                   grid[4], grid[4]), 0)
+
+                pygame.draw.ellipse(screen, 'white',
+                                    (grid[4] * i + grid[0], grid[1] + j * grid[4],
+                                     grid[4], grid[4]), 5)
 
                 
                 
