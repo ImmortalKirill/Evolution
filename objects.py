@@ -179,6 +179,23 @@ class Interface:
         self.clear.draw(screen)
 
 
+class Menu(Interface):
+    """creates class of additional menu with buttons"""
+    def __init__(self, game_window,  width, height):
+        super().__init__(game_window,  width, height)
+        self.background_color = (100, 100, 100)
+
+
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
+                                                         self.WIDTH - self.game_window[0] - self.game_window[2],
+                                                         self.HEIGHT], 0)
+
+
+
+
+
 class Field():
     """ class Field, consists of cells"""
 
