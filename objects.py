@@ -13,6 +13,10 @@ class Cell():
         y = self.y = 0
         self.color = (255, 255, 255)
         max_live = self.max_live = 1
+        self.genes = [0, 0]
+        self.humidity = self.genes[0]
+        # radioactive resistance
+        self.rad_res = self.genes[1]
 
     def new_cell(self, x0, y0):
         x = self.x = x0

@@ -43,7 +43,8 @@ def game():
             if event.type == pygame.QUIT:
                 Game = False
             else:
-                field, pressed_mouse, interface, speed = event_manage(event, field, pressed_mouse, interface, speed)
+                field, pressed_mouse, interface, speed = \
+                    event_manage(event, field, pressed_mouse, interface, speed)
         if get_steps(loop_counter, speed):
             step(field)
 
