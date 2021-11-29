@@ -22,8 +22,10 @@ def step(Field):
         if Field.cells[x][y].live:
             if neighbors[x][y] < neighbors_exist_start or neighbors[x][y] > neighbors_exist_end:
                 Field.cells[x][y].live -= 1
+                Field.cells[x][y].humadity = 0
         elif neighbors[x][y] == neighbors_born:
             Field.cells[x][y].live += 1
+            Field.cells[x][y].humadity = humadity[x][y]
             
     neighbors_born = 3
     neighbors_exist_start = 2
@@ -115,6 +117,8 @@ def find_cell(pos, field, game_window):
         return None, None
     else:
         return math.floor(x), math.ceil(y)
+    
+    
 def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, par_of_change):
     """changes coordinates from field coors to pygame coors
     par of change = 1 if Field coors in pygame, 0 if Pygame coors in field"""
