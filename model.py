@@ -18,6 +18,12 @@ def step(Field):
         neighbors[(x + 1) % field.size_x][y] += 1
         neighbors[(x + 1) % field.size_x][(y + 1) % field.size_y] += 1
         
+    def fraun_neighbors(field, neighbors, x, y):
+        neighbors[x - 1][y] += 1
+        neighbors[x][(y + 1) % field.size_y] += 1
+        neighbors[x][y - 1] += 1
+        neighbors[(x + 1) % field.size_x][y] += 1        
+        
     def born_survive(Field, neighbors, x, y):
         if Field.cells[x][y].live:
             if neighbors[x][y] < neighbors_exist_start or neighbors[x][y] > neighbors_exist_end:
@@ -25,16 +31,16 @@ def step(Field):
         elif neighbors[x][y] == neighbors_born:
             Field.cells[x][y].live += 1
             
-    neighbors_born = 3
+    neighbors_born = 2
     neighbors_exist_start = 2
-    neighbors_exist_end = 3
-    pole = [[0] * Field.size_y for i in range(Field.size_x)]
+    neighbors_exist_end = 8
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
     for x in range(0, Field.size_x, 1): 
         for y in range(0, Field.size_y, 1):
             # counting number of neighbors
             if Field.cells[x][y].live:
                 muavr_neighbors(Field, neighbors, x, y)
+                #fraun_neighbors(Field, neighbors, x, y)
     for x in range(0, Field.size_x, 1): 
         for y in range(0, Field.size_y, 1):
             born_survive(Field, neighbors, x, y)
@@ -115,6 +121,8 @@ def find_cell(pos, field, game_window):
         return None, None
     else:
         return math.floor(x), math.ceil(y)
+    
+    
 def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, par_of_change):
     """changes coordinates from field coors to pygame coors
     par of change = 1 if Field coors in pygame, 0 if Pygame coors in field"""
