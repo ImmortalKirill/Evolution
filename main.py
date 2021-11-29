@@ -7,11 +7,11 @@ from controller import *
 BLACK = (0,0,0)
 # Game screen Height and Width
 HEIGHT = 800
-WIDTH = 800
+WIDTH = 1400
 
 # window with game, rectangle(left up angle cors, width, height)
-game_window = (0, 0, 800, 700)
-FPS = 20
+game_window = (0, 0, 1200, 700)
+FPS = 30
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
     pass
@@ -20,7 +20,7 @@ def game():
     global Game, Main, screen
     # creating initial field
     field = Field()
-    field.new_field(100, 100)
+    field.new_field(200, 200)
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)

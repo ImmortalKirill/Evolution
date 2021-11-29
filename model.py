@@ -14,7 +14,7 @@ def step(Field):
             for j in range(y - 1, (y + 2) % field.size_y, 1):
                 neighbors[i][j] += 1
                 humidity[i][j] += field.cells[x][y].genes[0] / 8
-        neighbors[x][y] -= 1 
+        neighbors[x][y] -= 1
         humidity[x][y] -= field.cells[x][y].genes[0] / 8
         
     def fraun_neighbors(field, neighbors, x, y):
@@ -27,10 +27,10 @@ def step(Field):
         
         neighbors[x][y - 1] += 1
         humidity[x][y - 1] += field.cells[x][y].genes[0] / 4
-        
-        neighbors[(x + 1) % field.size_x][y] += 1  
+
+        neighbors[(x + 1) % field.size_x][y] += 1
         humidity[(x + 1) % field.size_x][y] += field.cells[x][y].genes[0] / 4
-        
+
     def long_neighbors(field, neighbors, x, y):
         '''Count neighbors in area of nearest 24 cells'''
         for i in range(x - 2, (x + 3) % field.size_x, 1):
