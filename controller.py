@@ -26,7 +26,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
                 x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
                 if x_cell != None:
                     field.cells[x_cell][y_cell].live = 1
-        else:  # FixMe managing interface, haven't done managing another buttons
+        else:
             # if mouse on button pause
             if mouse_pos_check(pygame.mouse.get_pos(), interface.pause.bg_rect):
                 interface.pause.change_press()

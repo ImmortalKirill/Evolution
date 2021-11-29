@@ -39,7 +39,10 @@ def step(Field):
         for y in range(0, Field.size_y, 1):
             born_survive(Field, neighbors, x, y)
     
-
+def mix_genes(cells_genes: list):
+    """mixes genes of cells,
+    cells_genes - list, consists of lists of tuples with cells genes"""
+    pass
 def change_scale(field, par):
     """changes scale of field, increases it if par = 1, decreases it if par = -1"""
     change_step = 5
