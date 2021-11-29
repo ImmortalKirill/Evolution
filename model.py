@@ -12,53 +12,50 @@ def step(Field):
         for i in range(x - 1, (x + 2) % field.size_x, 1):
             for j in range(y - 1, (y + 2) % field.size_y, 1):
                 neighbors[i][j] += 1
-                humadity[i][j] += field.cells[x][y].humadity / 8
+                humidity[i][j] += field.cells[x][y].genes[0] / 8
         neighbors[x][y] -= 1 
-        humadity[x][y] -= field.cells[x][y].humadity / 8
+        humidity[x][y] -= field.cells[x][y].genes[0] / 8
         
     def fraun_neighbors(field, neighbors, x, y):
         neighbors[x - 1][y] += 1
-        humadity[x - 1][y] += field.cells[x][y].humadity / 4
+        humidity[x - 1][y] += field.cells[x][y].genes[0] / 4
         
         neighbors[x][(y + 1) % field.size_y] += 1
-        humadity[x][(y + 1) % field.size_y] += field.cells[x][y].humadity / 4
+        humidity[x][(y + 1) % field.size_y] += field.cells[x][y].genes[0] / 4
         
         neighbors[x][y - 1] += 1
-        humadity[x][y - 1] += field.cells[x][y].humadity / 4
+        humidity[x][y - 1] += field.cells[x][y].genes[0] / 4
         
         neighbors[(x + 1) % field.size_x][y] += 1  
-        humadity[(x + 1) % field.size_x][y] += field.cells[x][y].humadity / 4
+        humidity[(x + 1) % field.size_x][y] += field.cells[x][y].genes[0] / 4
         
     def long_neighbors(field, neighbors, x, y):
         for i in range(x - 2, (x + 3) % field.size_x, 1):
             for j in range(y - 2, (y + 3) % field.size_y, 1):
                 neighbors[i][j] += 1
-                humadity[i][j] += field.cells[x][y].humadity / 24
+                humidity[i][j] += field.cells[x][y].genes[0] / 24
         neighbors[x][y] -= 1
-        humadity[x][y] -= field.cells[x][y].humadity / 24
+        humidity[x][y] -= field.cells[x][y].genes[0] / 24
         
     def born_survive(Field, neighbors, x, y):
         if Field.cells[x][y].live:
             if neighbors[x][y] < neighbors_exist_start or neighbors[x][y] > neighbors_exist_end:
                 Field.cells[x][y].live -= 1
-                Field.cells[x][y].humadity = 0
+                #Field.cells[x][y].humidity = 0
         elif neighbors[x][y] == neighbors_born:
             Field.cells[x][y].live += 1
-            Field.cells[x][y].humadity = humadity[x][y]
+            Field.cells[x][y].genes[0] = humidity[x][y]
             
     neighbors_born = 3
     neighbors_exist_start = 2
     neighbors_exist_end = 3
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
-    humadity = [[0] * Field.size_y for i in range(Field.size_x)]
+    humidity = [[0] * Field.size_y for i in range(Field.size_x)]
     for x in range(0, Field.size_x, 1): 
         for y in range(0, Field.size_y, 1):
             # counting number of neighbors
             if Field.cells[x][y].live:
-                if Field.cells[x][y].humadity > Field.humadity[x][y]:
-                #muavr_neighbors(Field, neighbors, x, y)
-                #fraun_neighbors(Field, neighbors, x, y)
-                    #fraun_neighbors(Field, neighbors, x, y)
+                if Field.cells[x][y].genes[0] > Field.cells[x][y].humidity:
                     long_neighbors(Field, neighbors, x, y)
                 else:
                     muavr_neighbors(Field, neighbors, x, y)
@@ -69,12 +66,12 @@ def step(Field):
 def mix_genes(cells_genes: list):
     """mixes genes of cells,
     cells_genes - list, consists of lists of tuples with cells genes"""
-    humadity = 0
+    humidity = 0
     radioactive = 0
     for i in cell_genes:
-        humadity += i[0]
+        humidity += i[0]
         radioactive += i[1]
-    return humadity, radioactive
+    return humidity, radioactive
 
 def change_scale(field, par):
     """changes scale of field, increases it if par = 1, decreases it if par = -1"""
