@@ -189,19 +189,22 @@ class Field():
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
+        #humidity = self.humidity = [[]]
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
+        #self.humidity = [[0] * y for l in range(x)]
         for i in range(x):
             for l in range(y):
                 self.cells[i][l] = Cell()
                 self.cells[i][l].new_cell(i, l)
                 if randint(0, 2):
                     self.cells[i][l].live = 1
-        self.cells[5][5].live = 1
-        self.cells[5][4].live = 1
-        self.cells[5][3].live = 1
+                    self.cells[i][l].genes[0] = 10
+        for i in range(x // 2):
+            for l in range(y):
+                self.cells[i][l].humidity = 10
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
