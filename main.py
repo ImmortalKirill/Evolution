@@ -7,10 +7,10 @@ from controller import *
 BLACK = (0,0,0)
 # Game screen Height and Width
 HEIGHT = 800
-WIDTH = 800
+WIDTH = 1400
 
 # window with game, rectangle(left up angle cors, width, height)
-game_window = (0, 0, 800, 700)
+game_window = (0, 0, 1200, 700)
 FPS = 30
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
