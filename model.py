@@ -8,7 +8,6 @@ def step(Field):
     
     Method generate new field by basics rules
     '''
-
     def muavr_neighbors(field, neighbors, x, y):
         '''Count neighbors in area of nearest 8 cells'''
         for i in range(x - 1, (x + 2) % field.size_x, 1):
@@ -34,14 +33,29 @@ def step(Field):
         humidity[(x + 1) % field.size_x][y] += field.cells[x][y].genes[0]
 
     def long_neighbors(field, neighbors, x, y):
-        '''Count neighbors in area of nearest 24 cells'''
-        for i in range(x - 2, (x + 3) % field.size_x, 1):
-            for j in range(y - 2, (y + 3) % field.size_y, 1):
+        '''Count neighbors in area of nearest 8 cells and more 4 cells on the distance 2cells away'''
+        # closest 8 cells
+        for i in range(x - 1, (x + 2) % field.size_x, 1):
+            for j in range(y - 1, (y + 2) % field.size_y, 1):
                 neighbors[i][j] += 1
-                # adding parent genes
+                # adding parent gene
                 humidity[i][j] += field.cells[x][y].genes[0]
+        # additional 4 cells
+        neighbors[x - 2][y] += 1
+        humidity[x - 2][y] += field.cells[x][y].genes[0]
+
+        neighbors[x][(y + 2) % field.size_y] += 1
+        humidity[x][(y + 2) % field.size_y] += field.cells[x][y].genes[0]
+
+        neighbors[x][y - 2] += 1
+        humidity[x][y - 2] += field.cells[x][y].genes[0]
+
+        neighbors[(x + 2) % field.size_x][y] += 1
+        humidity[(x + 2) % field.size_x][y] += field.cells[x][y].genes[0]
+
         neighbors[x][y] -= 1
         humidity[x][y] -= field.cells[x][y].genes[0]
+
 
     def born_survive(Field, neighbors, x, y):
         '''Shows if cells alives, born or die'''
@@ -60,10 +74,17 @@ def step(Field):
                 Field.cells[x][y].genes[0] = 100
             elif Field.cells[x][y].genes[0] < -100:
                 Field.cells[x][y].genes[0] = -100
-
+    # conditions of birth
     neighbors_born = 3
     neighbors_exist_start = 2
     neighbors_exist_end = 3
+    # conditions for dividing stages
+    # the best combination(gives super dividing)
+    stage_1 = 5
+    # usual combination
+    stage_2 = 30
+    # bad combination
+    stage_3 = 49
     # list of number of neighbors around 1 cell
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
     # list of sums of genes of life cells around cell and number of life cells
@@ -73,11 +94,16 @@ def step(Field):
             # counting number of neighbors
             if Field.cells[x][y].live:
                 # calculating humidity interaction parameter
+                # tells how close humidity and corresponding genes are
                 hum_int = Field.cells[x][y].genes[0] - Field.cells[x][y].humidity
-                if hum_int**2 <= 100:
+                # condition decider, calculates how good cell will divide
+                if hum_int**2 <= stage_1**2:
                     long_neighbors(Field, neighbors, x, y)
-                elif hum_int**2 <= 900:
+                elif hum_int**2 <= stage_2**2:
                     muavr_neighbors(Field, neighbors, x, y)
+                elif hum_int**2 <= stage_3**2:
+                    fraun_neighbors(Field, neighbors, x, y)
+
     for x in range(0, Field.size_x, 1):
         for y in range(0, Field.size_y, 1):
             #Decide if cell born, exist or die
