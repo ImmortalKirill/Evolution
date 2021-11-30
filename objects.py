@@ -1,6 +1,7 @@
 from random import randint
 import pygame
 import pygame.freetype
+import math
 from pygame.draw import *
 
 
@@ -13,7 +14,6 @@ class Cell():
         y = self.y = 0
         self.color = (255, 255, 255)
         self.color_bg = (0, 0, 0)
-        max_live = self.max_live = 1
         self.genes = [0, 0]
         self.humidity = 0
         # radioactive resistance
@@ -24,10 +24,12 @@ class Cell():
         y = self.y = y0
     def change_colors(self):
         """changes color of cell and cell_bg according to genes"""
-        self.color = (round(255*(self.genes[1] + 100)/200), 0, round(255*(self.genes[0] + 100)/200))
-        self.color_bg = (round(255*(self.radioactivity + 100)/200),
+        self.color = (math.floor(255*(self.genes[1] + 100)/200),
+                      0,
+                      math.floor(255*(self.genes[0] + 100)/200))
+        self.color_bg = (math.floor(255*(self.radioactivity + 100)/200),
                          0,
-                         round(255*(self.humidity + 100)/200))
+                         math.floor(255*(self.humidity + 100)/200))
 class Button:
     """class of buttons"""
 
@@ -206,22 +208,21 @@ class Field():
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
-        #humidity = self.humidity = [[]]
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
-        #self.humidity = [[0] * y for l in range(x)]
         for i in range(x):
             for l in range(y):
                 self.cells[i][l] = Cell()
                 self.cells[i][l].new_cell(i, l)
                 if randint(0, 2):
-                    self.cells[i][l].live = 1
-                    self.cells[i][l].genes[0] = 10
+                    self.cells[i][l].live = 5
+                    self.cells[i][l].genes[0] = 0
         for i in range(x // 2):
             for l in range(y):
-                self.cells[i][l].humidity = 10
+                self.cells[i][l].humidity = 99
+                self.cells[x - i -1][l].humidity = -99
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
