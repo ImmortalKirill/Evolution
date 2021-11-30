@@ -154,6 +154,7 @@ class Interface:
         self.clear = Button([600, 700, 30, 30], (0, 0, 0), (255, 255, 255), '0', '0')
         self.pause = Button([0, 700, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
         self.cell_spawn = Button([50, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
+        self.population_spawn = Button([100, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+!', '+!')
         self.slider = Slider(bg_rect=[200, 700, 300, 30], text='speed')
         self.background_color = (100, 100, 100)
 
@@ -179,6 +180,7 @@ class Interface:
         self.cell_spawn.draw(screen)
         self.slider.draw(screen)
         self.clear.draw(screen)
+        self.population_spawn.draw(screen)
 
 
 class Menu(Interface):

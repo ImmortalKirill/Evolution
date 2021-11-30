@@ -42,6 +42,9 @@ def event_manage(event, field, pressed_mouse, interface, speed, menu):
                 for i in range(field.size_x):
                     for j in range(field.size_y):
                         field.cells[i][j].live = 0
+            # if mouse on button create new field with new population
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.population_spawn.bg_rect):
+                field.new_field(field.size_x, field.size_y)
     # if mouse on speed_slider
     if pygame.mouse.get_pressed()[0] and not(mouse_pos_check(event.pos, interface.game_window)):
         interface.slider.change_value()
