@@ -5,7 +5,7 @@ import math
 from pygame.draw import *
 
 
-class Cell():
+class Cell:
     """ class of one cell on a Field"""
 
     def __init__(self):
@@ -22,14 +22,18 @@ class Cell():
     def new_cell(self, x0, y0):
         x = self.x = x0
         y = self.y = y0
+        self.change_colors()
+
     def change_colors(self):
         """changes color of cell and cell_bg according to genes"""
         self.color = (math.floor(255*(self.genes[1] + 100)/200),
                       0,
                       math.floor(255*(self.genes[0] + 100)/200))
-        self.color_bg = (math.floor(255*(self.radioactivity + 100)/200),
-                         0,
-                         math.floor(255*(self.humidity + 100)/200))
+        self.color_bg = (0, 0, math.floor(255*(100 + self.humidity)/200))
+        # radioactivity
+        self.radioactivity_frequency = (self.radioactivity + 100)//20
+
+
 class Button:
     """class of buttons"""
 
@@ -181,6 +185,26 @@ class Interface:
         self.clear.draw(screen)
 
 
+class Menu(Interface):
+    """creates class of additional menu with buttons"""
+    def __init__(self, game_window,  width, height):
+        super().__init__(game_window,  width, height)
+        self.background_color = (100, 100, 100)
+        self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 100, 150, 30],
+                                            text='humidity', upper_value=200)
+
+
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
+                                                         self.WIDTH - self.game_window[0] - self.game_window[2],
+                                                         self.HEIGHT], 0)
+        self.field_humidity_slider.draw(screen)
+
+
+
+
+
 class Field():
     """ class Field, consists of cells"""
 
@@ -204,8 +228,8 @@ class Field():
                     self.cells[i][l].genes[0] = 0
         for i in range(x // 2):
             for l in range(y):
-                self.cells[i][l].humidity = 50
-                self.cells[x - i -1][l].humidity = -50
+                self.cells[i][l].humidity = randint(-100,100)
+                self.cells[x - i -1][l].humidity = randint(-100,100)
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
