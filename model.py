@@ -8,21 +8,23 @@ def step(Field):
     
     Method generate new field by basics rules
     '''
+
     def muavr_neighbors(field, neighbors, x, y):
         for i in range(x - 1, (x + 2) % field.size_x, 1):
             for j in range(y - 1, (y + 2) % field.size_y, 1):
                 neighbors[i][j] += 1
-                humidity[i][j] += field.cells[x][y].genes[0] / 8
+                # adding parent gene
+                humidity[i][j] += field.cells[x][y].genes[0]
         neighbors[x][y] -= 1
-        humidity[x][y] -= field.cells[x][y].genes[0] / 8
-        
+        humidity[x][y] -= field.cells[x][y].genes[0]
+
     def fraun_neighbors(field, neighbors, x, y):
         neighbors[x - 1][y] += 1
         humidity[x - 1][y] += field.cells[x][y].genes[0] / 4
-        
+
         neighbors[x][(y + 1) % field.size_y] += 1
         humidity[x][(y + 1) % field.size_y] += field.cells[x][y].genes[0] / 4
-        
+
         neighbors[x][y - 1] += 1
         humidity[x][y - 1] += field.cells[x][y].genes[0] / 4
 
@@ -33,45 +35,50 @@ def step(Field):
         for i in range(x - 2, (x + 3) % field.size_x, 1):
             for j in range(y - 2, (y + 3) % field.size_y, 1):
                 neighbors[i][j] += 1
-                humidity[i][j] += field.cells[x][y].genes[0] / 24
+                # adding parent genes
+                humidity[i][j] += field.cells[x][y].genes[0]
         neighbors[x][y] -= 1
-        humidity[x][y] -= field.cells[x][y].genes[0] / 24
-        
+        humidity[x][y] -= field.cells[x][y].genes[0]
+
     def born_survive(Field, neighbors, x, y):
         if Field.cells[x][y].live:
+            # if cell has overpopulation or underpopulation
             if neighbors[x][y] < neighbors_exist_start or neighbors[x][y] > neighbors_exist_end:
-                Field.cells[x][y].live -= 1
-                #Field.cells[x][y].humidity = 0
+                Field.cells[x][y].live -= 5
+                if Field.cells[x][y].live <= 0:
+                    Field.cells[x][y].genes[0] = 0
+        # if dead cell has enough parents
         elif neighbors[x][y] == neighbors_born:
-            Field.cells[x][y].live += 1
-            Field.cells[x][y].genes[0] = humidity[x][y]
-            
+            Field.cells[x][y].live += 5
+            # giving parents genes and random mutation
+            Field.cells[x][y].genes[0] = humidity[x][y]/neighbors[x][y] + randint(-10, 10)
+            if Field.cells[x][y].genes[0] > 100:
+                Field.cells[x][y].genes[0] = 100
+            elif Field.cells[x][y].genes[0] < -100:
+                Field.cells[x][y].genes[0] = -100
+
     neighbors_born = 3
     neighbors_exist_start = 2
     neighbors_exist_end = 3
+    # list of number of neighbors around 1 cell
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
+    # list of sums of genes of life cells around cell and number of life cells
     humidity = [[0] * Field.size_y for i in range(Field.size_x)]
-    for x in range(0, Field.size_x, 1): 
+    for x in range(0, Field.size_x, 1):
         for y in range(0, Field.size_y, 1):
             # counting number of neighbors
             if Field.cells[x][y].live:
-                if Field.cells[x][y].genes[0] > Field.cells[x][y].humidity:
+                # calculating humidity interaction parameter
+                hum_int = Field.cells[x][y].genes[0] - Field.cells[x][y].humidity
+                if hum_int**2 <= 100:
                     long_neighbors(Field, neighbors, x, y)
                 else:
                     muavr_neighbors(Field, neighbors, x, y)
-    for x in range(0, Field.size_x, 1): 
+    for x in range(0, Field.size_x, 1):
         for y in range(0, Field.size_y, 1):
             born_survive(Field, neighbors, x, y)
-    
-def mix_genes(cells_genes: list):
-    """mixes genes of cells,
-    cells_genes - list, consists of lists of tuples with cells genes"""
-    humidity = 0
-    radioactive = 0
-    for i in cell_genes:
-        humidity += i[0]
-        radioactive += i[1]
-    return humidity, radioactive
+            Field.cells[x][y].change_colors()
+
 
 def change_scale(field, par):
     """changes scale of field, increases it if par = 1, decreases it if par = -1"""
@@ -79,7 +86,8 @@ def change_scale(field, par):
     field.scale += par * change_step
     if field.scale <= 5:
         field.scale = 5
-            
+
+
 def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all field
     """calculates optimal grid size to display it in game_window
     look of grid: (coordinate of top left corner, number of rows and colons, size of 1 cell,
@@ -90,11 +98,11 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     cell_size = field.scale
     grid = [0, 0, 0, 0, 0, 0]
     # calculating x coordinate of a grid
-    dist_x = (game_window_x_center - game_window[0])/cell_size
+    dist_x = (game_window_x_center - game_window[0]) / cell_size
     x = field.x_center - dist_x
     X = math.floor(x) - 2
     # calculating y coordinate of a grid in field coors
-    dist_y = (game_window_y_center - game_window[1])/cell_size
+    dist_y = (game_window_y_center - game_window[1]) / cell_size
     y = field.y_center + dist_y
     Y = math.ceil(y) + 2
     # cheking edges
@@ -107,20 +115,22 @@ def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all 
     elif Y < 0:
         Y = 0
     grid[0], grid[1] = change_coords((X, Y), cell_size, field.x_center, field.y_center, game_window, 1)
-    grid[2] = math.ceil(game_window[2]/cell_size) + 5
-    grid[3] = math.ceil(game_window[3]/cell_size) + 5
-    if grid[2]+X >= field.size_x:
+    grid[2] = math.ceil(game_window[2] / cell_size) + 5
+    grid[3] = math.ceil(game_window[3] / cell_size) + 5
+    if grid[2] + X >= field.size_x:
         grid[2] = field.size_x - X
-    if Y - grid[3] < 0:
-        grid[3] = Y
+    if Y - grid[3] <= 0:
+        grid[3] = Y + 1
     grid[4] = cell_size
     grid[5] = (X, Y)
 
     return grid
 
+
 def mouse_pos_check(mouse_pos, rect):
     """checks if mouse is on rect(left up angle, width, height)"""
-    if abs(mouse_pos[0] - (rect[0]+rect[2] / 2)) <= rect[2] / 2 and abs(mouse_pos[1] - (rect[1]+rect[3] / 2)) <= rect[3] / 2:
+    if abs(mouse_pos[0] - (rect[0] + rect[2] / 2)) <= rect[2] / 2 and abs(mouse_pos[1] - (rect[1] + rect[3] / 2)) <= \
+            rect[3] / 2:
         return True
     else:
         return False
@@ -135,18 +145,18 @@ def get_steps(loop_counter, speed):
         return 1
     else:
         return 0
-    
-    
+
+
 def find_cell(pos, field, game_window):
     """finds coordinate of the cells which contains pos = (x,y) coordinate in pygame cors """
 
     x, y = change_coords(pos, field.scale, field.x_center, field.y_center, game_window, 0)
-    if math.floor(x) >= field.size_x or math.floor(x) < 0 or math.ceil(y) >= field.size_y or math.ceil(y) <  0:
+    if math.floor(x) >= field.size_x or math.floor(x) < 0 or math.ceil(y) >= field.size_y or math.ceil(y) < 0:
         return None, None
     else:
         return math.floor(x), math.ceil(y)
-    
-    
+
+
 def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, par_of_change):
     """changes coordinates from field coors to pygame coors
     par of change = 1 if Field coors in pygame, 0 if Pygame coors in field"""
@@ -155,17 +165,15 @@ def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, p
     if par_of_change == 0:
         x_in_center = pos[0] - game_window_x_center
         y_in_center = pos[1] - game_window_y_center
-        x_in_field = x_in_center/cell_size + field_x_center
-        y_in_field = - y_in_center/cell_size + field_y_center
+        x_in_field = x_in_center / cell_size + field_x_center
+        y_in_field = - y_in_center / cell_size + field_y_center
         return x_in_field, y_in_field
     elif par_of_change == 1:
-        x, y = (pos[0]*cell_size, pos[1]*cell_size)
-        X = game_window_x_center + x - field_x_center*cell_size
-        Y = game_window_y_center - (y - field_y_center*cell_size)
+        x, y = (pos[0] * cell_size, pos[1] * cell_size)
+        X = game_window_x_center + x - field_x_center * cell_size
+        Y = game_window_y_center - (y - field_y_center * cell_size)
         return X, Y
+
 
 if __name__ == "__main__":
     print("This module is not for direct call!")
-
-        
-            
