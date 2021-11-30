@@ -38,11 +38,18 @@ def draw_life_cells(screen, field, grid):
             cell = field.cells[grid[5][0]+i][grid[5][1] - j]
             pygame.draw.rect(screen, cell.color_bg, (grid[4]*i + grid[0], grid[1] + j*grid[4], grid[4], grid[4]), 0)
             # draws red lines connected with radioactivity
-            for k in range(cell.radioactivity_frequency):
-                x = random.uniform(grid[4]*i + grid[0], grid[4]*(i+1) + grid[0])
-                y = random.uniform(grid[1] + j*grid[4], grid[1] + (j+1)*grid[4])
-                size = grid[4] / 20
-                pygame.draw.line(screen, 'red', [x, y], [x+size, y+size])
+            x = grid[4]*i + grid[0]
+            y = grid[1] + j*grid[4]
+            if cell.radioactivity_frequency != 0:
+                size = grid[4] / cell.radioactivity_frequency
+                for k in range(cell.radioactivity_frequency):
+                    # x = random.uniform(grid[4]*i + grid[0], grid[4]*(i+1) + grid[0])
+                    # y = random.uniform(grid[1] + j*grid[4], grid[1] + (j+1)*grid[4])
+                    # size = grid[4] / 20
+                    # pygame.draw.line(screen, 'red', [x, y], [x+size, y+size])
+                    pygame.draw.line(screen, 'red', [x, y + k*size], [x + grid[4] - k*size, y + grid[4]])
+                    pygame.draw.line(screen, 'red', [x + k * size, y], [x + grid[4], y + grid[4] - k * size])
+
             if cell.live > 0:
                 pygame.draw.ellipse(screen, cell.color,
                                  (grid[4]*i + grid[0], grid[1] + j*grid[4],
