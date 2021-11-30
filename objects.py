@@ -1,4 +1,4 @@
-from random import randint, uniform
+from random import randint
 import pygame
 import pygame.freetype
 import math
@@ -14,10 +14,10 @@ class Cell:
         y = self.y = 0
         self.color = (255, 255, 255)
         self.color_bg = (0, 0, 0)
-        self.genes = [34, 0]
-        self.humidity = 85
+        self.genes = [0, 0]
+        self.humidity = 0
         # radioactive resistance
-        self.radioactivity = randint(-100, 100)
+        self.radioactivity = 0
 
     def new_cell(self, x0, y0):
         x = self.x = x0

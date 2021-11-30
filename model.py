@@ -22,16 +22,16 @@ def step(Field):
     def fraun_neighbors(field, neighbors, x, y):
         '''Count neighbors in 4 bordered cells'''
         neighbors[x - 1][y] += 1
-        humidity[x - 1][y] += field.cells[x][y].genes[0] / 4
+        humidity[x - 1][y] += field.cells[x][y].genes[0]
 
         neighbors[x][(y + 1) % field.size_y] += 1
-        humidity[x][(y + 1) % field.size_y] += field.cells[x][y].genes[0] / 4
+        humidity[x][(y + 1) % field.size_y] += field.cells[x][y].genes[0]
 
         neighbors[x][y - 1] += 1
-        humidity[x][y - 1] += field.cells[x][y].genes[0] / 4
+        humidity[x][y - 1] += field.cells[x][y].genes[0]
 
         neighbors[(x + 1) % field.size_x][y] += 1
-        humidity[(x + 1) % field.size_x][y] += field.cells[x][y].genes[0] / 4
+        humidity[(x + 1) % field.size_x][y] += field.cells[x][y].genes[0]
 
     def long_neighbors(field, neighbors, x, y):
         '''Count neighbors in area of nearest 24 cells'''
@@ -76,7 +76,7 @@ def step(Field):
                 hum_int = Field.cells[x][y].genes[0] - Field.cells[x][y].humidity
                 if hum_int**2 <= 100:
                     long_neighbors(Field, neighbors, x, y)
-                else:
+                elif hum_int**2 <= 900:
                     muavr_neighbors(Field, neighbors, x, y)
     for x in range(0, Field.size_x, 1):
         for y in range(0, Field.size_y, 1):
