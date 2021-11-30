@@ -7,10 +7,10 @@ from controller import *
 BLACK = (0,0,0)
 # Game screen Height and Width
 HEIGHT = 800
-WIDTH = 1400
+WIDTH = 1000
 
 # window with game, rectangle(left up angle cors, width, height)
-game_window = (0, 0, 1200, 700)
+game_window = (0, 0, 800, 700)
 FPS = 30
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
@@ -24,10 +24,11 @@ def game():
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
+    menu_new = Menu(200, HEIGHT, game_window)
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     # game speed
-    speed = 10
+    speed = 1
     # counter of loops in the game
     loop_counter = 0
     while Game:
@@ -36,7 +37,7 @@ def game():
         loop_counter += 1
         screen.fill(BLACK)
         # drawing game screen
-        draw_game(screen, field, interface)
+        draw_game(screen, field, interface, menu_new)
         pygame.display.update()
         # event processing
         for event in pygame.event.get():
@@ -44,7 +45,8 @@ def game():
                 Game = False
             else:
                 field, pressed_mouse, interface, speed = \
-                    event_manage(event, field, pressed_mouse, interface, speed)
+                    event_manage(event, field, pressed_mouse, interface, speed, menu_new)
+
         if get_steps(loop_counter, speed):
             step(field)
 

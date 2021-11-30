@@ -1,10 +1,11 @@
 from random import randint
 import pygame
 import pygame.freetype
+import math
 from pygame.draw import *
 
 
-class Cell():
+class Cell:
     """ class of one cell on a Field"""
 
     def __init__(self):
@@ -13,7 +14,6 @@ class Cell():
         y = self.y = 0
         self.color = (255, 255, 255)
         self.color_bg = (0, 0, 0)
-        max_live = self.max_live = 1
         self.genes = [0, 0]
         self.humidity = 0
         # radioactive resistance
@@ -22,12 +22,17 @@ class Cell():
     def new_cell(self, x0, y0):
         x = self.x = x0
         y = self.y = y0
+        self.change_colors()
+
     def change_colors(self):
         """changes color of cell and cell_bg according to genes"""
-        self.color = (round(255*(self.genes[1] + 100)/200), 0, round(255*(self.genes[0] + 100)/200))
-        self.color_bg = (round(255*(self.radioactivity + 100)/200),
-                         0,
-                         round(255*(self.humidity + 100)/200))
+        self.color = (math.floor(255 * (self.genes[1] + 100) / 200),
+                      0,
+                      math.floor(255 * (self.genes[0] + 100) / 200))
+        self.color_bg = (
+        math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
+
+
 class Button:
     """class of buttons"""
 
@@ -83,7 +88,7 @@ from model import mouse_pos_check
 
 class Slider(Button):
     def __init__(self, bg_rect, text_color=(0, 0, 0), bg_color=(0, 0, 0), text='Parameter', text_pressed='', angle=0,
-                 upper_value: int = 10, current_value_points: int = 30):
+                 upper_value: int = 10, current_value_points: int = 30, minus_value=0):
         """position - tuple of left top angle coors of slider - (x, y)
         upper_value - maximum value that parameter can reach
         current_value_points - value on slider in points of pygame
@@ -94,10 +99,11 @@ class Slider(Button):
         self.current_value_points = current_value_points
         self.upper_value = upper_value
         self.font = 0
+        self.minus_value = minus_value
 
     # returns the current value of the slider
     def get_value(self) -> float:
-        return round(self.current_value_points / (self.bg_rect[2] / self.upper_value))
+        return round(self.current_value_points / (self.bg_rect[2] / self.upper_value) - self.minus_value)
 
     # renders slider and the text showing the value of the slider
     def draw(self, display: pygame.display) -> None:
@@ -125,18 +131,14 @@ class Slider(Button):
         # If mouse is pressed and mouse is inside the slider
         mousePos = pygame.mouse.get_pos()
         if mouse_pos_check(mousePos, self.bg_rect):
-            if pygame.mouse.get_pressed()[0]:
-                # the size of the slider
-                self.current_value_points = mousePos[0] - self.bg_rect[0]
+            # the size of the slider
+            self.current_value_points = mousePos[0] - self.bg_rect[0]
 
-        # limit the size of the slider
-                if self.current_value_points < 1:
-                    self.current_value_points = 0
-                if self.current_value_points > self.bg_rect[2]:
-                    self.current_value_points = self.bg_rect[2]
-
-
-
+            # limit the size of the slider
+            if self.current_value_points < 1:
+                self.current_value_points = 0
+            if self.current_value_points > self.bg_rect[2]:
+                self.current_value_points = self.bg_rect[2]
 
 
 class Interface:
@@ -179,6 +181,32 @@ class Interface:
         self.clear.draw(screen)
 
 
+class Menu(Interface):
+    """creates class of additional menu with buttons"""
+
+    def __init__(self, game_window, width, height):
+        super().__init__(game_window, width, height)
+        self.background_color = (100, 100, 100)
+        self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 100, 150, 30],
+                                            text='humidity', upper_value=200, minus_value=100)
+        self.field_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 200, 150, 30],
+                                                 text='radioactivity', upper_value=200, minus_value=100)
+        self.font = 0
+        self.text = 'Field'
+        self.text_color = 'black'
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
+                                                         self.WIDTH + self.game_window[0] + self.game_window[2],
+                                                         self.HEIGHT], 0)
+        self.field_humidity_slider.draw(screen)
+        self.field_radioactivity_slider.draw(screen)
+
+        self.font = pygame.font.Font(pygame.font.get_default_font(), 18)
+        valueSurf = self.font.render(str(self.text), True, self.text_color)
+        screen.blit(valueSurf, (self.game_window[0] + self.game_window[2] + 100, 50))
+
+
 class Field():
     """ class Field, consists of cells"""
 
@@ -189,22 +217,22 @@ class Field():
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
-        #humidity = self.humidity = [[]]
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
-        #self.humidity = [[0] * y for l in range(x)]
         for i in range(x):
             for l in range(y):
                 self.cells[i][l] = Cell()
                 self.cells[i][l].new_cell(i, l)
                 if randint(0, 2):
-                    self.cells[i][l].live = 1
-                    self.cells[i][l].genes[0] = 10
+                    self.cells[i][l].live = 5
+                    self.cells[i][l].genes[0] = 0
         for i in range(x // 2):
             for l in range(y):
-                self.cells[i][l].humidity = 10
+                self.cells[i][l].humidity = randint(-100, 100)
+                self.cells[x - i - 1][l].humidity = randint(-99, 100)
+                self.cells[i][l].radioactivity = randint(-99, 100)
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x

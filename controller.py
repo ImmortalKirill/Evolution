@@ -12,7 +12,7 @@ def zoom(event: pygame.MOUSEBUTTONDOWN, field):
         change_scale(field, -1)
 
 
-def event_manage(event, field, pressed_mouse, interface, speed):
+def event_manage(event, field, pressed_mouse, interface, speed, menu):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
         if mouse_pos_check(event.pos, interface.game_window):  # if mouse on game window
@@ -25,9 +25,11 @@ def event_manage(event, field, pressed_mouse, interface, speed):
             if interface.cell_spawn.pressed and event.button == 3:
                 x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
                 if x_cell != None:
-                    field.cells[x_cell][y_cell].live = 1
+                    field.cells[x_cell][y_cell].live = 5
         else:
-
+            # if pressed button is left mouse button
+            if event.button == 1:
+                pressed_mouse = True
             # if mouse on button pause
             if mouse_pos_check(pygame.mouse.get_pos(), interface.pause.bg_rect):
                 interface.pause.change_press()
@@ -40,6 +42,13 @@ def event_manage(event, field, pressed_mouse, interface, speed):
                 for i in range(field.size_x):
                     for j in range(field.size_y):
                         field.cells[i][j].live = 0
+    # if mouse on speed_slider
+    if pygame.mouse.get_pressed()[0] and not(mouse_pos_check(event.pos, interface.game_window)):
+        interface.slider.change_value()
+        if interface.pause.pressed == False:
+            speed = interface.slider.get_value()
+        menu.field_humidity_slider.change_value()
+        menu.field_radioactivity_slider.change_value()
 
 
     elif event.type == pygame.MOUSEBUTTONUP:
@@ -49,10 +58,7 @@ def event_manage(event, field, pressed_mouse, interface, speed):
         if pressed_mouse and mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
-    if pressed_mouse:
-        if mouse_pos_check(pygame.mouse.get_pos(), interface.slider.bg_rect):
-            interface.slider.change_value()
-            speed = interface.slider.get_value()
+
 
     return field, pressed_mouse, interface, speed
 
