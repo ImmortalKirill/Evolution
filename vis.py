@@ -1,6 +1,8 @@
 from objects import *
 from model import find_grid, change_coords
 import pygame
+import random
+
 def menu_draw():
     pass # FixMe
     """ draws menu of the game with play button"""
@@ -11,6 +13,8 @@ def game_field(screen, field: Field, interface_game_window):
     grid = find_grid(field, interface_game_window)
     draw_life_cells(screen, field, grid)
     draw_grid(screen, grid)
+
+
 def draw_grid(screen, grid):
     """draws grid on screen
     look of grid: (coordinate of top left corner, number of colons and rows
@@ -32,9 +36,13 @@ def draw_life_cells(screen, field, grid):
     for i in range(grid[2]):
         for j in range(grid[3]):
             cell = field.cells[grid[5][0]+i][grid[5][1] - j]
-            pygame.draw.rect(screen, cell.color_bg,
-                                 (grid[4]*i + grid[0], grid[1] + j*grid[4],
-                                  grid[4], grid[4]), 0)
+            pygame.draw.rect(screen, cell.color_bg, (grid[4]*i + grid[0], grid[1] + j*grid[4], grid[4], grid[4]), 0)
+            # draws red lines connected with radioactivity
+            for k in range(cell.radioactivity_frequency):
+                x = random.uniform(grid[4]*i + grid[0], grid[4]*(i+1) + grid[0])
+                y = random.uniform(grid[1] + j*grid[4], grid[1] + (j+1)*grid[4])
+                size = grid[4] / 20
+                pygame.draw.line(screen, 'red', [x, y], [x+size, y+size])
             if cell.live > 0:
                 pygame.draw.ellipse(screen, cell.color,
                                  (grid[4]*i + grid[0], grid[1] + j*grid[4],
@@ -46,11 +54,12 @@ def draw_life_cells(screen, field, grid):
 
                 
                 
-def draw_game(screen, field, interface):
+def draw_game(screen, field, interface,menu):
 
     """draws game screen on par screen with field"""
     game_field(screen, field, interface.game_window)
     interface.draw(screen)
+    menu.draw(screen)
     
 if __name__ == "__main__":
     print("This module is not for direct call!")
