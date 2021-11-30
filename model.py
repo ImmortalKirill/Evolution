@@ -10,6 +10,7 @@ def step(Field):
     '''
 
     def muavr_neighbors(field, neighbors, x, y):
+        '''Count neighbors in area of nearest 8 cells'''
         for i in range(x - 1, (x + 2) % field.size_x, 1):
             for j in range(y - 1, (y + 2) % field.size_y, 1):
                 neighbors[i][j] += 1
@@ -19,6 +20,7 @@ def step(Field):
         humidity[x][y] -= field.cells[x][y].genes[0]
 
     def fraun_neighbors(field, neighbors, x, y):
+        '''Count neighbors in 4 bordered cells'''
         neighbors[x - 1][y] += 1
         humidity[x - 1][y] += field.cells[x][y].genes[0] / 4
 
@@ -32,6 +34,7 @@ def step(Field):
         humidity[(x + 1) % field.size_x][y] += field.cells[x][y].genes[0] / 4
 
     def long_neighbors(field, neighbors, x, y):
+        '''Count neighbors in area of nearest 24 cells'''
         for i in range(x - 2, (x + 3) % field.size_x, 1):
             for j in range(y - 2, (y + 3) % field.size_y, 1):
                 neighbors[i][j] += 1
@@ -41,6 +44,7 @@ def step(Field):
         humidity[x][y] -= field.cells[x][y].genes[0]
 
     def born_survive(Field, neighbors, x, y):
+        '''Shows if cells alives, born or die'''
         if Field.cells[x][y].live:
             # if cell has overpopulation or underpopulation
             if neighbors[x][y] < neighbors_exist_start or neighbors[x][y] > neighbors_exist_end:
@@ -76,6 +80,7 @@ def step(Field):
                     muavr_neighbors(Field, neighbors, x, y)
     for x in range(0, Field.size_x, 1):
         for y in range(0, Field.size_y, 1):
+            #Decide if cell born, exist or die
             born_survive(Field, neighbors, x, y)
             Field.cells[x][y].change_colors()
 
@@ -86,8 +91,7 @@ def change_scale(field, par):
     field.scale += par * change_step
     if field.scale <= 5:
         field.scale = 5
-
-
+            
 def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all field
     """calculates optimal grid size to display it in game_window
     look of grid: (coordinate of top left corner, number of rows and colons, size of 1 cell,
