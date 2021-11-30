@@ -204,8 +204,8 @@ class Field():
                     self.cells[i][l].genes[0] = 0
         for i in range(x // 2):
             for l in range(y):
-                self.cells[i][l].humidity = 99
-                self.cells[x - i -1][l].humidity = -99
+                self.cells[i][l].humidity = 50
+                self.cells[x - i -1][l].humidity = -50
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
