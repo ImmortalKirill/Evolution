@@ -29,9 +29,8 @@ class Cell:
         self.color = (math.floor(255*(self.genes[1] + 100)/200),
                       0,
                       math.floor(255*(self.genes[0] + 100)/200))
-        self.color_bg = (0, 0, math.floor(255*(100 + self.humidity)/200))
-        # radioactivity
-        self.radioactivity_frequency = (self.radioactivity + 100)//20
+        self.color_bg = (math.floor(255*(100 + self.radioactivity)/200), 0, math.floor(255*(100 + self.humidity)/200))
+
 
 
 class Button:
@@ -229,7 +228,8 @@ class Field():
         for i in range(x // 2):
             for l in range(y):
                 self.cells[i][l].humidity = randint(-100,100)
-                self.cells[x - i -1][l].humidity = randint(-100,100)
+                self.cells[x - i -1][l].humidity = randint(-99,100)
+                self.cells[i][l].radioactivity = randint(-99, 100)
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
