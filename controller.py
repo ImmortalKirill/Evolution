@@ -12,7 +12,7 @@ def zoom(event: pygame.MOUSEBUTTONDOWN, field):
         change_scale(field, -1)
 
 
-def event_manage(event, field, pressed_mouse, interface, speed):
+def event_manage(event, field, pressed_mouse, interface, speed, menu):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
         if mouse_pos_check(event.pos, interface.game_window):  # if mouse on game window
@@ -42,11 +42,16 @@ def event_manage(event, field, pressed_mouse, interface, speed):
                 for i in range(field.size_x):
                     for j in range(field.size_y):
                         field.cells[i][j].live = 0
-            # if mouse on speed_slider
-            if mouse_pos_check(pygame.mouse.get_pos(), interface.slider.bg_rect):
-                interface.slider.change_value()
-                if interface.pause.pressed == False:
-                    speed = interface.slider.get_value()
+            # if mouse on button create new field with new population
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.population_spawn.bg_rect):
+                field.new_field(field.size_x, field.size_y)
+    # if mouse on speed_slider
+    if pygame.mouse.get_pressed()[0] and not(mouse_pos_check(event.pos, interface.game_window)):
+        interface.slider.change_value()
+        if interface.pause.pressed == False:
+            speed = interface.slider.get_value()
+        menu.field_humidity_slider.change_value()
+        menu.field_radioactivity_slider.change_value()
 
 
     elif event.type == pygame.MOUSEBUTTONUP:
