@@ -17,7 +17,7 @@ class Cell:
         self.genes = [0, 0]
         self.humidity = 0
         # radioactive resistance
-        self.radioactivity = 0
+        self.radioactivity = -100
 
     def new_cell(self, x0, y0):
         x = self.x = x0
@@ -223,18 +223,7 @@ class Field():
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
-        for i in range(x):
-            for l in range(y):
-                self.cells[i][l] = Cell()
-                self.cells[i][l].new_cell(i, l)
-                if randint(0, 2):
-                    self.cells[i][l].live = 5
-                    self.cells[i][l].genes[0] = 0
-        for i in range(x // 2):
-            for l in range(y):
-                self.cells[i][l].humidity = randint(-100, 100)
-                self.cells[x - i - 1][l].humidity = randint(-99, 100)
-                self.cells[i][l].radioactivity = randint(-99, 100)
+        generate_field(self.cells, x, y)
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
@@ -244,6 +233,25 @@ class Field():
         """shift of center coordinates on vector(x, y)"""
         self.x_center += vector[0]
         self.y_center += vector[1]
+
+def generate_field(cells:list, x, y):
+    """generates field initial conditions"""
+    for i in range(x):
+        for l in range(y):
+            cells[i][l] = Cell()
+            cells[i][l].new_cell(i, l)
+            if randint(0, 2):
+                cells[i][l].live = 5
+                cells[i][l].genes[0] = 0
+                cells[i][l].genes[1] = 50
+    for i in range(x):
+        for l in range(y):
+            cells[i][l].humidity = -90 + (i + l)
+            cells[i][l].radioactivity = 100
+            if cells[i][l].humidity > 100:
+                cells[i][l].humidity = 100
+            elif cells[i][l].humidity < -100:
+                cells[i][l].humidity = -100
 
 
 if __name__ == "__main__":

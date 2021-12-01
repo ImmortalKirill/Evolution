@@ -8,29 +8,30 @@ def step(Field):
     
     Method generate new field by basics rules
     '''
+
     def muavr_neighbors(field, neighbors, x, y):
         '''Count neighbors in area of nearest 8 cells'''
         for i in range(x - 1, (x + 2) % field.size_x, 1):
             for j in range(y - 1, (y + 2) % field.size_y, 1):
                 neighbors[i][j] += 1
                 # adding parent gene
-                humidity[i][j] += field.cells[x][y].genes[0]
+                genes_to_pass[i][j][0] += field.cells[x][y].genes[0]
         neighbors[x][y] -= 1
-        humidity[x][y] -= field.cells[x][y].genes[0]
+        genes_to_pass[x][y][0] -= field.cells[x][y].genes[0]
 
     def fraun_neighbors(field, neighbors, x, y):
         '''Count neighbors in 4 bordered cells'''
         neighbors[x - 1][y] += 1
-        humidity[x - 1][y] += field.cells[x][y].genes[0]
+        genes_to_pass[x - 1][y][0] += field.cells[x][y].genes[0]
 
         neighbors[x][(y + 1) % field.size_y] += 1
-        humidity[x][(y + 1) % field.size_y] += field.cells[x][y].genes[0]
+        genes_to_pass[x][(y + 1) % field.size_y][0] += field.cells[x][y].genes[0]
 
         neighbors[x][y - 1] += 1
-        humidity[x][y - 1] += field.cells[x][y].genes[0]
+        genes_to_pass[x][y - 1][0] += field.cells[x][y].genes[0]
 
         neighbors[(x + 1) % field.size_x][y] += 1
-        humidity[(x + 1) % field.size_x][y] += field.cells[x][y].genes[0]
+        genes_to_pass[(x + 1) % field.size_x][y][0] += field.cells[x][y].genes[0]
 
     def long_neighbors(field, neighbors, x, y):
         '''Count neighbors in area of nearest 8 cells and more 4 cells on the distance 2cells away'''
@@ -39,56 +40,83 @@ def step(Field):
             for j in range(y - 1, (y + 2) % field.size_y, 1):
                 neighbors[i][j] += 1
                 # adding parent gene
-                humidity[i][j] += field.cells[x][y].genes[0]
+                genes_to_pass[i][j][0] += field.cells[x][y].genes[0]
         # additional 4 cells
         neighbors[x - 2][y] += 1
-        humidity[x - 2][y] += field.cells[x][y].genes[0]
+        genes_to_pass[x - 2][y][0] += field.cells[x][y].genes[0]
 
         neighbors[x][(y + 2) % field.size_y] += 1
-        humidity[x][(y + 2) % field.size_y] += field.cells[x][y].genes[0]
+        genes_to_pass[x][(y + 2) % field.size_y][0] += field.cells[x][y].genes[0]
 
         neighbors[x][y - 2] += 1
-        humidity[x][y - 2] += field.cells[x][y].genes[0]
+        genes_to_pass[x][y - 2][0] += field.cells[x][y].genes[0]
 
         neighbors[(x + 2) % field.size_x][y] += 1
-        humidity[(x + 2) % field.size_x][y] += field.cells[x][y].genes[0]
+        genes_to_pass[(x + 2) % field.size_x][y][0] += field.cells[x][y].genes[0]
 
         neighbors[x][y] -= 1
-        humidity[x][y] -= field.cells[x][y].genes[0]
-
+        genes_to_pass[x][y][0] -= field.cells[x][y].genes[0]
 
     def born_survive(Field, neighbors, x, y):
         '''Shows if cells alives, born or die'''
+        # calculating random mutation parameter
+        # according to cell_radio-resistance and environment radioactivity
+        rand_mut = math.floor((Field.cells[x][y].radioactivity+100+rad_inf)/(Field.cells[x][y].genes[1]+101))
         if Field.cells[x][y].live:
             # if cell has overpopulation or underpopulation
             if neighbors[x][y] < neighbors_exist_start or neighbors[x][y] > neighbors_exist_end:
                 Field.cells[x][y].live -= 5
                 if Field.cells[x][y].live <= 0:
                     Field.cells[x][y].genes[0] = 0
+                    Field.cells[x][y].genes[1] = 0
+            else:  # Influence of radiation
+                Field.cells[x][y].genes[0] += randint(-rand_mut, rand_mut)
+                Field.cells[x][y].genes[1] += randint(-rand_mut, rand_mut)
+                Field.cells[x][y].genes[0] = gen_out_of_range(Field.cells[x][y].genes[0])
+                Field.cells[x][y].genes[1] = gen_out_of_range(Field.cells[x][y].genes[1])
         # if dead cell has enough parents
         elif neighbors[x][y] == neighbors_born:
-            Field.cells[x][y].live += 5
-            # giving parents genes and random mutation
-            Field.cells[x][y].genes[0] = humidity[x][y]/neighbors[x][y] + randint(-3, 3)
-            if Field.cells[x][y].genes[0] > 100:
-                Field.cells[x][y].genes[0] = 100
-            elif Field.cells[x][y].genes[0] < -100:
-                Field.cells[x][y].genes[0] = -100
+            Field.cells[x][y].live = 5
+            # giving parents genes and random mutation(because of reproduction)
+            for i in range(len(Field.cells[x][y].genes)):
+                Field.cells[x][y].genes[i] = genes_to_pass[x][y][i] / neighbors[x][y] + randint(-3, 3)
+                Field.cells[x][y].genes[i] = gen_out_of_range(Field.cells[x][y].genes[i])
+    def divide_manager(Field, neighbors, x, y, hum_int, stage_1, stage_2, stage_3):
+        """decides how good cell(x, y) will be dividing
+        stage_i - rules of goodness"""
+        if hum_int ** 2 <= stage_1 ** 2:
+            long_neighbors(Field, neighbors, x, y)
+        elif hum_int ** 2 <= stage_2 ** 2:
+            muavr_neighbors(Field, neighbors, x, y)
+        elif hum_int ** 2 <= stage_3 ** 2:
+            fraun_neighbors(Field, neighbors, x, y)
+
+    def gen_out_of_range(gen):
+        """checks if gen is in -100 to 100 range, else changes it"""
+        if gen > 100:
+            gen = 100
+        elif gen < -100:
+            gen = -100
+        return gen
+
+    # Main constants of the game
     # conditions of birth
     neighbors_born = 3
     neighbors_exist_start = 2
     neighbors_exist_end = 3
-    # conditions for dividing stages
+    # conditions for dividing stages(good and bad genes-environment combinations)
     # the best combination(gives super dividing)
-    stage_1 = 10
+    stage_1 = 3
     # usual combination
     stage_2 = 30
     # bad combination
-    stage_3 = 60
+    stage_3 = 50
+    # radiation influence parameter
+    rad_inf = 20
     # list of number of neighbors around 1 cell
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
     # list of sums of genes of life cells around cell and number of life cells
-    humidity = [[0] * Field.size_y for i in range(Field.size_x)]
+    genes_to_pass = [[[0, 0] for j in range(Field.size_y)] for i in range(Field.size_x)]
     for x in range(0, Field.size_x, 1):
         for y in range(0, Field.size_y, 1):
             # counting number of neighbors
@@ -97,16 +125,11 @@ def step(Field):
                 # tells how close humidity and corresponding genes are
                 hum_int = Field.cells[x][y].genes[0] - Field.cells[x][y].humidity
                 # condition decider, calculates how good cell will divide
-                if hum_int**2 <= stage_1**2:
-                    long_neighbors(Field, neighbors, x, y)
-                elif hum_int**2 <= stage_2**2:
-                    muavr_neighbors(Field, neighbors, x, y)
-                elif hum_int**2 <= stage_3**2:
-                    fraun_neighbors(Field, neighbors, x, y)
+                divide_manager(Field, neighbors, x, y, hum_int, stage_1, stage_2, stage_3)
 
     for x in range(0, Field.size_x, 1):
         for y in range(0, Field.size_y, 1):
-            #Decide if cell born, exist or die
+            # Decide if cell born, exist or die
             born_survive(Field, neighbors, x, y)
             Field.cells[x][y].change_colors()
 
@@ -117,7 +140,8 @@ def change_scale(field, par):
     field.scale += par * change_step
     if field.scale <= 5:
         field.scale = 5
-            
+
+
 def find_grid(field, game_window):  # FixMe Rail task, now returns grid for all field
     """calculates optimal grid size to display it in game_window
     look of grid: (coordinate of top left corner, number of rows and colons, size of 1 cell,
@@ -203,7 +227,5 @@ def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, p
         X = game_window_x_center + x - field_x_center * cell_size
         Y = game_window_y_center - (y - field_y_center * cell_size)
         return X, Y
-
-
 if __name__ == "__main__":
     print("This module is not for direct call!")
