@@ -69,7 +69,7 @@ def step(Field):
         elif neighbors[x][y] == neighbors_born:
             Field.cells[x][y].live += 5
             # giving parents genes and random mutation
-            Field.cells[x][y].genes[0] = humidity[x][y]/neighbors[x][y] + randint(-10, 10)
+            Field.cells[x][y].genes[0] = humidity[x][y]/neighbors[x][y] + randint(-3, 3)
             if Field.cells[x][y].genes[0] > 100:
                 Field.cells[x][y].genes[0] = 100
             elif Field.cells[x][y].genes[0] < -100:
@@ -80,11 +80,11 @@ def step(Field):
     neighbors_exist_end = 3
     # conditions for dividing stages
     # the best combination(gives super dividing)
-    stage_1 = 5
+    stage_1 = 10
     # usual combination
     stage_2 = 30
     # bad combination
-    stage_3 = 49
+    stage_3 = 60
     # list of number of neighbors around 1 cell
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
     # list of sums of genes of life cells around cell and number of life cells

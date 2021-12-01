@@ -25,6 +25,8 @@ def game():
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
     # Constant that shows if mouse button is pressed
+    # creating Menu of parameters\
+    par_menu = Menu(WIDTH, HEIGHT, game_window)
     pressed_mouse = False
     # game speed
     speed = 1
@@ -36,7 +38,7 @@ def game():
         loop_counter += 1
         screen.fill(BLACK)
         # drawing game screen
-        draw_game(screen, field, interface)
+        draw_game(screen, field, interface, par_menu)
         pygame.display.update()
         # event processing
         for event in pygame.event.get():
