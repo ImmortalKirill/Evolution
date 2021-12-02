@@ -197,7 +197,7 @@ class Settings(Interface):
         self.cell_text = 'Cell'
         self.text_color = 'black'
         self.game_window_width = game_window_width
-        self.cell = None
+        self.cell = Cell()
 
     def draw(self, screen):
         if (self.status % 2) == 1:
@@ -218,14 +218,22 @@ class Settings(Interface):
     def update(self):
         """changes values of all sliders in settings"""
         self.field_humidity_slider.change_value()
+        self.cell.humidity = self.field_humidity_slider.get_value()
+
         self.field_radioactivity_slider.change_value()
+        self.cell.radioactivity = self.field_radioactivity_slider.get_value()
+
         self.cell_humidity_slider.change_value()
+        self.cell.genes[0] = self.cell_humidity_slider.get_value()
+
         self.cell_radioactivity_slider.change_value()
+        self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
+
+        self.cell.change_colors()
 
     def update_cell(self):
         self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value)\
                                                           * self.field_humidity_slider.scale
-        print(self.cell.humidity)
 
         # return round(self.current_value_points / (self.bg_rect[2] / self.upper_value) - self.minus_value)
         self.field_radioactivity_slider.current_value_points = (self.cell.radioactivity + self.field_radioactivity_slider.minus_value) \
