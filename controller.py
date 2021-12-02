@@ -54,12 +54,12 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         if pressed_mouse and mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
-        # if mouse on speed_slider
-        if pygame.mouse.get_pressed()[0]:
-            interface.slider.change_value()
-            if not interface.pause.pressed:
-                speed = interface.slider.get_value()
-            settings.update()
+    # if mouse on speed_slider
+    if pygame.mouse.get_pressed()[0]:
+        interface.slider.change_value()
+        if not interface.pause.pressed:
+            speed = interface.slider.get_value()
+        settings.update()
 
 
     return field, pressed_mouse, interface, speed

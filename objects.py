@@ -178,8 +178,8 @@ class Interface:
 class Settings(Interface):
     """creates class of additional menu with buttons"""
 
-    def __init__(self, game_window, width, height, status, indent=100):
-        super().__init__(game_window, width, height)
+    def __init__(self, width, height, game_window, game_window_width, status, indent=100):
+        super().__init__(width, height, game_window)
         self.background_color = (100, 100, 100)
         self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, indent, 150, 30],
                                             text='humidity', upper_value=200, minus_value=100)
@@ -190,14 +190,16 @@ class Settings(Interface):
         self.cell_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5*indent, 150, 30],
                                                  text='radioactivity', upper_value=200, minus_value=100)
         self.font = 0
+        self.width = width
         self.status = status
         self.field_text = 'Field'
         self.cell_text = 'Cell'
         self.text_color = 'black'
+        self.game_window_width = game_window_width
 
     def draw(self, screen):
         if (self.status % 2) == 1:
-            self.game_window[2] = 800
+            self.game_window[2] = self.game_window_width - self.width
             pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
                                                              self.WIDTH + self.game_window[0] + self.game_window[2],
                                                              self.HEIGHT], 0)
@@ -209,7 +211,7 @@ class Settings(Interface):
             print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50, 18)
             print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350, 18)
         else:
-            self.game_window[2] = 1000
+            self.game_window[2] = self.game_window_width
 
     def update(self):
         """changes values of all sliders in settings"""
