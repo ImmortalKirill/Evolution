@@ -1,4 +1,5 @@
 import math
+import pygame
 from random import randint
 
 
@@ -233,5 +234,17 @@ def change_coords(pos, cell_size, field_x_center, field_y_center, game_window, p
         X = game_window_x_center + x - field_x_center * cell_size
         Y = game_window_y_center - (y - field_y_center * cell_size)
         return X, Y
+
+
+def print_text(screen, text: str, text_color, x, y, size):
+    """function that prints given text with pygame
+    x,y - coors of text center"""
+    font = pygame.font.Font(pygame.font.get_default_font(), size)
+    text_rendered = font.render(text, True, text_color)
+    text_rect = text_rendered.get_rect()
+    text_rect.center = (x, y)
+    screen.blit(text_rendered, text_rect)
+
+
 if __name__ == "__main__":
     print("This module is not for direct call!")
