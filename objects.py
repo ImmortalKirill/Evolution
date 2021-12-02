@@ -194,7 +194,6 @@ class Settings(Interface):
         self.cell_text = 'Cell'
         self.text_color = 'black'
 
-
     def draw(self, screen):
         pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
                                                          self.WIDTH + self.game_window[0] + self.game_window[2],
@@ -206,6 +205,14 @@ class Settings(Interface):
 
         print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50, 18)
         print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350, 18)
+
+    def update(self):
+        """changes values of all sliders in settings"""
+        self.field_humidity_slider.change_value()
+        self.field_radioactivity_slider.change_value()
+        self.cell_humidity_slider.change_value()
+        self.cell_radioactivity_slider.change_value()
+
 
 
 class Field():

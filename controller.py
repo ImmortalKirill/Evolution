@@ -12,7 +12,7 @@ def zoom(event: pygame.MOUSEBUTTONDOWN, field):
         change_scale(field, -1)
 
 
-def event_manage(event, field, pressed_mouse, interface, speed, menu):
+def event_manage(event, field, pressed_mouse, interface, speed, settings):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
         if mouse_pos_check(event.pos, interface.game_window):  # if mouse on game window
@@ -58,8 +58,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, menu):
             interface.slider.change_value()
             if not interface.pause.pressed:
                 speed = interface.slider.get_value()
-            menu.field_humidity_slider.change_value()
-            menu.field_radioactivity_slider.change_value()
+            settings.update()
 
 
     return field, pressed_mouse, interface, speed
