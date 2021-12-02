@@ -37,6 +37,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mouse on button spawn new cells
             if mouse_pos_check(pygame.mouse.get_pos(), interface.cell_spawn.bg_rect):
                 interface.cell_spawn.change_press()
+                settings.status += 1
             # if mouse on button clear field
             if mouse_pos_check(pygame.mouse.get_pos(), interface.clear.bg_rect):
                 for i in range(field.size_x):

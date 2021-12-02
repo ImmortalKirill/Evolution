@@ -178,7 +178,7 @@ class Interface:
 class Settings(Interface):
     """creates class of additional menu with buttons"""
 
-    def __init__(self, game_window, width, height, indent=100):
+    def __init__(self, game_window, width, height, status, indent=100):
         super().__init__(game_window, width, height)
         self.background_color = (100, 100, 100)
         self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, indent, 150, 30],
@@ -190,21 +190,26 @@ class Settings(Interface):
         self.cell_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5*indent, 150, 30],
                                                  text='radioactivity', upper_value=200, minus_value=100)
         self.font = 0
+        self.status = status
         self.field_text = 'Field'
         self.cell_text = 'Cell'
         self.text_color = 'black'
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
-                                                         self.WIDTH + self.game_window[0] + self.game_window[2],
-                                                         self.HEIGHT], 0)
-        self.field_humidity_slider.draw(screen)
-        self.field_radioactivity_slider.draw(screen)
-        self.cell_humidity_slider.draw(screen)
-        self.cell_radioactivity_slider.draw(screen)
+        if (self.status % 2) == 1:
+            self.game_window[2] = 800
+            pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
+                                                             self.WIDTH + self.game_window[0] + self.game_window[2],
+                                                             self.HEIGHT], 0)
+            self.field_humidity_slider.draw(screen)
+            self.field_radioactivity_slider.draw(screen)
+            self.cell_humidity_slider.draw(screen)
+            self.cell_radioactivity_slider.draw(screen)
 
-        print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50, 18)
-        print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350, 18)
+            print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50, 18)
+            print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350, 18)
+        else:
+            self.game_window[2] = 1000
 
     def update(self):
         """changes values of all sliders in settings"""
@@ -215,7 +220,8 @@ class Settings(Interface):
 
 
 
-class Field():
+
+class Field:
     """ class Field, consists of cells"""
 
     def __init__(self):

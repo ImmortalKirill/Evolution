@@ -10,7 +10,7 @@ HEIGHT = 800
 WIDTH = 1000
 
 # window with game, rectangle(left up angle cors, width, height)
-game_window = (0, 0, 800, 700)
+game_window = [0, 0, 800, 700]
 FPS = 30
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
@@ -24,7 +24,7 @@ def game():
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
-    settings = Settings(200, HEIGHT, game_window)
+    settings = Settings(200, HEIGHT, game_window, 0)
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     # game speed
