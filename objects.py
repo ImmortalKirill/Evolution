@@ -233,7 +233,7 @@ class Field():
         for i in range(x // 2):
             for l in range(y):
                 self.cells[i][l].humidity = randint(-100, 100)
-                self.cells[x - i - 1][l].humidity = randint(-99, 100)
+                #self.cells[x - i - 1][l].humidity = randint(-99, 100)
                 self.cells[i][l].radioactivity = randint(-99, 100)
         self.x_center = x / 2
         self.y_center = y / 2
