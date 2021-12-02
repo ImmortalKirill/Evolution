@@ -84,7 +84,7 @@ class Button:
         self.pressed = self.pressed % 2
 
 
-from model import mouse_pos_check
+from model import mouse_pos_check, print_text
 
 
 class Slider(Button):
@@ -107,25 +107,16 @@ class Slider(Button):
         return round(self.current_value_points / (self.bg_rect[2] / self.upper_value) - self.minus_value)
 
     # renders slider and the text showing the value of the slider
-    def draw(self, display: pygame.display) -> None:
+    def draw(self, screen: pygame.display) -> None:
         # draw outline and slider rectangles
-        pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
-                                                  self.bg_rect[2], self.bg_rect[3]), 1)
+        pygame.draw.rect(screen, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
+                                                 self.bg_rect[2], self.bg_rect[3]), 1)
 
-        pygame.draw.rect(display, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
-                                                  self.current_value_points, self.bg_rect[3] - 3))
+        pygame.draw.rect(screen, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
+                                                 self.current_value_points, self.bg_rect[3] - 3))
 
-        # determine size of font
-        self.font = pygame.font.Font(pygame.font.get_default_font(), int((50 / 100) * self.bg_rect[3]))
-
-        # create text surface with value
-        valueSurf = self.font.render(f"{self.text}: {self.get_value()}", True, self.text_color)
-
-        # centre text
-        textx = self.bg_rect[0] + (self.bg_rect[2] / 2) - (valueSurf.get_rect().width / 2)
-        texty = self.bg_rect[1] + (self.bg_rect[3]) + 3 * (valueSurf.get_rect().height / 2)
-
-        display.blit(valueSurf, (textx, texty))
+        print_text(screen, f"{self.text}: {self.get_value()}", self.text_color, self.bg_rect[0] + (self.bg_rect[2] / 2),
+                   self.bg_rect[1] + self.bg_rect[3]*1.5, int(self.bg_rect[3]/2))
 
     # allows users to change value of the slider by dragging it.
     def change_value(self) -> None:
@@ -184,19 +175,25 @@ class Interface:
         self.population_spawn.draw(screen)
 
 
-class Menu(Interface):
+class Settings(Interface):
     """creates class of additional menu with buttons"""
 
-    def __init__(self, game_window, width, height):
+    def __init__(self, game_window, width, height, indent=100):
         super().__init__(game_window, width, height)
         self.background_color = (100, 100, 100)
-        self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 100, 150, 30],
+        self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, indent, 150, 30],
                                             text='humidity', upper_value=200, minus_value=100)
-        self.field_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 200, 150, 30],
+        self.field_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 2*indent, 150, 30],
+                                                 text='radioactivity', upper_value=200, minus_value=100)
+        self.cell_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 4*indent, 150, 30],
+                                            text='humidity', upper_value=200, minus_value=100)
+        self.cell_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5*indent, 150, 30],
                                                  text='radioactivity', upper_value=200, minus_value=100)
         self.font = 0
-        self.text = 'Field'
+        self.field_text = 'Field'
+        self.cell_text = 'Cell'
         self.text_color = 'black'
+
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
@@ -204,10 +201,11 @@ class Menu(Interface):
                                                          self.HEIGHT], 0)
         self.field_humidity_slider.draw(screen)
         self.field_radioactivity_slider.draw(screen)
+        self.cell_humidity_slider.draw(screen)
+        self.cell_radioactivity_slider.draw(screen)
 
-        self.font = pygame.font.Font(pygame.font.get_default_font(), 18)
-        valueSurf = self.font.render(str(self.text), True, self.text_color)
-        screen.blit(valueSurf, (self.game_window[0] + self.game_window[2] + 100, 50))
+        print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50, 18)
+        print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350, 18)
 
 
 class Field():
@@ -242,7 +240,7 @@ class Field():
                         cells[i][l].humidity = 100
                     elif cells[i][l].humidity < -100:
                         cells[i][l].humidity = -100
-                    cells[i][l].food = randint(0, 1)        
+                    cells[i][l].food = randint(0, 1)
         generate_field(self.cells, x, y)
         self.x_center = x / 2
         self.y_center = y / 2

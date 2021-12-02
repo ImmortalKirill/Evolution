@@ -24,7 +24,7 @@ def game():
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
-    menu_new = Menu(200, HEIGHT, game_window)
+    settings = Settings(200, HEIGHT, game_window)
     # Constant that shows if mouse button is pressed
     pressed_mouse = False
     # game speed
@@ -37,7 +37,7 @@ def game():
         loop_counter += 1
         screen.fill(BLACK)
         # drawing game screen
-        draw_game(screen, field, interface, menu_new)
+        draw_game(screen, field, interface, settings)
         pygame.display.update()
         # event processing
         for event in pygame.event.get():
@@ -45,7 +45,7 @@ def game():
                 Game = False
             else:
                 field, pressed_mouse, interface, speed = \
-                    event_manage(event, field, pressed_mouse, interface, speed, menu_new)
+                    event_manage(event, field, pressed_mouse, interface, speed, settings)
 
         if get_steps(loop_counter, speed):
             step(field)
