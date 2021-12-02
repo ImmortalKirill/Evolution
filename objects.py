@@ -101,10 +101,11 @@ class Slider(Button):
         self.upper_value = upper_value
         self.font = 0
         self.minus_value = minus_value
+        self.scale = self.bg_rect[2] / self.upper_value
 
     # returns the current value of the slider
     def get_value(self) -> float:
-        return round(self.current_value_points / (self.bg_rect[2] / self.upper_value) - self.minus_value)
+        return round(self.current_value_points / self.scale - self.minus_value)
 
     # renders slider and the text showing the value of the slider
     def draw(self, screen: pygame.display) -> None:
@@ -196,6 +197,7 @@ class Settings(Interface):
         self.cell_text = 'Cell'
         self.text_color = 'black'
         self.game_window_width = game_window_width
+        self.cell = None
 
     def draw(self, screen):
         if (self.status % 2) == 1:
@@ -219,6 +221,21 @@ class Settings(Interface):
         self.field_radioactivity_slider.change_value()
         self.cell_humidity_slider.change_value()
         self.cell_radioactivity_slider.change_value()
+
+    def update_cell(self):
+        self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value)\
+                                                          * self.field_humidity_slider.scale
+        print(self.cell.humidity)
+
+        # return round(self.current_value_points / (self.bg_rect[2] / self.upper_value) - self.minus_value)
+        self.field_radioactivity_slider.current_value_points = (self.cell.radioactivity + self.field_radioactivity_slider.minus_value) \
+                                                          * self.field_radioactivity_slider.scale
+        self.cell_humidity_slider.current_value_points = (self.cell.genes[0] + self.cell_humidity_slider.minus_value) \
+                                                          * self.cell_humidity_slider.scale
+        self.cell_radioactivity_slider.current_value_points = (self.cell.genes[1] + self.cell_radioactivity_slider.minus_value) \
+                                                          * self.cell_radioactivity_slider.scale
+
+
 
 
 

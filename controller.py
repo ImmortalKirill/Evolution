@@ -24,6 +24,8 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mode is cell_spawn
             if interface.cell_spawn.pressed and event.button == 3:
                 x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
+                settings.cell = field.cells[x_cell][y_cell]
+                settings.update_cell()
                 if x_cell != None:
                     field.cells[x_cell][y_cell].live = 5
         else:
