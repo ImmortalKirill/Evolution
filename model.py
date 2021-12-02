@@ -1,5 +1,5 @@
 import math
-from objects import *
+from random import randint
 
 
 def step(Field):
@@ -63,12 +63,18 @@ def step(Field):
         # according to cell_radio-resistance and environment radioactivity
         rand_mut = math.floor((Field.cells[x][y].radioactivity+100+rad_inf)/(Field.cells[x][y].genes[1]+101))
         if Field.cells[x][y].live:
+            # if cell has food on it
+            if Field.cells[x][y].food > 0:
+                Field.cells[x][y].food -= 2
+                Field.cells[x][y].live += 1
             # if cell has overpopulation or underpopulation
             if neighbors[x][y] < neighbors_exist_start or neighbors[x][y] > neighbors_exist_end:
                 Field.cells[x][y].live -= 5
                 if Field.cells[x][y].live <= 0:
                     Field.cells[x][y].genes[0] = 0
                     Field.cells[x][y].genes[1] = 0
+                    if randint(0, 10) == 0: #drop of food with some chance
+                        Field.cells[x][y].food += 1
             else:  # Influence of radiation
                 Field.cells[x][y].genes[0] += randint(-rand_mut, rand_mut)
                 Field.cells[x][y].genes[1] += randint(-rand_mut, rand_mut)
