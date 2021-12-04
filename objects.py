@@ -259,73 +259,76 @@ class Field:
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
-
+        
+        
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
+        def midpoint_displacement(x, upper_point, bottom_point):
+            size = x
+            heightmap = [[0]*size for i in range(size)]
+    
+            heightmap[0][0] = randint(-bottom_point, upper_point)
+            heightmap[size - 1][0] = randint(-bottom_point, upper_point)
+            heightmap[0][size - 1] = randint(-bottom_point, upper_point)
+            heightmap[size - 1][size - 1] = randint(-bottom_point, upper_point)
+    
+            q = deque()
+            q.append((0, 0, size - 1, size - 1, 200))
+    
+            while len(q) != 0:
+                top, left, bottom, right, randomness = q.popleft()
+    
+                centerX = (left + right) // 2
+                centerY = (top + bottom) // 2
+    
+                heightmap[centerX][top] = (heightmap[left][top] + heightmap[right][top]) // 2 + randint(-randomness, randomness)
+                heightmap[centerX][bottom] = (heightmap[left][bottom] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
+                heightmap[left][centerY] = (heightmap[left][top] + heightmap[left][bottom]) // 2 + randint(-randomness, randomness)
+                heightmap[right][centerY] = (heightmap[right][top] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
+    
+                heightmap[centerX][centerY] = (heightmap[left][top] +
+                                                   heightmap[right][top] +
+                                                   heightmap[left][bottom] +
+                                                   heightmap[right][bottom]) // 4 + \
+                        randint(-randomness, randomness)
+    
+                if right - left > 2:
+                    q.append((top, left, centerY, centerX, randomness // 2))
+                    q.append((top, centerX, centerY, right, randomness // 2))
+                    q.append((centerY, left, bottom, centerX, randomness // 2))
+                    q.append((centerY, centerX, bottom, right, randomness // 2))
+            return heightmap        
         def generate_field(cells:list, x, y):
             """generates field initial conditions"""
             for i in range(x):
                 for l in range(y):
                     cells[i][l] = Cell()
                     cells[i][l].new_cell(i, l)
+                    cells[i][l].radioactivity = 100
                     if randint(0, 2):
                         cells[i][l].live = 5
                         cells[i][l].genes[0] = 0
                         cells[i][l].genes[1] = 50
+                        #cells[i][l].food = randint(0, 1)
+            #generate humadity
+            massive = midpoint_displacement(x, 100, -100)
             for i in range(x):
-                for l in range(y):
-                    cells[i][l].humidity = -90 + (i + l)
-                    cells[i][l].radioactivity = 100
-                    if cells[i][l].humidity > 100:
-                        cells[i][l].humidity = 100
-                    elif cells[i][l].humidity < -100:
-                        cells[i][l].humidity = -100
-                    cells[i][l].food = randint(0, 1)
-        generate_field(self.cells, x, y)
-        
-        def main(x):
-            size = x
-            heightmap = [[0]*size for i in range(size)]
-        
-            heightmap[0][0] = randint(-100, 100)
-            heightmap[size - 1][0] = randint(-100, 100)
-            heightmap[0][size - 1] = randint(-100, 100)
-            heightmap[size - 1][size - 1] = randint(-100, 100)
-        
-            q = deque()
-            q.append((0, 0, size - 1, size - 1, 200))
-        
-            while len(q) != 0:
-                top, left, bottom, right, randomness = q.popleft()
-        
-                centerX = (left + right) // 2
-                centerY = (top + bottom) // 2
-        
-                heightmap[centerX][top] = (heightmap[left][top] + heightmap[right][top]) // 2 + randint(-randomness, randomness)
-                heightmap[centerX][bottom] = (heightmap[left][bottom] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
-                heightmap[left][centerY] = (heightmap[left][top] + heightmap[left][bottom]) // 2 + randint(-randomness, randomness)
-                heightmap[right][centerY] = (heightmap[right][top] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
-        
-                heightmap[centerX][centerY] = (heightmap[left][top] +
-                                               heightmap[right][top] +
-                                               heightmap[left][bottom] +
-                                               heightmap[right][bottom]) // 4 + \
-                    randint(-randomness, randomness)
-        
-                if right - left > 2:
-                    q.append((top, left, centerY, centerX, randomness // 2))
-                    q.append((top, centerX, centerY, right, randomness // 2))
-                    q.append((centerY, left, bottom, centerX, randomness // 2))
-                    q.append((centerY, centerX, bottom, right, randomness // 2))
-            return heightmap
-        massive = main(x)
-        for i in range(x):
-            for j in range(y):
-                if massive[i][j] > 0:
-                    self.cells[i][j].humidity = min(massive[i][j], 100)
-                else:
-                    self.cells[i][j].humidity = max(massive[i][j], 100)
+                for j in range(y):
+                    if massive[i][j] > 0:
+                        self.cells[i][j].humidity = min(massive[i][j], 100)
+                    else:
+                        self.cells[i][j].humidity = max(massive[i][j], -100)
+            #generate radioactivity
+            #massive = midpoint_displacement(x, 100, 99)
+            #for i in range(x):
+            #    for j in range(y):
+            #        if massive[i][j] > 0:
+            #            self.cells[i][j].radioactivity = min(massive[i][j], 100)
+            #        else:
+            #            self.cells[i][j].radioactivity = max(massive[i][j], -100)            
+        generate_field(self.cells, x, y)        
+                
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
