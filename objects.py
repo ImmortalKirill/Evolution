@@ -3,6 +3,7 @@ import pygame
 import pygame.freetype
 import math
 from pygame.draw import *
+from collections import deque
 
 
 class Cell:
@@ -282,6 +283,49 @@ class Field:
                         cells[i][l].humidity = -100
                     cells[i][l].food = randint(0, 1)
         generate_field(self.cells, x, y)
+        
+        def main(x):
+            size = x
+            heightmap = [[0]*size for i in range(size)]
+        
+            heightmap[0][0] = randint(-100, 100)
+            heightmap[size - 1][0] = randint(-100, 100)
+            heightmap[0][size - 1] = randint(-100, 100)
+            heightmap[size - 1][size - 1] = randint(-100, 100)
+        
+            q = deque()
+            q.append((0, 0, size - 1, size - 1, 200))
+        
+            while len(q) != 0:
+                top, left, bottom, right, randomness = q.popleft()
+        
+                centerX = (left + right) // 2
+                centerY = (top + bottom) // 2
+        
+                heightmap[centerX][top] = (heightmap[left][top] + heightmap[right][top]) // 2 + randint(-randomness, randomness)
+                heightmap[centerX][bottom] = (heightmap[left][bottom] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
+                heightmap[left][centerY] = (heightmap[left][top] + heightmap[left][bottom]) // 2 + randint(-randomness, randomness)
+                heightmap[right][centerY] = (heightmap[right][top] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
+        
+                heightmap[centerX][centerY] = (heightmap[left][top] +
+                                               heightmap[right][top] +
+                                               heightmap[left][bottom] +
+                                               heightmap[right][bottom]) // 4 + \
+                    randint(-randomness, randomness)
+        
+                if right - left > 2:
+                    q.append((top, left, centerY, centerX, randomness // 2))
+                    q.append((top, centerX, centerY, right, randomness // 2))
+                    q.append((centerY, left, bottom, centerX, randomness // 2))
+                    q.append((centerY, centerX, bottom, right, randomness // 2))
+            return heightmap
+        massive = main(x)
+        for i in range(x):
+            for j in range(y):
+                if massive[i][j] > 0:
+                    self.cells[i][j].humidity = min(massive[i][j], 100)
+                else:
+                    self.cells[i][j].humidity = max(massive[i][j], 100)
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
