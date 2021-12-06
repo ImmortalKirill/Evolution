@@ -121,9 +121,9 @@ def step(Field):
 
     # Main constants of the game
     # conditions of birth
-    neighbors_born = 3
-    neighbors_exist_start = 2
-    neighbors_exist_end = 3
+    neighbors_born = Field.neighbors_born
+    neighbors_exist_start = Field.neighbors_exist_start
+    neighbors_exist_end = Field.neighbors_exist_end
     # conditions for dividing stages(good and bad genes-environment combinations)
     # the best combination(gives super dividing)
     stage_1 = 10
