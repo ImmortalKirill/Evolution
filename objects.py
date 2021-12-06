@@ -244,6 +244,11 @@ class Settings(Interface):
         self.cell_radioactivity_slider.current_value_points = (self.cell.genes[1] + self.cell_radioactivity_slider.minus_value) \
                                                           * self.cell_radioactivity_slider.scale
 
+    def select(self):
+        pass
+
+
+
 
 
 
@@ -305,7 +310,7 @@ class Field:
                 for l in range(y):
                     cells[i][l] = Cell()
                     cells[i][l].new_cell(i, l)
-                    cells[i][l].radioactivity = 100
+                    cells[i][l].radioactivity = 0
                     if randint(0, 2):
                         cells[i][l].live = 5
                         cells[i][l].genes[0] = 0
