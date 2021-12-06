@@ -85,7 +85,7 @@ class Button:
         self.pressed = self.pressed % 2
 
 
-from model import mouse_pos_check, print_text
+from model import mouse_pos_check, print_text, change_coords
 
 
 class Slider(Button):
@@ -177,10 +177,12 @@ class Interface:
         self.population_spawn.draw(screen)
 
 
+
 class Settings(Interface):
     """creates class of additional menu with buttons"""
 
-    def __init__(self, width, height, game_window, game_window_width, status, indent=100):
+    def __init__(self, width, height, game_window, game_window_width, status,
+                 indent=100):
         super().__init__(width, height, game_window)
         self.background_color = (100, 100, 100)
         self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, indent, 150, 30],
@@ -191,6 +193,7 @@ class Settings(Interface):
                                             text='humidity', upper_value=200, minus_value=100)
         self.cell_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5*indent, 150, 30],
                                                  text='radioactivity', upper_value=200, minus_value=100)
+        self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6*indent, 30, 30], (0, 0, 0), (255, 255, 255), '|', '|', 90)
         self.font = 0
         self.width = width
         self.status = status
@@ -199,6 +202,9 @@ class Settings(Interface):
         self.text_color = 'black'
         self.game_window_width = game_window_width
         self.cell = Cell()
+        self.cell_pen = Cell()
+
+
 
     def draw(self, screen):
         if (self.status % 2) == 1:
@@ -213,6 +219,8 @@ class Settings(Interface):
 
             print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50, 18)
             print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350, 18)
+
+            self.pen.draw(screen)
         else:
             self.game_window[2] = self.game_window_width
 
@@ -244,8 +252,12 @@ class Settings(Interface):
         self.cell_radioactivity_slider.current_value_points = (self.cell.genes[1] + self.cell_radioactivity_slider.minus_value) \
                                                           * self.cell_radioactivity_slider.scale
 
-    def select(self):
-        pass
+    def select(self, screen, cell_size, field_x_center, field_y_center):
+        draw_rect = [0]*4
+        draw_rect[0], draw_rect[1] = change_coords(self.rect[0], cell_size, field_x_center, field_y_center,
+                                                   self.game_window, 1)
+
+        pygame.draw.rect(screen, 'green', draw_rect)
 
 
 

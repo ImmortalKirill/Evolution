@@ -22,12 +22,14 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # checking if we need to zoom map
             zoom(event, field)
             # if mode is cell_spawn
-            if interface.cell_spawn.pressed and event.button == 3:
-                x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
-                settings.cell = field.cells[x_cell][y_cell]
-                settings.update_cell()
-                if x_cell != None:
-                    field.cells[x_cell][y_cell].live = 5
+
+        if interface.cell_spawn.pressed and (not settings.pen.pressed) and (event.button == 3):
+            x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
+            settings.cell = field.cells[x_cell][y_cell]
+            settings.update_cell()
+            if x_cell != None:
+                field.cells[x_cell][y_cell].live = 5
+
         else:
             # if pressed button is left mouse button
             if event.button == 1:
@@ -40,6 +42,9 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             if mouse_pos_check(pygame.mouse.get_pos(), interface.cell_spawn.bg_rect):
                 interface.cell_spawn.change_press()
                 settings.status += 1
+            # if mouse on button pen
+            if mouse_pos_check(pygame.mouse.get_pos(), settings.pen.bg_rect):
+                settings.pen.change_press()
             # if mouse on button clear field
             if mouse_pos_check(pygame.mouse.get_pos(), interface.clear.bg_rect):
                 for i in range(field.size_x):
@@ -49,6 +54,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             if mouse_pos_check(pygame.mouse.get_pos(), interface.population_spawn.bg_rect):
                 field.new_field(field.size_x, field.size_y)
 
+
     elif event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
             pressed_mouse = False
@@ -56,12 +62,36 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         if pressed_mouse and mouse_pos_check(pygame.mouse.get_pos(), interface.game_window):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
+
+    if settings.pen.pressed and pygame.mouse.get_pressed()[2]:
+        x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
+        settings.cell_pen = field.cells[x_cell][y_cell]
+        settings.update_cell()
+        if x_cell != None:
+            field.cells[x_cell][y_cell].live = 5
     # if mouse on speed_slider
     if pygame.mouse.get_pressed()[0]:
         interface.slider.change_value()
         if not interface.pause.pressed:
             speed = interface.slider.get_value()
         settings.update()
+
+
+
+    #if event.type == pygame.KEYDOWN:
+        #if event.key == pygame.K_SPACE:
+            #if not settings.selection:
+                #settings.selection = True
+                #x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
+                #settings.rect[0] = field.cells[x_cell][y_cell]
+                #settings.select()
+           # else:
+                #x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
+                #settings.rect[1] = field.cells[x_cell][y_cell]
+                #settings.selection = False
+
+
+
 
 
     return field, pressed_mouse, interface, speed
