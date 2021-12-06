@@ -259,8 +259,6 @@ class Field:
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
-        
-        
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
@@ -305,14 +303,23 @@ class Field:
                 for l in range(y):
                     cells[i][l] = Cell()
                     cells[i][l].new_cell(i, l)
-                    cells[i][l].radioactivity = 100
+                    cells[i][l].radioactivity = -90
+                    cells[i][l].food = 30
                     if randint(0, 2):
                         cells[i][l].live = 5
+<<<<<<< HEAD
                         cells[i][l].genes[0] = 0
                         cells[i][l].genes[1] = 50
                         #cells[i][l].food = randint(0, 1)
             #generate humadity
             massive = midpoint_displacement(x, 100, -100, 150)
+=======
+                        cells[i][l].genes[0] = 100
+                        cells[i][l].genes[1] = 100
+            # generate humidity
+
+            massive = midpoint_displacement(x, 100, -100)
+>>>>>>> b654f2e087cfeee1553166b4e01c77436fde1225
             for i in range(x):
                 for j in range(y):
                     if massive[i][j] > 0:
@@ -320,6 +327,7 @@ class Field:
                     else:
                         self.cells[i][j].humidity = max(massive[i][j], -100)
             #generate radioactivity
+<<<<<<< HEAD
             massive = midpoint_displacement(x, 100, 99, 150)
             for i in range(x):
                 for j in range(y):
@@ -327,6 +335,15 @@ class Field:
                         self.cells[i][j].radioactivity = min(massive[i][j], 100)
                     else:
                         self.cells[i][j].radioactivity = max(massive[i][j], -100)            
+=======
+            #massive = midpoint_displacement(x, 100, 99)
+            #for i in range(x):
+            #    for j in range(y):
+            #        if massive[i][j] > 0:
+            #            self.cells[i][j].radioactivity = min(massive[i][j], 100)
+            #        else:
+            #            self.cells[i][j].radioactivity = max(massive[i][j], -100)
+>>>>>>> b654f2e087cfeee1553166b4e01c77436fde1225
         generate_field(self.cells, x, y)        
                 
         self.x_center = x / 2

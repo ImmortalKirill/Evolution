@@ -11,7 +11,7 @@ WIDTH = 1000
 
 # window with game, rectangle(left up angle cors, width, height)
 game_window = [0, 0, 800, 700]
-FPS = 30
+FPS = 100
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
     pass
