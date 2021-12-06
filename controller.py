@@ -48,6 +48,13 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mouse on button create new field with new population
             if mouse_pos_check(pygame.mouse.get_pos(), interface.population_spawn.bg_rect):
                 field.new_field(field.size_x, field.size_y)
+            # if mouse on button modified born rule
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.button_born.bg_rect):
+                if field.neighbors_born < 8:
+                    field.neighbors_born = field.neighbors_born + 1 
+                else:
+                    field.neighbors_born = 1
+                
 
     elif event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
@@ -62,6 +69,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         if not interface.pause.pressed:
             speed = interface.slider.get_value()
         settings.update()
+        
 
 
     return field, pressed_mouse, interface, speed
