@@ -134,8 +134,10 @@ def step(Field):
     # radiation influence parameter
     max_inf = 20
     edge_of_inf = 10
-
-
+    #cloud moves
+    Field.cloud.clear(Field)
+    Field.cloud.move(Field.size_x, Field.size_y)
+    Field.cloud.mod(Field)
     # list of number of neighbors around 1 cell
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
     # list of sums of genes of life cells around cell and number of life cells

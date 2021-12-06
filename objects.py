@@ -33,6 +33,46 @@ class Cell:
                       math.floor(255 * (self.genes[0] + 100) / 200))
         self.color_bg = (
         math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
+        
+        
+        
+class Cloud:
+    
+    def __init__(self, x, y):
+        cells = [[]]
+        size_x = self.size_x = x
+        size_y = self.size_y = y
+        x = self.x = 0
+        y = self.y = 0
+        speed_x = self.speed_x = 1
+        speed_y = self.speed_y = 1
+        count = self.count = 0
+        
+        
+    def move(self, size_x, size_y):
+        self.x = (self.x + self.speed_x) % size_x
+        self.y = (self.y + self.speed_y) % size_y
+        self.count += 1
+        if self.count % 20 == 0:
+            self.speed_x = randint(-2, 3)
+            self.speed_y = randint(-2, 3)
+        
+    def mod(self, field):
+        #modified field
+        field_x = field.size_x
+        field_y = field.size_y
+        for i in range(self.size_x):
+            for j in range(self.size_y):
+                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.cells[i][j]
+                
+                
+    def clear(self, field):
+        #clear itself
+        field_x = field.size_x
+        field_y = field.size_y
+        for i in range(self.size_x):
+            for j in range(self.size_y):
+                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100       
 
 
 class Button:
@@ -149,8 +189,10 @@ class Interface:
         self.pause = Button([0, 700, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
         self.cell_spawn = Button([50, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
         self.population_spawn = Button([100, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+!', '+!')
+        self.button_born = Button([150, 700, 30, 30], (0, 0, 0), (255, 255, 255), '-', '-')
         self.slider = Slider(bg_rect=[200, 700, 300, 30], text='speed')
         self.background_color = (100, 100, 100)
+
 
     def draw(self, screen):
         """draws interface"""
@@ -175,6 +217,7 @@ class Interface:
         self.slider.draw(screen)
         self.clear.draw(screen)
         self.population_spawn.draw(screen)
+        self.button_born.draw(screen)
 
 
 class Settings(Interface):
@@ -259,17 +302,24 @@ class Field:
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
+        neighbors_born = self.neighbors_born = 3
+        neighbors_exist_start = self.neighbors_exist_start = 2
+        neighbors_exist_end = self.neighbors_exist_end = 3
+        cloud = self.cloud = 0
+        
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
+        self.size_x = x
+        self.size_y = y
         def midpoint_displacement(x, upper_point, bottom_point, sharpest):
             size = x
             heightmap = [[0]*size for i in range(size)]
     
-            heightmap[0][0] = randint(-bottom_point, upper_point)
-            heightmap[size - 1][0] = randint(-bottom_point, upper_point)
-            heightmap[0][size - 1] = randint(-bottom_point, upper_point)
-            heightmap[size - 1][size - 1] = randint(-bottom_point, upper_point)
+            heightmap[0][0] = randint(bottom_point, upper_point)
+            heightmap[size - 1][0] = randint(bottom_point, upper_point)
+            heightmap[0][size - 1] = randint(bottom_point, upper_point)
+            heightmap[size - 1][size - 1] = randint(bottom_point, upper_point)
     
             q = deque()
             q.append((0, 0, size - 1, size - 1, sharpest))
@@ -296,7 +346,20 @@ class Field:
                     q.append((top, centerX, centerY, right, randomness // 2))
                     q.append((centerY, left, bottom, centerX, randomness // 2))
                     q.append((centerY, centerX, bottom, right, randomness // 2))
-            return heightmap        
+            return heightmap   
+        
+        
+        #cloud generation
+        self.cloud = Cloud(17, 17)
+        self.cloud.cells = midpoint_displacement(self.cloud.size_x, 100, -100, 500)
+        for i in range(self.cloud.size_x):
+            for j in range(self.cloud.size_y):
+                if self.cloud.cells[i][j] > 0:
+                    self.cloud.cells[i][j] = min(self.cloud.cells[i][j], 100)
+                else:
+                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)        
+        
+        
         def generate_field(cells:list, x, y):
             """generates field initial conditions"""
             for i in range(x):
@@ -307,45 +370,28 @@ class Field:
                     cells[i][l].food = 30
                     if randint(0, 2):
                         cells[i][l].live = 5
-<<<<<<< HEAD
                         cells[i][l].genes[0] = 0
                         cells[i][l].genes[1] = 50
                         #cells[i][l].food = randint(0, 1)
             #generate humadity
-            massive = midpoint_displacement(x, 100, -100, 150)
-=======
-                        cells[i][l].genes[0] = 100
-                        cells[i][l].genes[1] = 100
-            # generate humidity
-
-            massive = midpoint_displacement(x, 100, -100)
->>>>>>> b654f2e087cfeee1553166b4e01c77436fde1225
+            massive = midpoint_displacement(x, 100, -100, 200)
             for i in range(x):
                 for j in range(y):
                     if massive[i][j] > 0:
                         self.cells[i][j].humidity = min(massive[i][j], 100)
                     else:
                         self.cells[i][j].humidity = max(massive[i][j], -100)
-            #generate radioactivity
-<<<<<<< HEAD
-            massive = midpoint_displacement(x, 100, 99, 150)
-            for i in range(x):
-                for j in range(y):
-                    if massive[i][j] > 0:
-                        self.cells[i][j].radioactivity = min(massive[i][j], 100)
-                    else:
-                        self.cells[i][j].radioactivity = max(massive[i][j], -100)            
-=======
-            #massive = midpoint_displacement(x, 100, 99)
-            #for i in range(x):
-            #    for j in range(y):
-            #        if massive[i][j] > 0:
-            #            self.cells[i][j].radioactivity = min(massive[i][j], 100)
-            #        else:
-            #            self.cells[i][j].radioactivity = max(massive[i][j], -100)
->>>>>>> b654f2e087cfeee1553166b4e01c77436fde1225
+            #generate radioactivity           
+            massive = midpoint_displacement(x, 0, -100, 200)
+          #  for i in range(x):
+          #      for j in range(y):
+          #          if massive[i][j] > 0:
+          #              self.cells[i][j].radioactivity = min(massive[i][j], 100)
+          #          else:
+          #              self.cells[i][j].radioactivity = max(massive[i][j], -100)
+            self.cloud.mod(self)
         generate_field(self.cells, x, y)        
-                
+              
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
