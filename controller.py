@@ -26,7 +26,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         if interface.cell_spawn.pressed and (not settings.pen.pressed) and (event.button == 3):
             x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
             settings.cell = field.cells[x_cell][y_cell]
-            settings.update_cell()
+            settings.update_slider()
             if x_cell != None:
                 field.cells[x_cell][y_cell].live = 5
 
@@ -45,6 +45,10 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mouse on button pen
             if mouse_pos_check(pygame.mouse.get_pos(), settings.pen.bg_rect):
                 settings.pen.change_press()
+            if mouse_pos_check(pygame.mouse.get_pos(), settings.cell_button.bg_rect):
+                settings.cell_button.change_press()
+            if mouse_pos_check(pygame.mouse.get_pos(), settings.field_button.bg_rect):
+                settings.field_button.change_press()
             # if mouse on button clear field
             if mouse_pos_check(pygame.mouse.get_pos(), interface.clear.bg_rect):
                 for i in range(field.size_x):
@@ -65,10 +69,11 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
 
     if settings.pen.pressed and pygame.mouse.get_pressed()[2]:
         x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
-        settings.cell_pen = field.cells[x_cell][y_cell]
-        settings.update_cell()
-        if x_cell != None:
-            field.cells[x_cell][y_cell].live = 5
+        settings.cell = field.cells[x_cell][y_cell]
+        settings.redraw()
+        if settings.cell_button.pressed:
+            if x_cell is not None:
+                field.cells[x_cell][y_cell].live = 5
     # if mouse on speed_slider
     if pygame.mouse.get_pressed()[0]:
         interface.slider.change_value()

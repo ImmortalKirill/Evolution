@@ -32,7 +32,7 @@ class Cell:
                       0,
                       math.floor(255 * (self.genes[0] + 100) / 200))
         self.color_bg = (
-        math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
+            math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
 
 
 class Button:
@@ -118,7 +118,7 @@ class Slider(Button):
                                                  self.current_value_points, self.bg_rect[3] - 3))
 
         print_text(screen, f"{self.text}: {self.get_value()}", self.text_color, self.bg_rect[0] + (self.bg_rect[2] / 2),
-                   self.bg_rect[1] + self.bg_rect[3]*1.5, int(self.bg_rect[3]/2))
+                   self.bg_rect[1] + self.bg_rect[3] * 1.5, int(self.bg_rect[3] / 2))
 
     # allows users to change value of the slider by dragging it.
     def change_value(self) -> None:
@@ -177,7 +177,6 @@ class Interface:
         self.population_spawn.draw(screen)
 
 
-
 class Settings(Interface):
     """creates class of additional menu with buttons"""
 
@@ -187,13 +186,21 @@ class Settings(Interface):
         self.background_color = (100, 100, 100)
         self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, indent, 150, 30],
                                             text='humidity', upper_value=200, minus_value=100)
-        self.field_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 2*indent, 150, 30],
-                                                 text='radioactivity', upper_value=200, minus_value=100)
-        self.cell_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 4*indent, 150, 30],
-                                            text='humidity', upper_value=200, minus_value=100)
-        self.cell_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5*indent, 150, 30],
-                                                 text='radioactivity', upper_value=200, minus_value=100)
-        self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6*indent, 30, 30], (0, 0, 0), (255, 255, 255), '|', '|', 90)
+        self.field_radioactivity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 2 * indent, 150, 30],
+            text='radioactivity', upper_value=200, minus_value=100)
+        self.cell_humidity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 4 * indent, 150, 30],
+            text='humidity', upper_value=200, minus_value=100)
+        self.cell_radioactivity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5 * indent, 150, 30],
+            text='radioactivity', upper_value=200, minus_value=100)
+        self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 30, 30], (0, 0, 0),
+                          (255, 255, 255), 'p', 'p', 0)
+        self.cell_button = Button([self.game_window[0] + self.game_window[2] + 50, 6 * indent, 30, 30], (0, 0, 0),
+                                  (255, 255, 255), 'c', 'c')
+        self.field_button = Button([self.game_window[0] + self.game_window[2] + 90, 6 * indent, 30, 30], (0, 0, 0),
+                                   (255, 255, 255), 'f', 'f')
         self.font = 0
         self.width = width
         self.status = status
@@ -203,8 +210,6 @@ class Settings(Interface):
         self.game_window_width = game_window_width
         self.cell = Cell()
         self.cell_pen = Cell()
-
-
 
     def draw(self, screen):
         if (self.status % 2) == 1:
@@ -217,15 +222,20 @@ class Settings(Interface):
             self.cell_humidity_slider.draw(screen)
             self.cell_radioactivity_slider.draw(screen)
 
-            print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50, 18)
-            print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350, 18)
+            print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50,
+                       18)
+            print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350,
+                       18)
 
             self.pen.draw(screen)
+            self.cell_button.draw(screen)
+            self.field_button.draw(screen)
         else:
             self.game_window[2] = self.game_window_width
 
     def update(self):
-        """changes values of all sliders in settings"""
+        """changes values of cells and field in settings"""
+
         self.field_humidity_slider.change_value()
         self.cell.humidity = self.field_humidity_slider.get_value()
 
@@ -240,30 +250,47 @@ class Settings(Interface):
 
         self.cell.change_colors()
 
-    def update_cell(self):
-        self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value)\
+    def update_slider(self):
+
+        self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value) \
                                                           * self.field_humidity_slider.scale
 
-        # return round(self.current_value_points / (self.bg_rect[2] / self.upper_value) - self.minus_value)
-        self.field_radioactivity_slider.current_value_points = (self.cell.radioactivity + self.field_radioactivity_slider.minus_value) \
-                                                          * self.field_radioactivity_slider.scale
+        self.field_radioactivity_slider.current_value_points = (self.cell.radioactivity
+                                                                + self.field_radioactivity_slider.minus_value) \
+                                                               * self.field_radioactivity_slider.scale
         self.cell_humidity_slider.current_value_points = (self.cell.genes[0] + self.cell_humidity_slider.minus_value) \
-                                                          * self.cell_humidity_slider.scale
-        self.cell_radioactivity_slider.current_value_points = (self.cell.genes[1] + self.cell_radioactivity_slider.minus_value) \
-                                                          * self.cell_radioactivity_slider.scale
+                                                         * self.cell_humidity_slider.scale
+        self.cell_radioactivity_slider.current_value_points = (self.cell.genes[
+                                                                   1] + self.cell_radioactivity_slider.minus_value) \
+                                                              * self.cell_radioactivity_slider.scale
+
+    def redraw(self):
+        print(self.cell_button.pressed)
+        if self.pen.pressed:
+            if self.cell_button.pressed:
+                print('yes')
+
+                self.cell_humidity_slider.change_value()
+                self.cell.genes[0] = self.cell_humidity_slider.get_value()
+
+                self.cell_radioactivity_slider.change_value()
+                self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
+
+                self.cell.change_colors()
+            if self.field_button.pressed:
+                print('yyes')
+                self.field_humidity_slider.change_value()
+                self.cell.humidity = self.field_humidity_slider.get_value()
+
+                self.field_radioactivity_slider.change_value()
+                self.cell.radioactivity = self.field_radioactivity_slider.get_value()
+                self.cell.change_colors()
+
+
+
 
     def select(self, screen, cell_size, field_x_center, field_y_center):
-        draw_rect = [0]*4
-        draw_rect[0], draw_rect[1] = change_coords(self.rect[0], cell_size, field_x_center, field_y_center,
-                                                   self.game_window, 1)
-
-        pygame.draw.rect(screen, 'green', draw_rect)
-
-
-
-
-
-
+        pass
 
 
 class Field:
@@ -276,47 +303,52 @@ class Field:
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
-        
-        
+
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
+
         def midpoint_displacement(x, upper_point, bottom_point):
             size = x
-            heightmap = [[0]*size for i in range(size)]
-    
+            heightmap = [[0] * size for i in range(size)]
+
             heightmap[0][0] = randint(-bottom_point, upper_point)
             heightmap[size - 1][0] = randint(-bottom_point, upper_point)
             heightmap[0][size - 1] = randint(-bottom_point, upper_point)
             heightmap[size - 1][size - 1] = randint(-bottom_point, upper_point)
-    
+
             q = deque()
             q.append((0, 0, size - 1, size - 1, 200))
-    
+
             while len(q) != 0:
                 top, left, bottom, right, randomness = q.popleft()
-    
+
                 centerX = (left + right) // 2
                 centerY = (top + bottom) // 2
-    
-                heightmap[centerX][top] = (heightmap[left][top] + heightmap[right][top]) // 2 + randint(-randomness, randomness)
-                heightmap[centerX][bottom] = (heightmap[left][bottom] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
-                heightmap[left][centerY] = (heightmap[left][top] + heightmap[left][bottom]) // 2 + randint(-randomness, randomness)
-                heightmap[right][centerY] = (heightmap[right][top] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
-    
+
+                heightmap[centerX][top] = (heightmap[left][top] + heightmap[right][top]) // 2 + randint(-randomness,
+                                                                                                        randomness)
+                heightmap[centerX][bottom] = (heightmap[left][bottom] + heightmap[right][bottom]) // 2 + randint(
+                    -randomness, randomness)
+                heightmap[left][centerY] = (heightmap[left][top] + heightmap[left][bottom]) // 2 + randint(-randomness,
+                                                                                                           randomness)
+                heightmap[right][centerY] = (heightmap[right][top] + heightmap[right][bottom]) // 2 + randint(
+                    -randomness, randomness)
+
                 heightmap[centerX][centerY] = (heightmap[left][top] +
-                                                   heightmap[right][top] +
-                                                   heightmap[left][bottom] +
-                                                   heightmap[right][bottom]) // 4 + \
-                        randint(-randomness, randomness)
-    
+                                               heightmap[right][top] +
+                                               heightmap[left][bottom] +
+                                               heightmap[right][bottom]) // 4 + \
+                                              randint(-randomness, randomness)
+
                 if right - left > 2:
                     q.append((top, left, centerY, centerX, randomness // 2))
                     q.append((top, centerX, centerY, right, randomness // 2))
                     q.append((centerY, left, bottom, centerX, randomness // 2))
                     q.append((centerY, centerX, bottom, right, randomness // 2))
-            return heightmap        
-        def generate_field(cells:list, x, y):
+            return heightmap
+
+        def generate_field(cells: list, x, y):
             """generates field initial conditions"""
             for i in range(x):
                 for l in range(y):
@@ -337,16 +369,17 @@ class Field:
                         self.cells[i][j].humidity = min(massive[i][j], 100)
                     else:
                         self.cells[i][j].humidity = max(massive[i][j], -100)
-            #generate radioactivity
-            #massive = midpoint_displacement(x, 100, 99)
-            #for i in range(x):
+            # generate radioactivity
+            # massive = midpoint_displacement(x, 100, 99)
+            # for i in range(x):
             #    for j in range(y):
             #        if massive[i][j] > 0:
             #            self.cells[i][j].radioactivity = min(massive[i][j], 100)
             #        else:
             #            self.cells[i][j].radioactivity = max(massive[i][j], -100)
-        generate_field(self.cells, x, y)        
-                
+
+        generate_field(self.cells, x, y)
+
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
@@ -356,8 +389,6 @@ class Field:
         """shift of center coordinates on vector(x, y)"""
         self.x_center += vector[0]
         self.y_center += vector[1]
-
-
 
 
 if __name__ == "__main__":
