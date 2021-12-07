@@ -51,9 +51,33 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mouse on button modified born rule
             if mouse_pos_check(pygame.mouse.get_pos(), interface.button_born.bg_rect):
                 if field.neighbors_born < 8:
-                    field.neighbors_born = field.neighbors_born + 1 
+                    field.neighbors_born = field.neighbors_born + 1
+                    interface.button_born.text_pressed = str(int(interface.button_born.text_pressed) + 1)
+                    interface.button_born.text = str(int(interface.button_born.text) + 1)
                 else:
                     field.neighbors_born = 1
+                    interface.button_born.text_pressed = str(1)
+                    interface.button_born.text = str(1)
+             # if mouse on button modified exist start rule
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.button_exist_start.bg_rect):
+                if field.neighbors_exist_start < 8:
+                    field.neighbors_exist_start = field.neighbors_exist_start + 1
+                    interface.button_exist_start.text_pressed = str(int(interface.button_exist_start.text_pressed) + 1)
+                    interface.button_exist_start.text = str(int(interface.button_exist_start.text) + 1)
+                else:
+                    field.neighbors_exist_start = 1
+                    interface.button_exist_start.text_pressed = str(1)
+                    interface.button_exist_start.text = str(1)
+            # if mouse on button modified exist end rule
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.button_exist_end.bg_rect):
+                if field.neighbors_exist_end < 8:
+                    field.neighbors_exist_end = field.neighbors_exist_end + 1
+                    interface.button_exist_end.text_pressed = str(int(interface.button_exist_end.text_pressed) + 1)
+                    interface.button_exist_end.text = str(int(interface.button_exist_end.text) + 1)
+                else:
+                    field.neighbors_exist_end = 1
+                    interface.button_exist_end.text_pressed = str(1)
+                    interface.button_exist_end.text = str(1)            
                 
 
     elif event.type == pygame.MOUSEBUTTONUP:

@@ -189,7 +189,9 @@ class Interface:
         self.pause = Button([0, 700, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
         self.cell_spawn = Button([50, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
         self.population_spawn = Button([100, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+!', '+!')
-        self.button_born = Button([150, 700, 30, 30], (0, 0, 0), (255, 255, 255), '-', '-')
+        self.button_born = Button([650, 700, 30, 30], (0, 0, 0), (255, 255, 255), '3', '3')
+        self.button_exist_start = Button([700, 700, 30, 30], (0, 0, 0), (255, 255, 255), '2', '2')
+        self.button_exist_end = Button([750, 700, 30, 30], (0, 0, 0), (255, 255, 255), '3', '3')
         self.slider = Slider(bg_rect=[200, 700, 300, 30], text='speed')
         self.background_color = (100, 100, 100)
 
@@ -218,6 +220,8 @@ class Interface:
         self.clear.draw(screen)
         self.population_spawn.draw(screen)
         self.button_born.draw(screen)
+        self.button_exist_start.draw(screen)
+        self.button_exist_end.draw(screen)
 
 
 class Settings(Interface):
