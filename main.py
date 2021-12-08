@@ -3,7 +3,7 @@ from vis import draw_game
 from model import *
 from objects import *
 from controller import *
-
+from multiprocessing import Process
 BLACK = (0,0,0)
 # Game screen Height and Width
 HEIGHT = 800
@@ -20,7 +20,7 @@ def game():
     global Game, Main, screen
     # creating initial field
     field = Field()
-    field.new_field(129, 129)
+    field.new_field(120, 120)
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
@@ -31,6 +31,7 @@ def game():
     speed = 1
     # counter of loops in the game
     loop_counter = 0
+
     while Game:
         clock.tick(FPS)
 
@@ -71,7 +72,7 @@ def main():
 
     pygame.quit()
     
-    
-main()
+if __name__ == '__main__':
+    main()
 
 

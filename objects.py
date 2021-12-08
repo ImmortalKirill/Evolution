@@ -32,7 +32,7 @@ class Cell:
                       0,
                       math.floor(255 * (self.genes[0] + 100) / 200))
         self.color_bg = (
-        math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
+        math.floor(255 * (100 + self.radioactivity) / 200), math.floor(255 * (self.food + 100) / 200), math.floor(255 * (100 + self.humidity) / 200))
 
 
 class Button:
@@ -272,7 +272,7 @@ class Field:
             heightmap[size - 1][size - 1] = randint(-bottom_point, upper_point)
     
             q = deque()
-            q.append((0, 0, size - 1, size - 1, 200))
+            q.append((0, 0, size - 1, size - 1, 100))
     
             while len(q) != 0:
                 top, left, bottom, right, randomness = q.popleft()
@@ -326,7 +326,7 @@ class Field:
             #            self.cells[i][j].radioactivity = min(massive[i][j], 100)
             #        else:
             #            self.cells[i][j].radioactivity = max(massive[i][j], -100)
-        generate_field(self.cells, x, y)        
+        generate_field(self.cells, x, y)
                 
         self.x_center = x / 2
         self.y_center = y / 2
