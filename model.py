@@ -1,72 +1,7 @@
 import math
-import multiprocessing
-
 import pygame
 from random import randint
-from multiprocessing import Pool
-
-
-def born_survive(cell, neighbors, genes_to_pass):
-    '''Decides future for cell'''
-    # conditions of birth
-    neighbors_born = 3
-    neighbors_exist_start = 2
-    neighbors_exist_end = 3
-    # radiation influence parameter
-    max_inf = 20
-    edge_of_inf = 10
-
-    food_drop = 2
-    # calculating random mutation parameter
-    # according to cell_radio-resistance and environment radioactivity
-    dif = cell.genes[1] - cell.radioactivity
-    if dif > edge_of_inf:
-        rand_mut = 0
-    else:
-        rand_mut = math.floor(-max_inf / 2 / edge_of_inf * (dif - edge_of_inf))
-
-    if cell.live > 0:
-        # if cell has overpopulation or underpopulation
-        if neighbors < neighbors_exist_start or neighbors > neighbors_exist_end:
-            cell.live -= 5
-            if cell.live <= 0:
-                cell.genes[0] = 0
-                cell.genes[1] = 0
-                # drop of food with some chance
-                cell.food += food_drop
-        else:
-            # Influence of radiation
-            if dif < edge_of_inf:
-                cell.live -= 2
-                if cell.live <= 0:
-                    cell.genes[0] = 0
-                    cell.genes[1] = 0
-            cell.genes[0] += randint(-rand_mut, rand_mut)
-            cell.genes[1] += 1
-            cell.genes[0] = gen_out_of_range(cell.genes[0])
-            cell.genes[1] = gen_out_of_range(cell.genes[1])
-            # if cell has food on it
-            if cell.food > 0:
-                cell.food -= 1
-    # if dead cell has enough parents
-    elif neighbors == neighbors_born:
-        if cell.food > 2:
-            cell.food -= 2
-            cell.live = 5
-        # giving parents genes and random mutation(because of reproduction)
-        for i in range(len(cell.genes)):
-            cell.genes[i] = genes_to_pass[i] / neighbors + randint(-3, 3)
-            cell.genes[i] = gen_out_of_range(cell.genes[i])
-
-
-def gen_out_of_range(gen):
-    """checks if gen is in -100 to 100 range, else changes it"""
-    if gen > 100:
-        gen = 100
-    elif gen < -100:
-        gen = -100
-    return gen
-
+import multiprocessing
 
 def step(Field):
     '''
@@ -123,6 +58,49 @@ def step(Field):
         neighbors[x][y] -= 1
         genes_to_pass[x][y][0] -= field.cells[x][y].genes[0]
 
+    def born_survive(cell, neighbors):
+        '''Decides future for cell'''
+        # calculating random mutation parameter
+        # according to cell_radio-resistance and environment radioactivity
+        dif = cell.genes[1] - cell.radioactivity
+        if dif > edge_of_inf:
+            rand_mut = 0
+        else:
+            rand_mut = math.floor(-max_inf/2/edge_of_inf*(dif - edge_of_inf))
+
+        if cell.live > 0:
+            # if cell has overpopulation or underpopulation
+            if neighbors < neighbors_exist_start or neighbors > neighbors_exist_end:
+                cell.live -= 5
+                if cell.live <= 0:
+                    cell.genes[0] = 0
+                    cell.genes[1] = 0
+                    # drop of food with some chance
+                    cell.food += 3
+            else:
+                # Influence of radiation
+                if dif < edge_of_inf:
+                    cell.live -= 2
+                    if cell.live <= 0:
+                        cell.genes[0] = 0
+                        cell.genes[1] = 0
+                cell.genes[0] += randint(-rand_mut, rand_mut)
+                cell.genes[1] += randint(-rand_mut, rand_mut)
+                cell.genes[0] = gen_out_of_range(cell.genes[0])
+                cell.genes[1] = gen_out_of_range(cell.genes[1])
+                # if cell has food on it
+                if cell.food > 0:
+                    cell.food -= 1
+                    cell.live += 0
+        # if dead cell has enough parents
+        elif neighbors == neighbors_born:
+            if cell.food > 2:
+                cell.food -= 2
+                cell.live = 5
+            # giving parents genes and random mutation(because of reproduction)
+            for i in range(len(cell.genes)):
+                cell.genes[i] = genes_to_pass[x][y][i] / neighbors + randint(-3, 3)
+                cell.genes[i] = gen_out_of_range(cell.genes[i])
     def divide_manager(Field, neighbors, x, y, hum_int, stage_1, stage_2, stage_3):
         """decides how good cell(x, y) will be dividing
         stage_i - rules of goodness"""
@@ -133,7 +111,19 @@ def step(Field):
         elif hum_int ** 2 <= stage_3 ** 2:
             fraun_neighbors(Field, neighbors, x, y)
 
+    def gen_out_of_range(gen):
+        """checks if gen is in -100 to 100 range, else changes it"""
+        if gen > 100:
+            gen = 100
+        elif gen < -100:
+            gen = -100
+        return gen
+
     # Main constants of the game
+    # conditions of birth
+    neighbors_born = Field.neighbors_born
+    neighbors_exist_start = Field.neighbors_exist_start
+    neighbors_exist_end = Field.neighbors_exist_end
     # conditions for dividing stages(good and bad genes-environment combinations)
     # the best combination(gives super dividing)
     stage_1 = 10
@@ -141,7 +131,13 @@ def step(Field):
     stage_2 = 40
     # bad combination
     stage_3 = 60
-
+    # radiation influence parameter
+    max_inf = 20
+    edge_of_inf = 10
+    #cloud moves
+    Field.cloud.clear(Field)
+    Field.cloud.move(Field.size_x, Field.size_y)
+    Field.cloud.mod(Field)
     # list of number of neighbors around 1 cell
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
     # list of sums of genes of life cells around cell and number of life cells
@@ -164,8 +160,9 @@ def step(Field):
         for y in range(0, Field.size_y, 1):
             # Decide if cell born, exist or die
             cell = Field.cells[x][y]
-            born_survive(cell, neighbors[x][y], genes_to_pass[x][y])
+            born_survive(cell, neighbors[x][y])
             Field.cells[x][y].change_colors()
+
 
 
 def change_scale(field, par):
