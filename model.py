@@ -135,9 +135,11 @@ def step(Field):
     max_inf = 20
     edge_of_inf = 10
     #cloud moves
-    Field.cloud.clear(Field)
-    Field.cloud.move(Field.size_x, Field.size_y)
-    Field.cloud.mod(Field)
+    Field.cloud.time += 1
+    if Field.cloud.time % Field.cloud.slow == 0:
+        Field.cloud.clear(Field)
+        Field.cloud.move(Field.size_x, Field.size_y)
+        Field.cloud.mod(Field)
     # list of number of neighbors around 1 cell
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
     # list of sums of genes of life cells around cell and number of life cells

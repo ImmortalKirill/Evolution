@@ -38,7 +38,7 @@ class Cell:
 
 class Cloud:
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, slow):
         cells = [[]]
         size_x = self.size_x = x
         size_y = self.size_y = y
@@ -47,6 +47,8 @@ class Cloud:
         speed_x = self.speed_x = 1
         speed_y = self.speed_y = 1
         count = self.count = 0
+        time = self.time = 0
+        self.slow = slow
 
 
     def move(self, size_x, size_y):
@@ -347,7 +349,7 @@ class Field:
 
 
         #cloud generation
-        self.cloud = Cloud(17, 17)
+        self.cloud = Cloud(17, 17, 3)
         self.cloud.cells = midpoint_displacement(self.cloud.size_x, 100, -100, 500)
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
