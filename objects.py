@@ -305,6 +305,7 @@ class Field:
         neighbors_exist_start = self.neighbors_exist_start = 2
         neighbors_exist_end = self.neighbors_exist_end = 3
         cloud = self.cloud = 0
+        #live_cells = self.live_cells = []
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
@@ -371,6 +372,7 @@ class Field:
                         cells[i][l].live = 5
                         cells[i][l].genes[0] = 0
                         cells[i][l].genes[1] = 50
+                        #self.live_cells.append([i, l])
                         #cells[i][l].food = randint(0, 1)
             #generate humadity
             massive = midpoint_displacement(x, 100, -100, 200)
@@ -390,7 +392,6 @@ class Field:
           #              self.cells[i][j].radioactivity = max(massive[i][j], -100)
             self.cloud.mod(self)
         generate_field(self.cells, x, y)
-
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x

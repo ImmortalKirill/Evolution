@@ -75,6 +75,7 @@ def step(Field):
                 if cell.live <= 0:
                     cell.genes[0] = 0
                     cell.genes[1] = 0
+                    #Field.live_cells.pop(finding(Field.live_cells, x, y))
                     # drop of food with some chance
                     cell.food += 3
             else:
@@ -97,6 +98,7 @@ def step(Field):
             if cell.food > 2:
                 cell.food -= 2
                 cell.live = 5
+                #Field.live_cells.append([x, y])
             # giving parents genes and random mutation(because of reproduction)
             for i in range(len(cell.genes)):
                 cell.genes[i] = genes_to_pass[x][y][i] / neighbors + randint(-3, 3)
@@ -118,6 +120,12 @@ def step(Field):
         elif gen < -100:
             gen = -100
         return gen
+    
+    def finding(massive, x, y):
+        for i in range(len(massive)):
+            if massive[i][0] == x:
+                if massive[i][1] == y:
+                    return i
 
     # Main constants of the game
     # conditions of birth
@@ -144,8 +152,8 @@ def step(Field):
     neighbors = [[0] * Field.size_y for i in range(Field.size_x)]
     # list of sums of genes of life cells around cell and number of life cells
     genes_to_pass = [[[0, 0] for j in range(Field.size_y)] for i in range(Field.size_x)]
-    for x in range(0, Field.size_x, 1):
-        for y in range(0, Field.size_y, 1):
+    for x in range(0, Field.size_x):
+        for y in range(0, Field.size_y):
             # counting number of neighbors
             if Field.cells[x][y].live > 0:
                 # calculating humidity interaction parameter
@@ -153,16 +161,23 @@ def step(Field):
                 hum_int = Field.cells[x][y].genes[0] - Field.cells[x][y].humidity
                 # condition decider, calculates how good cell will divide
                 divide_manager(Field, neighbors, x, y, hum_int, stage_1, stage_2, stage_3)
+    '''for cell in Field.live_cells:
+        # calculating humidity interaction parameter
+        # tells how close humidity and corresponding genes are
+        hum_int = Field.cells[cell[0]][cell[1]].genes[0] - Field.cells[cell[0]][cell[1]].humidity
+        # condition decider, calculates how good cell will divide
+        divide_manager(Field, neighbors, cell[0], cell[1], hum_int, stage_1, stage_2, stage_3)'''       
 
     for x in range(Field.size_x):
         '''print(x)
         p = Pool(multiprocessing.cpu_count())
         p.map(born_survive, zip(Field.cells[x], neighbors[x], genes_to_pass[x]))
         p.join()'''
-        for y in range(0, Field.size_y, 1):
+        for y in range(0, Field.size_y):
             # Decide if cell born, exist or die
-            cell = Field.cells[x][y]
-            born_survive(cell, neighbors[x][y])
+            #cell = Field.cells[x][y]
+            #born_survive(cell, neighbors[x][y])
+            born_survive(Field.cells[x][y], neighbors[x][y])
             Field.cells[x][y].change_colors()
 
 
