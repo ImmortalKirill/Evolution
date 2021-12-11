@@ -4,18 +4,20 @@ import pygame.freetype
 import math
 from pygame.draw import *
 from collections import deque
-
+from numpy import array
+from numba import njit
+from numba.experimental import jitclass
 
 class Cell:
     """ class of one cell on a Field"""
 
     def __init__(self):
-        live = self.live = 0
-        x = self.x = 0
-        y = self.y = 0
+        self.live = 0
+        self.x = 0
+        self.y = 0
         self.color = (255, 255, 255)
         self.color_bg = (0, 0, 0)
-        self.genes = [0, 0]
+        self.genes = array([0, 0])
         self.humidity = 0
         # radioactive resistance
         self.radioactivity = -100
@@ -24,15 +26,8 @@ class Cell:
     def new_cell(self, x0, y0):
         x = self.x = x0
         y = self.y = y0
-        self.change_colors()
 
-    def change_colors(self):
-        """changes color of cell and cell_bg according to genes"""
-        self.color = (math.floor(255 * (self.genes[1] + 100) / 200),
-                      0,
-                      math.floor(255 * (self.genes[0] + 100) / 200))
-        self.color_bg = (
-        math.floor(255 * (100 + self.radioactivity) / 200), math.floor(255 * (self.food + 100) / 200), math.floor(255 * (100 + self.humidity) / 200))
+
 
 
 
@@ -56,7 +51,6 @@ class Cloud:
         if self.count % 20 == 0:
             self.speed_x = randint(-2, 3)
             self.speed_y = randint(-2, 3)
-
     def mod(self, field):
         #modified field
         field_x = field.size_x
@@ -91,8 +85,8 @@ class Button:
         self.text_color = text_color
         self.text = text
         self.bg_color = bg_color
-        self.bg_rect = bg_rect
-        self.text_rect = [0, 0, 0, 0]
+        self.bg_rect = array(bg_rect)
+        self.text_rect = array([0, 0, 0, 0])
         self.angle = angle
         # pressed = 0 if not pressed and 1 if pressed
         self.pressed = 0
@@ -124,8 +118,7 @@ class Button:
         self.pressed += 1
         self.pressed = self.pressed % 2
 
-
-from model import mouse_pos_check, print_text
+from model import mouse_pos_check, print_text, change_colors
 
 
 class Slider(Button):
@@ -164,7 +157,7 @@ class Slider(Button):
     def change_value(self) -> None:
         # If mouse is pressed and mouse is inside the slider
         mousePos = pygame.mouse.get_pos()
-        if mouse_pos_check(mousePos, self.bg_rect):
+        if mouse_pos_check(array(mousePos), self.bg_rect):
             # the size of the slider
             self.current_value_points = mousePos[0] - self.bg_rect[0]
 
@@ -173,7 +166,6 @@ class Slider(Button):
                 self.current_value_points = 0
             if self.current_value_points > self.bg_rect[2]:
                 self.current_value_points = self.bg_rect[2]
-
 
 class Interface:
     """creates class with all buttons"""
@@ -215,7 +207,6 @@ class Interface:
         self.slider.draw(screen)
         self.clear.draw(screen)
         self.population_spawn.draw(screen)
-
 
 class Settings(Interface):
     """creates class of additional menu with buttons"""
@@ -270,7 +261,7 @@ class Settings(Interface):
         self.cell_radioactivity_slider.change_value()
         self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
 
-        self.cell.change_colors()
+        self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food, self.cell.radioactivity)
 
     def update_cell(self):
         self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value)\
@@ -293,16 +284,16 @@ class Field:
     """ class Field, consists of cells"""
 
     def __init__(self):
-        cells = self.cells = [[]]
-        x_center = self.x_center = 0
-        y_center = self.y_center = 0
-        scale = self.scale = 50
-        size_x = self.size_x = 0
-        size_y = self.size_y = 0
-        neighbors_born = self.neighbors_born = 3
-        neighbors_exist_start = self.neighbors_exist_start = 2
-        neighbors_exist_end = self.neighbors_exist_end = 3
-        cloud = self.cloud = 0
+        self.cells = [[]]
+        self.x_center = 0
+        self.y_center = 0
+        self.scale = 50
+        self.size_x = 0
+        self.size_y = 0
+        self.neighbors_born = 3
+        self.neighbors_exist_start = 2
+        self.neighbors_exist_end = 3
+        self.cloud = 0
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
