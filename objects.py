@@ -32,17 +32,35 @@ class Cell:
 
 
 class Cloud:
-
-    def __init__(self, x, y):
-        cells = [[]]
+    '''
+    Create cloud with parametrs:
+    cells - information about radiation
+    size_x, size_y - sizes of cloud
+    x, y - coordinates of left upper cornor
+    speed_x, speed_y - speed of cloud
+    count - periodic of changing speed
+    time - self time of cloud
+    slow - how often cloud moves
+    '''
+    def __init__(self, x, y, slow):
         size_x = self.size_x = x
         size_y = self.size_y = y
+        cells = self.cells = [[0] * size_x for i in range(size_y)]
         x = self.x = 0
         y = self.y = 0
         speed_x = self.speed_x = 1
         speed_y = self.speed_y = 1
         count = self.count = 0
+        time = self.time = 0
+        self.slow = slow
 
+
+    def new_cloud(self):
+        cells = [[0] * self.size_x for i in range(self.size_y)]
+        for i in range(self.size_x):
+            for j in range(self.size_y):
+                pass
+        pass
 
     def move(self, size_x, size_y):
         self.x = (self.x + self.speed_x) % size_x
@@ -53,11 +71,9 @@ class Cloud:
             self.speed_y = randint(-2, 3)
     def mod(self, field):
         #modified field
-        field_x = field.size_x
-        field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
-                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.cells[i][j]
+                field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity = self.cells[i][j]
 
 
     def clear(self, field):
@@ -284,16 +300,17 @@ class Field:
     """ class Field, consists of cells"""
 
     def __init__(self):
-        self.cells = [[]]
-        self.x_center = 0
-        self.y_center = 0
-        self.scale = 50
-        self.size_x = 0
-        self.size_y = 0
-        self.neighbors_born = 3
-        self.neighbors_exist_start = 2
-        self.neighbors_exist_end = 3
-        self.cloud = 0
+        cells = self.cells = [[]]
+        x_center = self.x_center = 0
+        y_center = self.y_center = 0
+        scale = self.scale = 50
+        size_x = self.size_x = 0
+        size_y = self.size_y = 0
+        neighbors_born = self.neighbors_born = 3
+        neighbors_exist_start = self.neighbors_exist_start = 2
+        neighbors_exist_end = self.neighbors_exist_end = 3
+        cloud = self.cloud = 0
+        #live_cells = self.live_cells = []
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
@@ -338,8 +355,16 @@ class Field:
 
 
         #cloud generation
-        self.cloud = Cloud(17, 17)
-        self.cloud.cells = midpoint_displacement(self.cloud.size_x, 100, -100, 500)
+        self.cloud = Cloud(33, 33, 3)
+        massive = midpoint_displacement(self.cloud.size_x, -80, -100, 500)
+        for i in range(self.cloud.size_x):
+            for j in range(self.cloud.size_y):
+                if self.cloud.cells[i][j] > 0:
+                    self.cloud.cells[i][j] = min(massive[i][j], 100)
+                else:
+                    self.cloud.cells[i][j] = max(massive[i][j], -100)
+
+
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
                 if self.cloud.cells[i][j] > 0:
@@ -360,6 +385,7 @@ class Field:
                         cells[i][l].live = 5
                         cells[i][l].genes[0] = 0
                         cells[i][l].genes[1] = 50
+                        #self.live_cells.append([i, l])
                         #cells[i][l].food = randint(0, 1)
             #generate humadity
             massive = midpoint_displacement(x, 100, -100, 200)
@@ -379,7 +405,6 @@ class Field:
           #              self.cells[i][j].radioactivity = max(massive[i][j], -100)
             self.cloud.mod(self)
         generate_field(self.cells, x, y)
-
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
