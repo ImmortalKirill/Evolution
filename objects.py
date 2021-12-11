@@ -37,11 +37,20 @@ class Cell:
 
 
 class Cloud:
-
+    '''
+    Create cloud with parametrs:
+    cells - information about radiation
+    size_x, size_y - sizes of cloud
+    x, y - coordinates of left upper cornor
+    speed_x, speed_y - speed of cloud
+    count - periodic of changing speed
+    time - self time of cloud
+    slow - how often cloud moves
+    '''
     def __init__(self, x, y, slow):
-        cells = [[]]
         size_x = self.size_x = x
         size_y = self.size_y = y
+        cells = self.cells = [[0] * size_x for i in range(size_y)]
         x = self.x = 0
         y = self.y = 0
         speed_x = self.speed_x = 1
@@ -49,7 +58,14 @@ class Cloud:
         count = self.count = 0
         time = self.time = 0
         self.slow = slow
-
+        
+        
+    def new_cloud(self):
+        cells = [[0] * self.size_x for i in range(self.size_y)]
+        for i in range(self.size_x):
+            for j in range(self.size_y):
+                pass
+        pass
 
     def move(self, size_x, size_y):
         self.x = (self.x + self.speed_x) % size_x
@@ -61,11 +77,9 @@ class Cloud:
 
     def mod(self, field):
         #modified field
-        field_x = field.size_x
-        field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
-                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.cells[i][j]
+                field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity = self.cells[i][j]
 
 
     def clear(self, field):
@@ -350,8 +364,16 @@ class Field:
 
 
         #cloud generation
-        self.cloud = Cloud(17, 17, 3)
-        self.cloud.cells = midpoint_displacement(self.cloud.size_x, 100, -100, 500)
+        self.cloud = Cloud(33, 33, 3)
+        massive = midpoint_displacement(self.cloud.size_x, -80, -100, 500)
+        for i in range(self.cloud.size_x):
+            for j in range(self.cloud.size_y):
+                if self.cloud.cells[i][j] > 0:
+                    self.cloud.cells[i][j] = min(massive[i][j], 100)
+                else:
+                    self.cloud.cells[i][j] = max(massive[i][j], -100)        
+        
+        
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
                 if self.cloud.cells[i][j] > 0:
