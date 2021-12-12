@@ -195,6 +195,9 @@ class Settings(Interface):
         self.cell_radioactivity_slider = Slider(
             bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5 * indent, 150, 30],
             text='radioactivity', upper_value=200, minus_value=100)
+        self.pen_radius = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 6.5 * indent, 150, 30],
+            text='pen radius', upper_value=10, minus_value=0)
         self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 30, 30], (0, 0, 0),
                           (255, 255, 255), 'p', 'p', 0)
         self.cell_button = Button([self.game_window[0] + self.game_window[2] + 50, 6 * indent, 30, 30], (0, 0, 0),
@@ -210,6 +213,7 @@ class Settings(Interface):
         self.game_window_width = game_window_width
         self.cell = Cell()
         self.cell_pen = Cell()
+        self.pen_rect = (0, 0, 0, 0)
 
     def draw(self, screen):
         if (self.status % 2) == 1:
@@ -221,6 +225,7 @@ class Settings(Interface):
             self.field_radioactivity_slider.draw(screen)
             self.cell_humidity_slider.draw(screen)
             self.cell_radioactivity_slider.draw(screen)
+            self.pen_radius.draw(screen)
 
             print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50,
                        18)
@@ -228,25 +233,31 @@ class Settings(Interface):
                        18)
 
             self.pen.draw(screen)
-            self.cell_button.draw(screen)
-            self.field_button.draw(screen)
+            if self.pen.pressed:
+                pygame.draw.rect(screen, 'green', self.pen_rect, 4)
+                self.cell_button.draw(screen)
+                self.field_button.draw(screen)
         else:
             self.game_window[2] = self.game_window_width
 
     def update(self):
         """changes values of cells and field in settings"""
 
-        self.field_humidity_slider.change_value()
-        self.cell.humidity = self.field_humidity_slider.get_value()
+        self.pen_radius.change_value()
 
-        self.field_radioactivity_slider.change_value()
-        self.cell.radioactivity = self.field_radioactivity_slider.get_value()
+        if (not self.pen.pressed) or self.field_button.pressed:
+            self.field_humidity_slider.change_value()
+            self.cell.humidity = self.field_humidity_slider.get_value()
 
-        self.cell_humidity_slider.change_value()
-        self.cell.genes[0] = self.cell_humidity_slider.get_value()
+            self.field_radioactivity_slider.change_value()
+            self.cell.radioactivity = self.field_radioactivity_slider.get_value()
 
-        self.cell_radioactivity_slider.change_value()
-        self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
+        if (not self.pen.pressed) or self.cell_button.pressed:
+            self.cell_humidity_slider.change_value()
+            self.cell.genes[0] = self.cell_humidity_slider.get_value()
+
+            self.cell_radioactivity_slider.change_value()
+            self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
 
         self.cell.change_colors()
 
@@ -265,11 +276,8 @@ class Settings(Interface):
                                                               * self.cell_radioactivity_slider.scale
 
     def redraw(self):
-        print(self.cell_button.pressed)
         if self.pen.pressed:
             if self.cell_button.pressed:
-                print('yes')
-
                 self.cell_humidity_slider.change_value()
                 self.cell.genes[0] = self.cell_humidity_slider.get_value()
 
@@ -278,7 +286,6 @@ class Settings(Interface):
 
                 self.cell.change_colors()
             if self.field_button.pressed:
-                print('yyes')
                 self.field_humidity_slider.change_value()
                 self.cell.humidity = self.field_humidity_slider.get_value()
 
@@ -286,11 +293,6 @@ class Settings(Interface):
                 self.cell.radioactivity = self.field_radioactivity_slider.get_value()
                 self.cell.change_colors()
 
-
-
-
-    def select(self, screen, cell_size, field_x_center, field_y_center):
-        pass
 
 
 class Field:
