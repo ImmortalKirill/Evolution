@@ -95,7 +95,7 @@ class Cloud:
 class Button:
     """class of buttons"""
 
-    def __init__(self, bg_rect: list, text_color, text, bg_color=(230, 230, 250), text_pressed='', angle=0):
+    def __init__(self, bg_rect: list, text_color, text, bg_color=(230, 230, 250), text_pressed='', angle=0, size=24):
         """x,y - coordinates of left top corner
         color - color of bottom
         text - text on the bottom
@@ -111,25 +111,27 @@ class Button:
         self.bg_rect = array(bg_rect)
         self.text_rect = array([0, 0, 0, 0])
         self.angle = angle
+        self.size = size
         # pressed = 0 if not pressed and 1 if pressed
         self.pressed = 0
-        self.pressed_color = (200, 200, 200)
+        self.pressed_color = (100, 100, 120)
         self.text_pressed = text_pressed
 
     def draw(self, screen):
         """draws button with text on the screen"""
-        rect(screen, self.bg_color, self.bg_rect)
 
-        font = pygame.freetype.SysFont("Arial", 10)  # FIXME text
+        font = pygame.freetype.SysFont(pygame.freetype.get_default_font(), self.size)
 
-        if (self.pressed == 0) or (self.text_pressed == '0'):
-            font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
-                           bgcolor=self.bg_color, rotation=self.angle, size=24)
+        if self.pressed == 0:
+            rect(screen, self.bg_color, self.bg_rect)
+            print_text(screen, self.text, self.text_color, self.bg_rect[0] + self.bg_rect[2]/2, self.bg_rect[1] +
+                       self.bg_rect[3]/2, self.size, self.bg_color)
         else:
-            font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text_pressed,
-                           fgcolor=self.text_color, bgcolor=self.pressed_color, size=24)
+            rect(screen, self.pressed_color, self.bg_rect)
+            print_text(screen, self.text_pressed, (255, 255, 255), self.bg_rect[0] + self.bg_rect[2]/2,
+                       self.bg_rect[1] + self.bg_rect[3]/2, self.size, self.pressed_color)
 
-        text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=24)
+        text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=self.size)
 
         self.text_rect[0] = text_rect_fig.left
         self.text_rect[1] = text_rect_fig.top
@@ -199,10 +201,10 @@ class Interface:
         self.WIDTH = width
         self.HEIGHT = height
         # Buttons of Interface
-        self.clear = Button([600, 710, 30, 30], (0, 0, 0), '0', text_pressed='0')
-        self.pause = Button([0, 710, 30, 30], (0, 0, 0),  '=', text_pressed='>', angle=90)
-        self.cell_spawn = Button([50, 710, 30, 30], (0, 0, 0), '+', text_pressed='+')
-        self.population_spawn = Button([100, 710, 30, 30], (0, 0, 0), '+!', text_pressed='+!')
+        self.clear = Button([600, 710, 50, 30], (0, 0, 0), 'clear', text_pressed='0', size=16)
+        self.pause = Button([10, 710, 30, 30], (0, 0, 0),  'II', text_pressed='>', angle=90)
+        self.cell_spawn = Button([50, 710, 30, 30], (0, 0, 0), '+', text_pressed='+', size=30)
+        self.population_spawn = Button([100, 710, 80, 30], (0, 0, 0), 'new field', text_pressed='new field', size=16)
         self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
         self.background_color = (129, 129, 144)
 
@@ -268,12 +270,12 @@ class Settings(Interface):
         self.pen_radius = Slider(
             bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 6.5 * indent,
                      self.slider_width, 30], text='pen radius', upper_value=10, minus_value=0)
-        self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 30, 30], (0, 0, 0), 'p',
-                          text_pressed='p', angle=0)
-        self.cell_button = Button([self.game_window[0] + self.game_window[2] + 50, 6 * indent, 30, 30], (0, 0, 0), 'c',
-                                  text_pressed='c')
-        self.field_button = Button([self.game_window[0] + self.game_window[2] + 90, 6 * indent, 30, 30], (0, 0, 0), 'f',
-                                   text_pressed='f')
+        self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 40, 30], (0, 0, 0), 'pen',
+                          text_pressed='pen', angle=0, size=16)
+        self.cell_button = Button([self.game_window[0] + self.game_window[2] + 60, 6 * indent, 40, 30], (0, 0, 0),
+                                  'cell', text_pressed='cell', size=16)
+        self.field_button = Button([self.game_window[0] + self.game_window[2] + 110, 6 * indent, 40, 30], (0, 0, 0),
+                                   'field', text_pressed='field', size=16)
 
 
     def draw(self, screen):

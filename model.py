@@ -298,11 +298,11 @@ def change_coords(pos: list, cell_size, field_x_center, field_y_center, game_win
         Y = game_window_y_center - (y - field_y_center * cell_size)
         return X, Y
 
-def print_text(screen, text: str, text_color, x, y, size):
+def print_text(screen, text: str, text_color, x, y, size, bg_color=None):
     """function that prints given text with pygame
     x,y - coors of text center"""
     font = pygame.font.Font(pygame.font.get_default_font(), size)
-    text_rendered = font.render(text, True, text_color)
+    text_rendered = font.render(text, True, text_color, bg_color)
     text_rect = text_rendered.get_rect()
     text_rect.center = (x, y)
     screen.blit(text_rendered, text_rect)
