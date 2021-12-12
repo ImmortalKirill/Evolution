@@ -244,6 +244,9 @@ class Settings(Interface):
         self.field_radioactivity_slider = Slider(
             bg_rect=[self.game_window[0] + self.game_window[2] + 10, 2 * indent, 150, 30],
             text='radioactivity', upper_value=200, minus_value=100)
+        self.field_food_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 3 * indent, 150, 30],
+            text='food', upper_value=200, minus_value=100)
         self.cell_humidity_slider = Slider(
             bg_rect=[self.game_window[0] + self.game_window[2] + 10, 4 * indent, 150, 30],
             text='humidity', upper_value=200, minus_value=100)
@@ -278,6 +281,7 @@ class Settings(Interface):
                                                              self.HEIGHT], 0)
             self.field_humidity_slider.draw(screen)
             self.field_radioactivity_slider.draw(screen)
+            self.field_food_slider.draw(screen)
             self.cell_humidity_slider.draw(screen)
             self.cell_radioactivity_slider.draw(screen)
             self.pen_radius.draw(screen)
@@ -289,7 +293,7 @@ class Settings(Interface):
 
             self.pen.draw(screen)
             if self.pen.pressed:
-                pygame.draw.rect(screen, 'green', self.pen_rect, 4)
+                pygame.draw.rect(screen, 'red', self.pen_rect, 4)
                 self.cell_button.draw(screen)
                 self.field_button.draw(screen)
         else:
@@ -306,6 +310,9 @@ class Settings(Interface):
 
             self.field_radioactivity_slider.change_value()
             self.cell.radioactivity = self.field_radioactivity_slider.get_value()
+
+            self.field_food_slider.change_value()
+            self.cell.food = self.field_food_slider.get_value()
 
         if (not self.pen.pressed) or self.cell_button.pressed:
             self.cell_humidity_slider.change_value()
@@ -324,6 +331,11 @@ class Settings(Interface):
         self.field_radioactivity_slider.current_value_points = (self.cell.radioactivity
                                                                 + self.field_radioactivity_slider.minus_value) \
                                                                * self.field_radioactivity_slider.scale
+
+        self.field_food_slider.current_value_points = (self.cell.food
+                                                                + self.field_food_slider.minus_value) \
+                                                               * self.field_food_slider.scale
+
         self.cell_humidity_slider.current_value_points = (self.cell.genes[0] + self.cell_humidity_slider.minus_value) \
                                                          * self.cell_humidity_slider.scale
         self.cell_radioactivity_slider.current_value_points = (self.cell.genes[
@@ -347,6 +359,9 @@ class Settings(Interface):
 
                 self.field_radioactivity_slider.change_value()
                 self.cell.radioactivity = self.field_radioactivity_slider.get_value()
+
+                self.field_food_slider.change_value()
+                self.cell.food = self.field_food_slider.get_value()
 
                 self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food,
                                                                     self.cell.radioactivity)
