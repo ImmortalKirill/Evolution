@@ -124,12 +124,21 @@ class Button:
 
         if self.pressed == 0:
             rect(screen, self.bg_color, self.bg_rect)
-            print_text(screen, self.text, self.text_color, self.bg_rect[0] + self.bg_rect[2]/2, self.bg_rect[1] +
-                       self.bg_rect[3]/2, self.size, self.bg_color)
+            if self.text == '+':
+                print_text(screen, self.text, self.text_color, self.bg_rect[0] + self.bg_rect[2] / 2 , self.bg_rect[1] +
+                           self.bg_rect[3] / 2 - 3, self.size, self.bg_color)
+            else:
+                print_text(screen, self.text, self.text_color, self.bg_rect[0] + self.bg_rect[2]/2, self.bg_rect[1] +
+                           self.bg_rect[3]/2, self.size, self.bg_color)
+
         else:
             rect(screen, self.pressed_color, self.bg_rect)
-            print_text(screen, self.text_pressed, (255, 255, 255), self.bg_rect[0] + self.bg_rect[2]/2,
-                       self.bg_rect[1] + self.bg_rect[3]/2, self.size, self.pressed_color)
+            if (self.text_pressed == '+') or (self.text_pressed == '>'):
+                print_text(screen, self.text_pressed, (255, 255, 255), self.bg_rect[0] + self.bg_rect[2] / 2 , self.bg_rect[1] +
+                           self.bg_rect[3] / 2 - 3, self.size, self.pressed_color)
+            else:
+                print_text(screen, self.text_pressed, (255, 255, 255), self.bg_rect[0] + self.bg_rect[2]/2,
+                           self.bg_rect[1] + self.bg_rect[3]/2, self.size, self.pressed_color)
 
         text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=self.size)
 
@@ -203,7 +212,7 @@ class Interface:
         # Buttons of Interface
         self.clear = Button([600, 710, 50, 30], (0, 0, 0), 'clear', text_pressed='0', size=16)
         self.pause = Button([10, 710, 30, 30], (0, 0, 0),  'II', text_pressed='>', angle=90)
-        self.cell_spawn = Button([50, 710, 30, 30], (0, 0, 0), '+', text_pressed='+', size=30)
+        self.cell_spawn = Button([50, 710, 30, 30], (0, 0, 0), '+', text_pressed='+', size=24)
         self.population_spawn = Button([100, 710, 80, 30], (0, 0, 0), 'new field', text_pressed='new field', size=16)
         self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
         self.background_color = (129, 129, 144)
