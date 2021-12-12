@@ -95,7 +95,7 @@ class Cloud:
 class Button:
     """class of buttons"""
 
-    def __init__(self, bg_rect: list, text_color, bg_color, text, text_pressed='', angle=0):
+    def __init__(self, bg_rect: list, text_color, text, bg_color=(230, 230, 250), text_pressed='', angle=0):
         """x,y - coordinates of left top corner
         color - color of bottom
         text - text on the bottom
@@ -145,7 +145,7 @@ from model import mouse_pos_check, print_text, change_coords, change_colors
 
 
 class Slider(Button):
-    def __init__(self, bg_rect, text_color=(0, 0, 0), bg_color=(0, 0, 0), text='Parameter', text_pressed='', angle=0,
+    def __init__(self, bg_rect, text_color=(0, 0, 0), text='Parameter', bg_color=(0, 0, 0),  text_pressed='', angle=0,
                  upper_value: int = 10, current_value_points: int = 30, minus_value=0):
         """position - tuple of left top angle coors of slider - (x, y)
         upper_value - maximum value that parameter can reach
@@ -153,7 +153,7 @@ class Slider(Button):
         text - name of changed parameter
         outline_size - tuple of width and height of the slider
         """
-        super().__init__(bg_rect, text_color, bg_color, text, text_pressed, angle)
+        super().__init__(bg_rect, text_color, text, bg_color, text_pressed, angle)
         self.current_value_points = current_value_points
         self.upper_value = upper_value
         self.font = 0
@@ -199,13 +199,12 @@ class Interface:
         self.WIDTH = width
         self.HEIGHT = height
         # Buttons of Interface
-        # FixME This should be a real button with position
-        self.clear = Button([600, 700, 30, 30], (0, 0, 0), (255, 255, 255), '0', '0')
-        self.pause = Button([0, 700, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
-        self.cell_spawn = Button([50, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
-        self.population_spawn = Button([100, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+!', '+!')
-        self.slider = Slider(bg_rect=[200, 700, 300, 30], text='speed')
-        self.background_color = (100, 100, 100)
+        self.clear = Button([600, 710, 30, 30], (0, 0, 0), '0', text_pressed='0')
+        self.pause = Button([0, 710, 30, 30], (0, 0, 0),  '=', text_pressed='>', angle=90)
+        self.cell_spawn = Button([50, 710, 30, 30], (0, 0, 0), '+', text_pressed='+')
+        self.population_spawn = Button([100, 710, 30, 30], (0, 0, 0), '+!', text_pressed='+!')
+        self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
+        self.background_color = (129, 129, 144)
 
     def draw(self, screen):
         """draws interface"""
@@ -236,34 +235,11 @@ class Settings(Interface):
     """creates class of additional menu with buttons"""
 
     def __init__(self, width, height, game_window, game_window_width, status,
-                 indent=100):
+                 indent=100, slider_width=150):
         super().__init__(width, height, game_window)
-        self.background_color = (100, 100, 100)
-        self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, indent, 150, 30],
-                                            text='humidity', upper_value=200, minus_value=100)
-        self.field_radioactivity_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 2 * indent, 150, 30],
-            text='radioactivity', upper_value=200, minus_value=100)
-        self.field_food_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 3 * indent, 150, 30],
-            text='food', upper_value=200, minus_value=100)
-        self.cell_humidity_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 4 * indent, 150, 30],
-            text='humidity', upper_value=200, minus_value=100)
-        self.cell_radioactivity_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5 * indent, 150, 30],
-            text='radioactivity', upper_value=200, minus_value=100)
-        self.pen_radius = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + 10, 6.5 * indent, 150, 30],
-            text='pen radius', upper_value=10, minus_value=0)
-        self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 30, 30], (0, 0, 0),
-                          (255, 255, 255), 'p', 'p', 0)
-        self.cell_button = Button([self.game_window[0] + self.game_window[2] + 50, 6 * indent, 30, 30], (0, 0, 0),
-                                  (255, 255, 255), 'c', 'c')
-        self.field_button = Button([self.game_window[0] + self.game_window[2] + 90, 6 * indent, 30, 30], (0, 0, 0),
-                                   (255, 255, 255), 'f', 'f')
         self.font = 0
         self.width = width
+        self.slider_width = slider_width
         self.status = status
         self.field_text = 'Field'
         self.cell_text = 'Cell'
@@ -272,6 +248,33 @@ class Settings(Interface):
         self.cell = Cell()
         self.cell_pen = Cell()
         self.pen_rect = (0, 0, 0, 0)
+        self.indent = indent
+        self.background_color = (129, 129, 144)
+        self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] +
+                                                     (self.width - self.slider_width)/2, indent, self.slider_width, 30],
+                                            text='humidity', upper_value=200, minus_value=100)
+        self.field_radioactivity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 2 * indent,
+                     self.slider_width, 30], text='radioactivity', upper_value=200, minus_value=100)
+        self.field_food_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 3 * indent,
+                     self.slider_width, 30], text='food', upper_value=200, minus_value=100)
+        self.cell_humidity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 4 * indent,
+                     self.slider_width, 30], text='humidity', upper_value=200, minus_value=100)
+        self.cell_radioactivity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 5 * indent,
+                     self.slider_width, 30], text='radioactivity', upper_value=200, minus_value=100)
+        self.pen_radius = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 6.5 * indent,
+                     self.slider_width, 30], text='pen radius', upper_value=10, minus_value=0)
+        self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 30, 30], (0, 0, 0), 'p',
+                          text_pressed='p', angle=0)
+        self.cell_button = Button([self.game_window[0] + self.game_window[2] + 50, 6 * indent, 30, 30], (0, 0, 0), 'c',
+                                  text_pressed='c')
+        self.field_button = Button([self.game_window[0] + self.game_window[2] + 90, 6 * indent, 30, 30], (0, 0, 0), 'f',
+                                   text_pressed='f')
+
 
     def draw(self, screen):
         if (self.status % 2) == 1:
@@ -288,8 +291,8 @@ class Settings(Interface):
 
             print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50,
                        18)
-            print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350,
-                       18)
+            print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100,
+                       self.indent*3.75, 18)
 
             self.pen.draw(screen)
             if self.pen.pressed:
