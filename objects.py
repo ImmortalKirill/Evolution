@@ -253,13 +253,13 @@ class Settings(Interface):
         self.indent = indent
         self.background_color = (129, 129, 144)
         self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] +
-                                                     (self.width - self.slider_width)/2, indent, self.slider_width, 30],
+                                                     (self.width - self.slider_width)/2, indent-25, self.slider_width, 30],
                                             text='humidity', upper_value=200, minus_value=100)
         self.field_radioactivity_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 2 * indent,
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 2 * indent-25,
                      self.slider_width, 30], text='radioactivity', upper_value=200, minus_value=100)
         self.field_food_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 3 * indent,
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 3 * indent-25,
                      self.slider_width, 30], text='food', upper_value=200, minus_value=100)
         self.cell_humidity_slider = Slider(
             bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 4 * indent,
@@ -291,11 +291,38 @@ class Settings(Interface):
             self.cell_radioactivity_slider.draw(screen)
             self.pen_radius.draw(screen)
 
+            # examples of colors near of sliders
+            # field humidity
+            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, self.indent-25, 5, 30])
+            pygame.draw.rect(screen, (0, 0, 255), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   self.indent-25, 5, 30])
+            # field radioactivity
+            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, 2*self.indent-25, 5, 30])
+            pygame.draw.rect(screen, (255, 0, 0), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   2*self.indent-25, 5, 30])
+            # field food
+            pygame.draw.rect(screen, (0, 0, 0),
+                             [self.game_window[0] + self.game_window[2] + 10, 3 * self.indent-25, 5, 30])
+            pygame.draw.rect(screen, (0, 255, 0), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   3 * self.indent-25, 5, 30])
+
+            # cell humidity
+            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, 4*self.indent, 5, 30])
+            pygame.draw.rect(screen, (0, 0, 255), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   4*self.indent, 5, 30])
+            # cell radioactivity
+            pygame.draw.rect(screen, (0, 0, 0),
+                             [self.game_window[0] + self.game_window[2] + 10, 5 * self.indent, 5, 30])
+            pygame.draw.rect(screen, (255, 0, 0), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   5 * self.indent, 5, 30])
+
+            # printing heads
             print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50,
                        18)
             print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100,
                        self.indent*3.75, 18)
 
+            # drawing rect that shows pen area
             self.pen.draw(screen)
             if self.pen.pressed:
                 pygame.draw.rect(screen, 'red', self.pen_rect, 4)
