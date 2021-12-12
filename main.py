@@ -3,15 +3,15 @@ from vis import draw_game
 from model import *
 from objects import *
 from controller import *
-
+from numpy import array
 BLACK = (0,0,0)
 # Game screen Height and Width
 HEIGHT = 800
 WIDTH = 1000
 
 # window with game, rectangle(left up angle cors, width, height)
-game_window = [0, 0, 800, 700]
-FPS = 100
+game_window = array([0, 0, 800, 700])
+FPS = 30
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
     pass
@@ -20,7 +20,7 @@ def game():
     global Game, Main, screen
     # creating initial field
     field = Field()
-    field.new_field(129, 129)
+    field.new_field(100, 100)
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
@@ -31,6 +31,7 @@ def game():
     speed = 1
     # counter of loops in the game
     loop_counter = 0
+
     while Game:
         clock.tick(FPS)
 
@@ -48,7 +49,9 @@ def game():
                     event_manage(event, field, pressed_mouse, interface, speed, settings)
 
         if get_steps(loop_counter, speed):
-            step(field)
+            k = time.perf_counter()
+            field = step(field)
+            print('entire time', time.perf_counter() - k)
 
 
 def main():
@@ -71,7 +74,7 @@ def main():
 
     pygame.quit()
     
-    
-main()
+if __name__ == '__main__':
+    main()
 
 

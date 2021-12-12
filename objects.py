@@ -4,18 +4,20 @@ import pygame.freetype
 import math
 from pygame.draw import *
 from collections import deque
-
+from numpy import array
+from numba import njit
+from numba.experimental import jitclass
 
 class Cell:
     """ class of one cell on a Field"""
 
     def __init__(self):
-        live = self.live = 0
-        x = self.x = 0
-        y = self.y = 0
+        self.live = 0
+        self.x = 0
+        self.y = 0
         self.color = (255, 255, 255)
         self.color_bg = (0, 0, 0)
-        self.genes = [0, 0]
+        self.genes = array([0, 0])
         self.humidity = 0
         # radioactive resistance
         self.radioactivity = -100
@@ -24,8 +26,63 @@ class Cell:
     def new_cell(self, x0, y0):
         x = self.x = x0
         y = self.y = y0
-        self.change_colors()
 
+
+
+
+
+class Cloud:
+    '''
+    Create cloud with parametrs:
+    cells - information about radiation
+    size_x, size_y - sizes of cloud
+    x, y - coordinates of left upper cornor
+    speed_x, speed_y - speed of cloud
+    count - periodic of changing speed
+    time - self time of cloud
+    slow - how often cloud moves
+    '''
+    def __init__(self, x, y, slow):
+        size_x = self.size_x = x
+        size_y = self.size_y = y
+        cells = self.cells = [[0] * size_x for i in range(size_y)]
+        x = self.x = 0
+        y = self.y = 0
+        speed_x = self.speed_x = 1
+        speed_y = self.speed_y = 1
+        count = self.count = 0
+        time = self.time = 0
+        self.slow = slow
+
+
+    def new_cloud(self):
+        cells = [[0] * self.size_x for i in range(self.size_y)]
+        for i in range(self.size_x):
+            for j in range(self.size_y):
+                pass
+        pass
+
+    def move(self, size_x, size_y):
+        self.x = (self.x + self.speed_x) % size_x
+        self.y = (self.y + self.speed_y) % size_y
+        self.count += 1
+        if self.count % 20 == 0:
+            self.speed_x = randint(-2, 3)
+            self.speed_y = randint(-2, 3)
+    def mod(self, field):
+        #modified field
+        for i in range(self.size_x):
+            for j in range(self.size_y):
+                field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity = self.cells[i][j]
+
+
+    def clear(self, field):
+        #clear itself
+        field_x = field.size_x
+        field_y = field.size_y
+        for i in range(self.size_x):
+            for j in range(self.size_y):
+                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
     def change_colors(self):
         """changes color of cell and cell_bg according to genes"""
         self.color = (math.floor(255 * (self.genes[1] + 100) / 200),
@@ -51,8 +108,8 @@ class Button:
         self.text_color = text_color
         self.text = text
         self.bg_color = bg_color
-        self.bg_rect = bg_rect
-        self.text_rect = [0, 0, 0, 0]
+        self.bg_rect = array(bg_rect)
+        self.text_rect = array([0, 0, 0, 0])
         self.angle = angle
         # pressed = 0 if not pressed and 1 if pressed
         self.pressed = 0
@@ -84,8 +141,7 @@ class Button:
         self.pressed += 1
         self.pressed = self.pressed % 2
 
-
-from model import mouse_pos_check, print_text, change_coords
+from model import mouse_pos_check, print_text, change_coords, change_colors
 
 
 class Slider(Button):
@@ -124,7 +180,7 @@ class Slider(Button):
     def change_value(self) -> None:
         # If mouse is pressed and mouse is inside the slider
         mousePos = pygame.mouse.get_pos()
-        if mouse_pos_check(mousePos, self.bg_rect):
+        if mouse_pos_check(array(mousePos), self.bg_rect):
             # the size of the slider
             self.current_value_points = mousePos[0] - self.bg_rect[0]
 
@@ -133,7 +189,6 @@ class Slider(Button):
                 self.current_value_points = 0
             if self.current_value_points > self.bg_rect[2]:
                 self.current_value_points = self.bg_rect[2]
-
 
 class Interface:
     """creates class with all buttons"""
@@ -259,7 +314,7 @@ class Settings(Interface):
             self.cell_radioactivity_slider.change_value()
             self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
 
-        self.cell.change_colors()
+        self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food, self.cell.radioactivity)
 
     def update_slider(self):
 
@@ -305,44 +360,46 @@ class Field:
         scale = self.scale = 50
         size_x = self.size_x = 0
         size_y = self.size_y = 0
+        neighbors_born = self.neighbors_born = 3
+        neighbors_exist_start = self.neighbors_exist_start = 2
+        neighbors_exist_end = self.neighbors_exist_end = 3
+        cloud = self.cloud = 0
+        #live_cells = self.live_cells = []
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
-
-        def midpoint_displacement(x, upper_point, bottom_point):
+        self.size_x = x
+        self.size_y = y
+        def midpoint_displacement(x, upper_point, bottom_point, sharpest):
             size = x
-            heightmap = [[0] * size for i in range(size)]
-
-            heightmap[0][0] = randint(-bottom_point, upper_point)
-            heightmap[size - 1][0] = randint(-bottom_point, upper_point)
-            heightmap[0][size - 1] = randint(-bottom_point, upper_point)
-            heightmap[size - 1][size - 1] = randint(-bottom_point, upper_point)
-
+            heightmap = [[0]*size for i in range(size)]
+    
+            heightmap[0][0] = randint(bottom_point, upper_point)
+            heightmap[size - 1][0] = randint(bottom_point, upper_point)
+            heightmap[0][size - 1] = randint(bottom_point, upper_point)
+            heightmap[size - 1][size - 1] = randint(bottom_point, upper_point)
+    
             q = deque()
-            q.append((0, 0, size - 1, size - 1, 200))
-
+            q.append((0, 0, size - 1, size - 1, sharpest))
+    
             while len(q) != 0:
                 top, left, bottom, right, randomness = q.popleft()
-
+    
                 centerX = (left + right) // 2
                 centerY = (top + bottom) // 2
-
-                heightmap[centerX][top] = (heightmap[left][top] + heightmap[right][top]) // 2 + randint(-randomness,
-                                                                                                        randomness)
-                heightmap[centerX][bottom] = (heightmap[left][bottom] + heightmap[right][bottom]) // 2 + randint(
-                    -randomness, randomness)
-                heightmap[left][centerY] = (heightmap[left][top] + heightmap[left][bottom]) // 2 + randint(-randomness,
-                                                                                                           randomness)
-                heightmap[right][centerY] = (heightmap[right][top] + heightmap[right][bottom]) // 2 + randint(
-                    -randomness, randomness)
-
+    
+                heightmap[centerX][top] = (heightmap[left][top] + heightmap[right][top]) // 2 + randint(-randomness, randomness)
+                heightmap[centerX][bottom] = (heightmap[left][bottom] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
+                heightmap[left][centerY] = (heightmap[left][top] + heightmap[left][bottom]) // 2 + randint(-randomness, randomness)
+                heightmap[right][centerY] = (heightmap[right][top] + heightmap[right][bottom]) // 2 + randint(-randomness, randomness)
+    
                 heightmap[centerX][centerY] = (heightmap[left][top] +
-                                               heightmap[right][top] +
-                                               heightmap[left][bottom] +
-                                               heightmap[right][bottom]) // 4 + \
-                                              randint(-randomness, randomness)
-
+                                                   heightmap[right][top] +
+                                                   heightmap[left][bottom] +
+                                                   heightmap[right][bottom]) // 4 + \
+                        randint(-randomness, randomness)
+    
                 if right - left > 2:
                     q.append((top, left, centerY, centerX, randomness // 2))
                     q.append((top, centerX, centerY, right, randomness // 2))
@@ -350,7 +407,27 @@ class Field:
                     q.append((centerY, centerX, bottom, right, randomness // 2))
             return heightmap
 
-        def generate_field(cells: list, x, y):
+
+        #cloud generation
+        self.cloud = Cloud(33, 33, 3)
+        massive = midpoint_displacement(self.cloud.size_x, -80, -100, 500)
+        for i in range(self.cloud.size_x):
+            for j in range(self.cloud.size_y):
+                if self.cloud.cells[i][j] > 0:
+                    self.cloud.cells[i][j] = min(massive[i][j], 100)
+                else:
+                    self.cloud.cells[i][j] = max(massive[i][j], -100)
+
+
+        for i in range(self.cloud.size_x):
+            for j in range(self.cloud.size_y):
+                if self.cloud.cells[i][j] > 0:
+                    self.cloud.cells[i][j] = min(self.cloud.cells[i][j], 100)
+                else:
+                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)
+
+
+        def generate_field(cells:list, x, y):
             """generates field initial conditions"""
             for i in range(x):
                 for l in range(y):
@@ -360,28 +437,28 @@ class Field:
                     cells[i][l].food = 30
                     if randint(0, 2):
                         cells[i][l].live = 5
-                        cells[i][l].genes[0] = 100
-                        cells[i][l].genes[1] = 100
-            # generate humidity
-
-            massive = midpoint_displacement(x, 100, -100)
+                        cells[i][l].genes[0] = 0
+                        cells[i][l].genes[1] = 50
+                        #self.live_cells.append([i, l])
+                        #cells[i][l].food = randint(0, 1)
+            #generate humadity
+            massive = midpoint_displacement(x, 100, -100, 200)
             for i in range(x):
                 for j in range(y):
                     if massive[i][j] > 0:
                         self.cells[i][j].humidity = min(massive[i][j], 100)
                     else:
                         self.cells[i][j].humidity = max(massive[i][j], -100)
-            # generate radioactivity
-            # massive = midpoint_displacement(x, 100, 99)
-            # for i in range(x):
-            #    for j in range(y):
-            #        if massive[i][j] > 0:
-            #            self.cells[i][j].radioactivity = min(massive[i][j], 100)
-            #        else:
-            #            self.cells[i][j].radioactivity = max(massive[i][j], -100)
-
+            #generate radioactivity
+            massive = midpoint_displacement(x, 0, -100, 200)
+          #  for i in range(x):
+          #      for j in range(y):
+          #          if massive[i][j] > 0:
+          #              self.cells[i][j].radioactivity = min(massive[i][j], 100)
+          #          else:
+          #              self.cells[i][j].radioactivity = max(massive[i][j], -100)
+            self.cloud.mod(self)
         generate_field(self.cells, x, y)
-
         self.x_center = x / 2
         self.y_center = y / 2
         self.size_x = x
@@ -391,6 +468,8 @@ class Field:
         """shift of center coordinates on vector(x, y)"""
         self.x_center += vector[0]
         self.y_center += vector[1]
+
+
 
 
 if __name__ == "__main__":
