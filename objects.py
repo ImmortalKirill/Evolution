@@ -339,14 +339,17 @@ class Settings(Interface):
                 self.cell_radioactivity_slider.change_value()
                 self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
 
-                self.cell.change_colors()
+                self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food,
+                                                                    self.cell.radioactivity)
             if self.field_button.pressed:
                 self.field_humidity_slider.change_value()
                 self.cell.humidity = self.field_humidity_slider.get_value()
 
                 self.field_radioactivity_slider.change_value()
                 self.cell.radioactivity = self.field_radioactivity_slider.get_value()
-                self.cell.change_colors()
+
+                self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food,
+                                                                    self.cell.radioactivity)
 
 
 

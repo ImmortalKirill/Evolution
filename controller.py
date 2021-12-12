@@ -69,7 +69,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
 
     if settings.pen.pressed and pygame.mouse.get_pressed()[2]:
         x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
-        x, y = change_coords((x_cell, y_cell), field.scale, field.x_center, field.y_center, settings.game_window, 1)
+        x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center, settings.game_window, 1)
         r = settings.pen_radius.get_value() * field.scale
         settings.pen_rect = (x - r, y - r, 2*r, 2*r)
         for i in range(-settings.pen_radius.get_value(), settings.pen_radius.get_value()):
