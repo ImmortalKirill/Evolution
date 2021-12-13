@@ -90,14 +90,25 @@ class Cloud:
         field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
+<<<<<<< HEAD
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.old_cells[i][j]
 
+=======
+                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
+    def change_colors(self):
+        """changes color of cell and cell_bg according to genes"""
+        self.color = (math.floor(255 * (self.genes[1] + 100) / 200),
+                      0,
+                      math.floor(255 * (self.genes[0] + 100) / 200))
+        self.color_bg = (
+            math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
+>>>>>>> b511e4a1adfe7a1450c6ca1e8700e8e27739b0d8
 
 
 class Button:
     """class of buttons"""
 
-    def __init__(self, bg_rect: list, text_color, bg_color, text, text_pressed='', angle=0):
+    def __init__(self, bg_rect: list, text_color, text, bg_color=(230, 230, 250), text_pressed='', angle=0, size=24):
         """x,y - coordinates of left top corner
         color - color of bottom
         text - text on the bottom
@@ -113,25 +124,27 @@ class Button:
         self.bg_rect = array(bg_rect)
         self.text_rect = array([0, 0, 0, 0])
         self.angle = angle
+        self.size = size
         # pressed = 0 if not pressed and 1 if pressed
         self.pressed = 0
-        self.pressed_color = (200, 200, 200)
+        self.pressed_color = (100, 100, 120)
         self.text_pressed = text_pressed
 
     def draw(self, screen):
         """draws button with text on the screen"""
-        rect(screen, self.bg_color, self.bg_rect)
 
-        font = pygame.freetype.SysFont("Arial", 10)  # FIXME text
+        font = pygame.freetype.SysFont(pygame.freetype.get_default_font(), self.size)
 
-        if (self.pressed == 0) or (self.text_pressed == '0'):
-            font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text, fgcolor=self.text_color,
-                           bgcolor=self.bg_color, rotation=self.angle, size=24)
+        if self.pressed == 0:
+            rect(screen, self.bg_color, self.bg_rect)
+            print_text(screen, self.text, self.text_color, self.bg_rect[0] + self.bg_rect[2]/2, self.bg_rect[1] +
+                       self.bg_rect[3]/2, self.size, self.bg_color)
         else:
-            font.render_to(screen, (self.bg_rect[0] + 5, self.bg_rect[1] + 5), self.text_pressed,
-                           fgcolor=self.text_color, bgcolor=self.pressed_color, size=24)
+            rect(screen, self.pressed_color, self.bg_rect)
+            print_text(screen, self.text_pressed, (255, 255, 255), self.bg_rect[0] + self.bg_rect[2]/2,
+                       self.bg_rect[1] + self.bg_rect[3]/2, self.size, self.pressed_color)
 
-        text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=24)
+        text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=self.size)
 
         self.text_rect[0] = text_rect_fig.left
         self.text_rect[1] = text_rect_fig.top
@@ -143,11 +156,11 @@ class Button:
         self.pressed += 1
         self.pressed = self.pressed % 2
 
-from model import mouse_pos_check, print_text, change_colors
+from model import mouse_pos_check, print_text, change_coords, change_colors
 
 
 class Slider(Button):
-    def __init__(self, bg_rect, text_color=(0, 0, 0), bg_color=(0, 0, 0), text='Parameter', text_pressed='', angle=0,
+    def __init__(self, bg_rect, text_color=(0, 0, 0), text='Parameter', bg_color=(0, 0, 0),  text_pressed='', angle=0,
                  upper_value: int = 10, current_value_points: int = 30, minus_value=0):
         """position - tuple of left top angle coors of slider - (x, y)
         upper_value - maximum value that parameter can reach
@@ -155,7 +168,7 @@ class Slider(Button):
         text - name of changed parameter
         outline_size - tuple of width and height of the slider
         """
-        super().__init__(bg_rect, text_color, bg_color, text, text_pressed, angle)
+        super().__init__(bg_rect, text_color, text, bg_color, text_pressed, angle)
         self.current_value_points = current_value_points
         self.upper_value = upper_value
         self.font = 0
@@ -176,7 +189,7 @@ class Slider(Button):
                                                  self.current_value_points, self.bg_rect[3] - 3))
 
         print_text(screen, f"{self.text}: {self.get_value()}", self.text_color, self.bg_rect[0] + (self.bg_rect[2] / 2),
-                   self.bg_rect[1] + self.bg_rect[3]*1.5, int(self.bg_rect[3]/2))
+                   self.bg_rect[1] + self.bg_rect[3] * 1.5, int(self.bg_rect[3] / 2))
 
     # allows users to change value of the slider by dragging it.
     def change_value(self) -> None:
@@ -201,13 +214,12 @@ class Interface:
         self.WIDTH = width
         self.HEIGHT = height
         # Buttons of Interface
-        # FixME This should be a real button with position
-        self.clear = Button([600, 700, 30, 30], (0, 0, 0), (255, 255, 255), '0', '0')
-        self.pause = Button([0, 700, 30, 30], (0, 0, 0), (255, 255, 255), '=', '>', 90)
-        self.cell_spawn = Button([50, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+', '+')
-        self.population_spawn = Button([100, 700, 30, 30], (0, 0, 0), (255, 255, 255), '+!', '+!')
-        self.slider = Slider(bg_rect=[200, 700, 300, 30], text='speed')
-        self.background_color = (100, 100, 100)
+        self.clear = Button([600, 710, 50, 30], (0, 0, 0), 'clear', text_pressed='0', size=16)
+        self.pause = Button([10, 710, 30, 30], (0, 0, 0),  'II', text_pressed='>', angle=90)
+        self.cell_spawn = Button([50, 710, 30, 30], (0, 0, 0), '+', text_pressed='+', size=30)
+        self.population_spawn = Button([100, 710, 80, 30], (0, 0, 0), 'new field', text_pressed='new field', size=16)
+        self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
+        self.background_color = (129, 129, 144)
 
     def draw(self, screen):
         """draws interface"""
@@ -233,28 +245,51 @@ class Interface:
         self.clear.draw(screen)
         self.population_spawn.draw(screen)
 
+
 class Settings(Interface):
     """creates class of additional menu with buttons"""
 
-    def __init__(self, width, height, game_window, game_window_width, status, indent=100):
+    def __init__(self, width, height, game_window, game_window_width, status,
+                 indent=100, slider_width=150):
         super().__init__(width, height, game_window)
-        self.background_color = (100, 100, 100)
-        self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, indent, 150, 30],
-                                            text='humidity', upper_value=200, minus_value=100)
-        self.field_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 2*indent, 150, 30],
-                                                 text='radioactivity', upper_value=200, minus_value=100)
-        self.cell_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 4*indent, 150, 30],
-                                            text='humidity', upper_value=200, minus_value=100)
-        self.cell_radioactivity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] + 10, 5*indent, 150, 30],
-                                                 text='radioactivity', upper_value=200, minus_value=100)
         self.font = 0
         self.width = width
+        self.slider_width = slider_width
         self.status = status
         self.field_text = 'Field'
         self.cell_text = 'Cell'
         self.text_color = 'black'
         self.game_window_width = game_window_width
         self.cell = Cell()
+        self.cell_pen = Cell()
+        self.pen_rect = (0, 0, 0, 0)
+        self.indent = indent
+        self.background_color = (129, 129, 144)
+        self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] +
+                                                     (self.width - self.slider_width)/2, indent-25, self.slider_width, 30],
+                                            text='humidity', upper_value=200, minus_value=100)
+        self.field_radioactivity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 2 * indent-25,
+                     self.slider_width, 30], text='radioactivity', upper_value=200, minus_value=100)
+        self.field_food_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 3 * indent-25,
+                     self.slider_width, 30], text='food', upper_value=200, minus_value=100)
+        self.cell_humidity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 4 * indent,
+                     self.slider_width, 30], text='humidity', upper_value=200, minus_value=100)
+        self.cell_radioactivity_slider = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 5 * indent,
+                     self.slider_width, 30], text='radioactivity', upper_value=200, minus_value=100)
+        self.pen_radius = Slider(
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 6.5 * indent,
+                     self.slider_width, 30], text='pen radius', upper_value=10, minus_value=0)
+        self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 40, 30], (0, 0, 0), 'pen',
+                          text_pressed='pen', angle=0, size=16)
+        self.cell_button = Button([self.game_window[0] + self.game_window[2] + 60, 6 * indent, 40, 30], (0, 0, 0),
+                                  'cell', text_pressed='cell', size=16)
+        self.field_button = Button([self.game_window[0] + self.game_window[2] + 110, 6 * indent, 40, 30], (0, 0, 0),
+                                   'field', text_pressed='field', size=16)
+
 
     def draw(self, screen):
         if (self.status % 2) == 1:
@@ -264,44 +299,117 @@ class Settings(Interface):
                                                              self.HEIGHT], 0)
             self.field_humidity_slider.draw(screen)
             self.field_radioactivity_slider.draw(screen)
+            self.field_food_slider.draw(screen)
             self.cell_humidity_slider.draw(screen)
             self.cell_radioactivity_slider.draw(screen)
+            self.pen_radius.draw(screen)
 
-            print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50, 18)
-            print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 350, 18)
+            # examples of colors near of sliders
+            # field humidity
+            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, self.indent-25, 5, 30])
+            pygame.draw.rect(screen, (0, 0, 255), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   self.indent-25, 5, 30])
+            # field radioactivity
+            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, 2*self.indent-25, 5, 30])
+            pygame.draw.rect(screen, (255, 0, 0), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   2*self.indent-25, 5, 30])
+            # field food
+            pygame.draw.rect(screen, (0, 0, 0),
+                             [self.game_window[0] + self.game_window[2] + 10, 3 * self.indent-25, 5, 30])
+            pygame.draw.rect(screen, (0, 255, 0), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   3 * self.indent-25, 5, 30])
+
+            # cell humidity
+            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, 4*self.indent, 5, 30])
+            pygame.draw.rect(screen, (0, 0, 255), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   4*self.indent, 5, 30])
+            # cell radioactivity
+            pygame.draw.rect(screen, (0, 0, 0),
+                             [self.game_window[0] + self.game_window[2] + 10, 5 * self.indent, 5, 30])
+            pygame.draw.rect(screen, (255, 0, 0), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
+                                                   5 * self.indent, 5, 30])
+
+            # printing heads
+            print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50,
+                       18)
+            print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100,
+                       self.indent*3.75, 18)
+
+            # drawing rect that shows pen area
+            self.pen.draw(screen)
+            if self.pen.pressed:
+                pygame.draw.rect(screen, 'red', self.pen_rect, 4)
+                self.cell_button.draw(screen)
+                self.field_button.draw(screen)
         else:
             self.game_window[2] = self.game_window_width
 
     def update(self):
-        """changes values of all sliders in settings"""
-        self.field_humidity_slider.change_value()
-        self.cell.humidity = self.field_humidity_slider.get_value()
+        """changes values of cells and field in settings"""
 
-        self.field_radioactivity_slider.change_value()
-        self.cell.radioactivity = self.field_radioactivity_slider.get_value()
+        self.pen_radius.change_value()
 
-        self.cell_humidity_slider.change_value()
-        self.cell.genes[0] = self.cell_humidity_slider.get_value()
+        if (not self.pen.pressed) or self.field_button.pressed:
+            self.field_humidity_slider.change_value()
+            self.cell.humidity = self.field_humidity_slider.get_value()
 
-        self.cell_radioactivity_slider.change_value()
-        self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
+            self.field_radioactivity_slider.change_value()
+            self.cell.radioactivity = self.field_radioactivity_slider.get_value()
+
+            self.field_food_slider.change_value()
+            self.cell.food = self.field_food_slider.get_value()
+
+        if (not self.pen.pressed) or self.cell_button.pressed:
+            self.cell_humidity_slider.change_value()
+            self.cell.genes[0] = self.cell_humidity_slider.get_value()
+
+            self.cell_radioactivity_slider.change_value()
+            self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
 
         self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food, self.cell.radioactivity)
 
-    def update_cell(self):
-        self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value)\
+    def update_slider(self):
+
+        self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value) \
                                                           * self.field_humidity_slider.scale
 
-        # return round(self.current_value_points / (self.bg_rect[2] / self.upper_value) - self.minus_value)
-        self.field_radioactivity_slider.current_value_points = (self.cell.radioactivity + self.field_radioactivity_slider.minus_value) \
-                                                          * self.field_radioactivity_slider.scale
+        self.field_radioactivity_slider.current_value_points = (self.cell.radioactivity
+                                                                + self.field_radioactivity_slider.minus_value) \
+                                                               * self.field_radioactivity_slider.scale
+
+        self.field_food_slider.current_value_points = (self.cell.food
+                                                                + self.field_food_slider.minus_value) \
+                                                               * self.field_food_slider.scale
+
         self.cell_humidity_slider.current_value_points = (self.cell.genes[0] + self.cell_humidity_slider.minus_value) \
-                                                          * self.cell_humidity_slider.scale
-        self.cell_radioactivity_slider.current_value_points = (self.cell.genes[1] + self.cell_radioactivity_slider.minus_value) \
-                                                          * self.cell_radioactivity_slider.scale
+                                                         * self.cell_humidity_slider.scale
+        self.cell_radioactivity_slider.current_value_points = (self.cell.genes[
+                                                                   1] + self.cell_radioactivity_slider.minus_value) \
+                                                              * self.cell_radioactivity_slider.scale
 
+    def redraw(self):
+        if self.pen.pressed:
+            if self.cell_button.pressed:
+                self.cell_humidity_slider.change_value()
+                self.cell.genes[0] = self.cell_humidity_slider.get_value()
 
+                self.cell_radioactivity_slider.change_value()
+                self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
 
+                self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food,
+                                                                    self.cell.radioactivity)
+            if self.field_button.pressed:
+                self.field_humidity_slider.change_value()
+                self.cell.humidity = self.field_humidity_slider.get_value()
+
+                self.field_radioactivity_slider.change_value()
+                self.cell.radioactivity = self.field_radioactivity_slider.get_value()
+
+                self.field_food_slider.change_value()
+                self.cell.food = self.field_food_slider.get_value()
+
+                self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food,
+                                                                    self.cell.radioactivity)
 
 
 
