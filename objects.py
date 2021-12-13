@@ -4,7 +4,7 @@ import pygame.freetype
 import math
 from pygame.draw import *
 from collections import deque
-from numpy import array
+from numpy import array, zeros
 from numba import njit
 from numba.experimental import jitclass
 
@@ -53,14 +53,15 @@ class Cloud:
         count = self.count = 0
         time = self.time = 0
         self.slow = slow
+        self.old_cells = zeros((self.size_x, self.size_y))
 
 
     def new_cloud(self):
-        cells = [[0] * self.size_x for i in range(self.size_y)]
+        self.cells = [[0] * self.size_x for i in range(self.size_y)]
         for i in range(self.size_x):
             for j in range(self.size_y):
-                pass
-        pass
+                self.cells[i][j] = math.floor((self.size_x * self.size_y / 4 - abs((i - self.size_x / 2) * (j - self.size_y / 2))) 
+                                         / (self.size_x * self.size_y / 4) * 200 - 100)
 
     def move(self, size_x, size_y):
         self.x = (self.x + self.speed_x) % size_x
@@ -69,11 +70,18 @@ class Cloud:
         if self.count % 20 == 0:
             self.speed_x = randint(-2, 3)
             self.speed_y = randint(-2, 3)
+            
+            
     def mod(self, field):
         #modified field
         for i in range(self.size_x):
             for j in range(self.size_y):
-                field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity = self.cells[i][j]
+                temp = field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity
+                self.old_cells[i][j] = temp
+                temp2 = self.cells[i][j] + temp
+                if temp2 > field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity:
+                    field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity = min(temp2, 100)
+               
 
 
     def clear(self, field):
@@ -82,7 +90,8 @@ class Cloud:
         field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
-                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
+                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.old_cells[i][j]
+
 
 
 class Button:
@@ -309,7 +318,7 @@ class Field:
         neighbors_born = self.neighbors_born = 3
         neighbors_exist_start = self.neighbors_exist_start = 2
         neighbors_exist_end = self.neighbors_exist_end = 3
-        cloud = self.cloud = 0
+        cloud = self.cloud = Cloud(33, 33, 3)
         #live_cells = self.live_cells = []
 
     def new_field(self, x, y):
@@ -355,7 +364,7 @@ class Field:
 
 
         #cloud generation
-        self.cloud = Cloud(33, 33, 3)
+        #self.cloud = Cloud(33, 33, 3)
         massive = midpoint_displacement(self.cloud.size_x, -80, -100, 500)
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
@@ -396,13 +405,13 @@ class Field:
                     else:
                         self.cells[i][j].humidity = max(massive[i][j], -100)
             #generate radioactivity
-            massive = midpoint_displacement(x, 0, -100, 200)
-          #  for i in range(x):
-          #      for j in range(y):
-          #          if massive[i][j] > 0:
-          #              self.cells[i][j].radioactivity = min(massive[i][j], 100)
-          #          else:
-          #              self.cells[i][j].radioactivity = max(massive[i][j], -100)
+            '''massive = midpoint_displacement(x, 0, -100, 200)
+            for i in range(x):
+                for j in range(y):
+                    if massive[i][j] > 0:
+                        self.cells[i][j].radioactivity = min(massive[i][j], 100)
+                    else:
+                        self.cells[i][j].radioactivity = max(massive[i][j], -100)'''
             self.cloud.mod(self)
         generate_field(self.cells, x, y)
         self.x_center = x / 2
