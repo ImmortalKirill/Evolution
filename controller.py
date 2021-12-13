@@ -91,5 +91,15 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
     return field, pressed_mouse, interface, speed
 
 
+def menu_event_manage(event, main_menu, pressed_mouse, Main_menu):
+    """manages event from the game, changes field etc"""
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.start.bg_rect):
+            main_menu.start.change_press()
+            Main_menu = False
+
+    return Main_menu, pressed_mouse
+
+
 if __name__ == "__main__":
     print("This module is not for direct call!")

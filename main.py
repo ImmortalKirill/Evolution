@@ -1,5 +1,5 @@
 import pygame
-from vis import draw_game
+from vis import draw_game, draw_menu
 from model import *
 from objects import *
 from controller import *
@@ -12,9 +12,30 @@ WIDTH = 1000
 # window with game, rectangle(left up angle cors, width, height)
 game_window = array([0, 0, 800, 700])
 FPS = 30
+
+
 def menu():
     """loop for menu, draws menu screen and reads events from user"""
-    pass
+    global Main_menu, Main, Game, screen
+    main_menu = Menu(WIDTH, HEIGHT, game_window)
+    clock = pygame.time.Clock()
+    pressed_mouse = False
+    while Main_menu:
+        clock.tick(FPS)
+
+
+        draw_menu(main_menu, screen)
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                Main_menu = False
+            else:
+                Main_menu, pressed_mouse = menu_event_manage(event, main_menu, pressed_mouse, Main_menu)
+
+
+
+
 def game():
     """loop for the game, draws game interface and reads events from user"""
     global Game, Main, screen
@@ -56,15 +77,16 @@ def game():
 
 def main():
     """main function of the game, everything starts here"""
-    global Main, Game, screen
+    global Main, Game, screen, Main_menu
     pygame.init()
     Main = True
     Game = False
+    Main_menu = False
     # main cycle of the game, ends when player exits the game,
     # consists of 2-3 cycles: game menu, game play, game over/game pause !!!Still in discussion about it!!!
     while Main:
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        Menu = True
+        Main_menu = True
         # loop for menu
         menu()
         Game = True

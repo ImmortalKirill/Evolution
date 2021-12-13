@@ -50,11 +50,15 @@ def draw_life_cells(screen, field, grid):
                 
                 
 def draw_game(screen, field, interface, settings):
-
     """draws game screen on par screen with field"""
     game_field(screen, field, interface.game_window)
     interface.draw(screen)
     settings.draw(screen)
+
+
+def draw_menu(main_menu, screen):
+    """draws menu"""
+    main_menu.draw(screen)
     
 if __name__ == "__main__":
     print("This module is not for direct call!")
