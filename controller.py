@@ -27,8 +27,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
             settings.cell = field.cells[x_cell][y_cell]
             settings.update_slider()
-            if x_cell != None:
-                field.cells[x_cell][y_cell].live = 5
+
 
         else:
             # if pressed button is left mouse button
@@ -45,6 +44,8 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mouse on button pen
             if mouse_pos_check(pygame.mouse.get_pos(), settings.pen.bg_rect):
                 settings.pen.change_press()
+                settings.cell_button.pressed = 1
+                settings.field_button.pressed = 1
             if mouse_pos_check(pygame.mouse.get_pos(), settings.cell_button.bg_rect):
                 settings.cell_button.change_press()
             if mouse_pos_check(pygame.mouse.get_pos(), settings.field_button.bg_rect):
