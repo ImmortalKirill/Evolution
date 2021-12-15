@@ -308,5 +308,17 @@ def print_text(screen, text: str, text_color, x, y, size, bg_color=None):
     screen.blit(text_rendered, text_rect)
 
 
+def saving(field):
+    '''
+    Function saving field in order: size_x, size_y, cells(humidity, food, live, genes), cloud
+    '''
+    with open('list.txt', 'w') as file:
+        file.write(field.size_x + '\n')
+        file.write(field.size_y + '\n')
+        for i in range(field.size_x):
+            for j in range(field.size_y):
+                file.write(str(field.cells[i][j].humidity) + ' ' + str(field.cells[i][j].food) + ' ' + str(field.cells[i][j].live) + ' '
+                           + str(field.cells[i][j].genes[0]) + ' ' + str(field.cells[i][j].genes[1]))
+                
 if __name__ == "__main__":
     print("This module is not for direct call!")

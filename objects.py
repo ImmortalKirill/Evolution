@@ -90,11 +90,8 @@ class Cloud:
         field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
-<<<<<<< HEAD
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.old_cells[i][j]
 
-=======
-                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
     def change_colors(self):
         """changes color of cell and cell_bg according to genes"""
         self.color = (math.floor(255 * (self.genes[1] + 100) / 200),
@@ -102,7 +99,7 @@ class Cloud:
                       math.floor(255 * (self.genes[0] + 100) / 200))
         self.color_bg = (
             math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
->>>>>>> b511e4a1adfe7a1450c6ca1e8700e8e27739b0d8
+#>>>>>>> b511e4a1adfe7a1450c6ca1e8700e8e27739b0d8
 
 
 class Button:
@@ -473,7 +470,7 @@ class Field:
 
         #cloud generation
         #self.cloud = Cloud(33, 33, 3)
-        massive = midpoint_displacement(self.cloud.size_x, -80, -100, 500)
+        massive = midpoint_displacement(self.cloud.size_x, -90, -100, 700)
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
                 if self.cloud.cells[i][j] > 0:
@@ -482,12 +479,12 @@ class Field:
                     self.cloud.cells[i][j] = max(massive[i][j], -100)
 
 
-        for i in range(self.cloud.size_x):
+        '''for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
                 if self.cloud.cells[i][j] > 0:
                     self.cloud.cells[i][j] = min(self.cloud.cells[i][j], 100)
                 else:
-                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)
+                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)'''
 
 
         def generate_field(cells:list, x, y):
