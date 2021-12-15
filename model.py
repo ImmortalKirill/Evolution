@@ -1,7 +1,7 @@
 import math
 import pygame
 from random import randint
-from numpy import array, zeros, floor
+from numpy import array, zeros, floor, ceil
 import concurrent.futures
 from numba import njit, prange
 import time
@@ -202,7 +202,7 @@ def change_colors(genes, humidity, food, radioactivity):
     if green > 255:
         green = 255
     color_bg = (
-    floor(255 * (100 + radioactivity) / 200), green, floor(255 * (100 + humidity) / 200))
+    ceil(255 * (100 + radioactivity) / 200), green, floor(255 * (100 + humidity) / 200))
     return color, color_bg
 def change_scale(field, par):
     """changes scale of field, increases it if par = 1, decreases it if par = -1"""
