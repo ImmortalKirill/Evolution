@@ -2,6 +2,7 @@ from random import randint
 import pygame
 import pygame.freetype
 import math
+from model import saving, upload
 from pygame.draw import *
 from collections import deque
 from numpy import array, zeros
@@ -495,7 +496,7 @@ class Field:
                     cells[i][l].new_cell(i, l)
                     cells[i][l].radioactivity = -90
                     cells[i][l].food = 30
-                    if randint(0, 2):
+                    if randint(0, 1):
                         cells[i][l].live = 5
                         cells[i][l].genes[0] = 0
                         cells[i][l].genes[1] = 50
@@ -523,7 +524,8 @@ class Field:
         self.y_center = y / 2
         self.size_x = x
         self.size_y = y
-
+        
+        
     def change_cors(self, vector):
         """shift of center coordinates on vector(x, y)"""
         self.x_center += vector[0]
