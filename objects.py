@@ -422,19 +422,39 @@ class Menu(Interface):
         self.bg_color = (200, 200, 200)
         self.rect_color = (100, 100, 100)
         self.text_color = (0, 0, 0)
-        self.start = Button([7.5*width / 10, 7*height / 10, width/10, height/20], (0, 0, 0), 'start', bg_color=(255, 255, 255),
-                            text_pressed='start', angle=0, size=16)
+        self.last = pygame.time.get_ticks()
+
+        self.start = Button([7.5 * width / 10, 7 * height / 10, width / 10, height / 20], (0, 0, 0), 'start',
+                            bg_color=(255, 255, 255),
+                            text_pressed='start', size=24)
+        self.small_field = Button([6.15 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'small',
+                                  bg_color=(255, 255, 255), text_pressed='small', size=20)
+        self.middle_field = Button([7.25 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'middle',
+                                   bg_color=(255, 255, 255),
+                                   text_pressed='middle', size=20)
+        self.large_field = Button([8.35 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'large',
+                                  bg_color=(255, 255, 255),
+                                  text_pressed='large', size=20)
 
     def draw(self, screen):
         screen.fill(self.bg_color)
-        print_text(screen, 'Evolution', self.text_color, self.width/2, self.height/10, 46)
+        print_text(screen, 'Evolution', self.text_color, self.width / 2, self.height / 10, 46)
         # block of rules
-        print_text(screen, 'Rules', self.text_color, self.width / 2, self.height / 10, 32)
-        pygame.draw.rect(screen, self.rect_color, (self.width/20, 2*self.height/10, self.width/2, 6*self.height/10))
+        pygame.draw.rect(screen, self.rect_color,
+                         (self.width / 20, 2 * self.height / 10, self.width / 2, 6 * self.height / 10))
         # block of window settings
         pygame.draw.rect(screen, self.rect_color,
-                         (6*self.width / 10, 2 * self.height / 10, 3.5 * self.width / 10, 3 * self.height / 10))
+                         (6 * self.width / 10, 2 * self.height / 10, 3.5 * self.width / 10, 3 * self.height / 10))
+        # text
+        print_text(screen, 'Rules', self.text_color, 11 * self.width / 40, 2.5 * self.height / 10, 32)
+        print_text(screen, 'Choose window size:', self.text_color, 15.5 * self.width / 20, 2.5 * self.height / 10, 28)
+        # buttons
         self.start.draw(screen)
+        self.small_field.draw(screen)
+        self.middle_field.draw(screen)
+        self.large_field.draw(screen)
+
+
 
 
 class Field:

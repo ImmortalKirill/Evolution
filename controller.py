@@ -97,6 +97,18 @@ def menu_event_manage(event, main_menu, pressed_mouse, Main_menu):
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.start.bg_rect):
             main_menu.start.change_press()
             Main_menu = False
+        if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.small_field.bg_rect):
+            main_menu.small_field.change_press()
+            main_menu.large_field.pressed = 0
+            main_menu.middle_field.pressed = 0
+        if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.middle_field.bg_rect):
+            main_menu.middle_field.change_press()
+            main_menu.large_field.pressed = 0
+            main_menu.small_field.pressed = 0
+        if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.large_field.bg_rect):
+            main_menu.large_field.change_press()
+            main_menu.small_field.pressed = 0
+            main_menu.middle_field.pressed = 0
 
     return Main_menu, pressed_mouse
 
