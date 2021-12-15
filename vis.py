@@ -3,11 +3,6 @@ from model import find_grid, change_coords
 import pygame
 import random
 
-def menu_draw():
-    pass # FixMe
-    """ draws menu of the game with play button"""
-
-
 def game_field(screen, field: Field, interface_game_window):
     """draws field on the screen in game-play window"""
     grid = find_grid(field, interface_game_window)
@@ -52,8 +47,11 @@ def draw_life_cells(screen, field, grid):
 def draw_game(screen, field, interface, settings):
     """draws game screen on par screen with field"""
     game_field(screen, field, interface.game_window)
+    settings.draw_pen_rect(screen)
     interface.draw(screen)
     settings.draw(screen)
+
+
 
 
 def draw_menu(main_menu, screen):

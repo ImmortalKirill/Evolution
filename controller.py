@@ -67,18 +67,24 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
 
-    if settings.pen.pressed and pygame.mouse.get_pressed()[2]:
+    # drawing pen square
+    if settings.pen.pressed and pygame.mouse.get_pressed()[2] and mouse_pos_check(array(pygame.mouse.get_pos()), interface.game_window):
         x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
         x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center, settings.game_window, 1)
         r = settings.pen_radius.get_value() * field.scale
         settings.pen_rect = (x - r, y - r, 2*r, 2*r)
         for i in range(-settings.pen_radius.get_value(), settings.pen_radius.get_value()):
             for j in range(-settings.pen_radius.get_value() + 1, settings.pen_radius.get_value() + 1):
-                settings.cell = field.cells[x_cell + i][y_cell + j]
-                settings.redraw()
-                if settings.cell_button.pressed:
-                    if x_cell is not None:
-                        field.cells[x_cell + i][y_cell + j].live = 5
+                print(field.size_x, field.size_y)
+                print(x_cell + i, y_cell + j)
+                if (x_cell + i < field.size_x) and (x_cell + i >= 0) and (y_cell + j < field.size_y) and (y_cell + j >= 0):
+                    print('Yeeee')
+                    settings.cell = field.cells[x_cell + i][y_cell + j]
+                    settings.redraw()
+                    if settings.cell_button.pressed:
+                        if x_cell is not None:
+                            field.cells[x_cell + i][y_cell + j].live = 5
+
     # if mouse on speed_slider
     if pygame.mouse.get_pressed()[0]:
         interface.slider.change_value()

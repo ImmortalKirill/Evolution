@@ -89,10 +89,8 @@ class Cloud:
         field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
-<<<<<<< HEAD
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.old_cells[i][j]
 
-=======
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
 
     def change_colors(self):
@@ -102,7 +100,6 @@ class Cloud:
                       math.floor(255 * (self.genes[0] + 100) / 200))
         self.color_bg = (
             math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
->>>>>>> b511e4a1adfe7a1450c6ca1e8700e8e27739b0d8
 
 
 class Button:
@@ -303,6 +300,7 @@ class Settings(Interface):
 
     def draw(self, screen):
         if (self.status % 2) == 1:
+
             self.game_window[2] = self.game_window_width - self.width
             pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
                                                              self.WIDTH + self.game_window[0] + self.game_window[2],
@@ -351,11 +349,15 @@ class Settings(Interface):
             # drawing rect that shows pen area
             self.pen.draw(screen)
             if self.pen.pressed:
-                pygame.draw.rect(screen, 'red', self.pen_rect, 4)
+                # pygame.draw.rect(screen, 'red', self.pen_rect, 4)
                 self.cell_button.draw(screen)
                 self.field_button.draw(screen)
         else:
             self.game_window[2] = self.game_window_width
+
+    def draw_pen_rect(self, screen):
+        if self.pen.pressed:
+            pygame.draw.rect(screen, 'red', self.pen_rect, 4)
 
     def update(self):
         """changes values of cells and field in settings"""
