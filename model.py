@@ -343,6 +343,11 @@ def saving(field, name):
                                + str(field.cells[i][j].genes[0]) + ' ' + str(field.cells[i][j].genes[1]) + '\n')
             text += 'End of ' + name + '\n'
             file.write(text)
+        with open('titles.txt', 'r') as file:
+            text = file.read()
+        with open('titles.txt', 'w') as file:
+            text += name + '\n'
+            file.write(text)
         return True
     else:
         return False

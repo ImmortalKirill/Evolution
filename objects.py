@@ -226,7 +226,7 @@ class Interface:
         self.background_color = (129, 129, 144)
         self.save = Button([700, 710, 50, 30], (0, 0, 0), 'save', text_pressed='accept', size=16)
         self.upload = Button([760, 710, 60, 30], (0, 0, 0), 'upload', text_pressed='accept', size=16)
-        self.text_of_file = ''
+        self.name_of_file = ''
         self.font = pygame.font.Font(None, 30)
 
     def draw(self, screen):
@@ -255,7 +255,7 @@ class Interface:
         self.save.draw(screen)
         self.upload.draw(screen)
         
-        text = self.font.render(self.text_of_file, True, (0, 0, 0))
+        text = self.font.render(self.name_of_file, True, (0, 0, 0))
         screen.blit(text, (720, 760))
 
 
