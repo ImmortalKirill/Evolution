@@ -2,6 +2,7 @@ from model import change_scale, mouse_pos_check, find_cell, change_coords
 import pygame
 from numpy import array
 
+
 def zoom(event: pygame.MOUSEBUTTONDOWN, field):
     """checks if event is wheel rolling and changes scale of field(zoom in or out)"""
     # if mouse wheel is rolled forward, zoom in
@@ -69,21 +70,25 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
 
     # drawing pen square
-    if settings.pen.pressed and pygame.mouse.get_pressed()[2] and mouse_pos_check(array(pygame.mouse.get_pos()), interface.game_window):
-        print(event.type)
-        x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
-        if (x_cell is not None) and (y_cell is not None):
-            x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center, settings.game_window, 1)
-            r = settings.pen_radius.get_value() * field.scale
-            settings.pen_rect = (x - r, y - r, 2*r, 2*r)
-            for i in range(-settings.pen_radius.get_value(), settings.pen_radius.get_value()):
-                for j in range(-settings.pen_radius.get_value() + 1, settings.pen_radius.get_value() + 1):
-                    if (x_cell + i < field.size_x) and (x_cell + i >= 0) and (y_cell + j < field.size_y) and (y_cell + j >= 0):
-                        settings.cell = field.cells[x_cell + i][y_cell + j]
-                        settings.redraw()
-                        if settings.cell_button.pressed:
-                            if x_cell is not None:
-                                field.cells[x_cell + i][y_cell + j].live = 5
+    if (event.type == pygame.MOUSEBUTTONDOWN) or (event.type == pygame.MOUSEMOTION):
+        if settings.pen.pressed and pygame.mouse.get_pressed()[2] and mouse_pos_check(array(pygame.mouse.get_pos()),
+                                                                                      interface.game_window):
+            # finds a square of cells which we change
+            x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
+            if (x_cell is not None) and (y_cell is not None):  # if cell is in field
+                x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center,
+                                     settings.game_window, 1)
+                r = settings.pen_radius.get_value() * field.scale  # radius of pen - 1/2 of square side in cells
+                settings.pen_rect = (x - r, y - r, 2 * r, 2 * r)
+                for i in range(-settings.pen_radius.get_value(), settings.pen_radius.get_value()):
+                    for j in range(-settings.pen_radius.get_value() + 1, settings.pen_radius.get_value() + 1):
+                        if (x_cell + i < field.size_x) and (x_cell + i >= 0) and (y_cell + j < field.size_y) and \
+                                (y_cell + j >= 0):
+                            settings.cell = field.cells[x_cell + i][y_cell + j]
+                            settings.redraw()
+                            if settings.cell_button.pressed:
+                                if x_cell is not None:
+                                    field.cells[x_cell + i][y_cell + j].live = 5
 
     # if mouse on speed_slider
     if pygame.mouse.get_pressed()[0]:
@@ -91,8 +96,6 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         if not interface.pause.pressed:
             speed = interface.slider.get_value()
         settings.update()
-        
-
 
     return field, pressed_mouse, interface, speed
 
