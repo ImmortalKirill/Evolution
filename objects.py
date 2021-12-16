@@ -43,6 +43,7 @@ class Cloud:
     time - self time of cloud
     slow - how often cloud moves
     '''
+
     def __init__(self, x, y, slow):
         size_x = self.size_x = x
         size_y = self.size_y = y
@@ -127,12 +128,22 @@ class Button:
 
         if self.pressed == 0:
             rect(screen, self.bg_color, self.bg_rect)
-            print_text(screen, self.text, self.text_color, self.bg_rect[0] + self.bg_rect[2]/2, self.bg_rect[1] +
-                       self.bg_rect[3]/2, self.size, self.bg_color)
+            if self.text == '+':
+                print_text(screen, self.text, self.text_color, self.bg_rect[0] + self.bg_rect[2] / 2, self.bg_rect[1] +
+                           self.bg_rect[3] / 2 - 3, self.size, self.bg_color)
+            else:
+                print_text(screen, self.text, self.text_color, self.bg_rect[0] + self.bg_rect[2] / 2, self.bg_rect[1] +
+                           self.bg_rect[3] / 2, self.size, self.bg_color)
+
         else:
             rect(screen, self.pressed_color, self.bg_rect)
-            print_text(screen, self.text_pressed, (255, 255, 255), self.bg_rect[0] + self.bg_rect[2]/2,
-                       self.bg_rect[1] + self.bg_rect[3]/2, self.size, self.pressed_color)
+            if (self.text_pressed == '+') or (self.text_pressed == '>'):
+                print_text(screen, self.text_pressed, (255, 255, 255), self.bg_rect[0] + self.bg_rect[2] / 2,
+                           self.bg_rect[1] +
+                           self.bg_rect[3] / 2 - 3, self.size, self.pressed_color)
+            else:
+                print_text(screen, self.text_pressed, (255, 255, 255), self.bg_rect[0] + self.bg_rect[2] / 2,
+                           self.bg_rect[1] + self.bg_rect[3] / 2, self.size, self.pressed_color)
 
         text_rect_fig = pygame.freetype.Font.get_rect(font, self.text, size=self.size)
 
@@ -150,7 +161,7 @@ from model import mouse_pos_check, print_text, change_coords, change_colors
 
 
 class Slider(Button):
-    def __init__(self, bg_rect, text_color=(0, 0, 0), text='Parameter', bg_color=(0, 0, 0),  text_pressed='', angle=0,
+    def __init__(self, bg_rect, text_color=(0, 0, 0), text='Parameter', bg_color=(0, 0, 0), text_pressed='', angle=0,
                  upper_value: int = 10, current_value_points: int = 30, minus_value=0):
         """position - tuple of left top angle coors of slider - (x, y)
         upper_value - maximum value that parameter can reach
@@ -205,8 +216,8 @@ class Interface:
         self.HEIGHT = height
         # Buttons of Interface
         self.clear = Button([600, 710, 50, 30], (0, 0, 0), 'clear', text_pressed='0', size=16)
-        self.pause = Button([10, 710, 30, 30], (0, 0, 0),  'II', text_pressed='>', angle=90)
-        self.cell_spawn = Button([50, 710, 30, 30], (0, 0, 0), '+', text_pressed='+', size=30)
+        self.pause = Button([10, 710, 30, 30], (0, 0, 0), 'II', text_pressed='>', angle=90)
+        self.cell_spawn = Button([50, 710, 30, 30], (0, 0, 0), '+', text_pressed='+', size=24)
         self.population_spawn = Button([100, 710, 80, 30], (0, 0, 0), 'new field', text_pressed='new field', size=16)
         self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
         self.background_color = (129, 129, 144)
@@ -256,22 +267,23 @@ class Settings(Interface):
         self.indent = indent
         self.background_color = (129, 129, 144)
         self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] +
-                                                     (self.width - self.slider_width)/2, indent-25, self.slider_width, 30],
+                                                     (self.width - self.slider_width) / 2, indent - 25,
+                                                     self.slider_width, 30],
                                             text='humidity', upper_value=200, minus_value=100)
         self.field_radioactivity_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 2 * indent-25,
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width) / 2, 2 * indent - 25,
                      self.slider_width, 30], text='radioactivity', upper_value=200, minus_value=100)
         self.field_food_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 3 * indent-25,
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width) / 2, 3 * indent - 25,
                      self.slider_width, 30], text='food', upper_value=200, minus_value=100)
         self.cell_humidity_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 4 * indent,
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width) / 2, 4 * indent,
                      self.slider_width, 30], text='humidity', upper_value=200, minus_value=100)
         self.cell_radioactivity_slider = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 5 * indent,
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width) / 2, 5 * indent,
                      self.slider_width, 30], text='radioactivity', upper_value=200, minus_value=100)
         self.pen_radius = Slider(
-            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width)/2, 6.5 * indent,
+            bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width) / 2, 6.5 * indent,
                      self.slider_width, 30], text='pen radius', upper_value=10, minus_value=0)
         self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 40, 30], (0, 0, 0), 'pen',
                           text_pressed='pen', angle=0, size=16)
@@ -280,9 +292,9 @@ class Settings(Interface):
         self.field_button = Button([self.game_window[0] + self.game_window[2] + 110, 6 * indent, 40, 30], (0, 0, 0),
                                    'field', text_pressed='field', size=16)
 
-
     def draw(self, screen):
         if (self.status % 2) == 1:
+
             self.game_window[2] = self.game_window_width - self.width
             pygame.draw.rect(screen, self.background_color, [self.game_window[0] + self.game_window[2], 0,
                                                              self.WIDTH + self.game_window[0] + self.game_window[2],
@@ -296,23 +308,26 @@ class Settings(Interface):
 
             # examples of colors near of sliders
             # field humidity
-            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, self.indent-25, 5, 30])
+            pygame.draw.rect(screen, (0, 0, 0),
+                             [self.game_window[0] + self.game_window[2] + 10, self.indent - 25, 5, 30])
             pygame.draw.rect(screen, (0, 0, 255), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
-                                                   self.indent-25, 5, 30])
+                                                   self.indent - 25, 5, 30])
             # field radioactivity
-            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, 2*self.indent-25, 5, 30])
+            pygame.draw.rect(screen, (0, 0, 0),
+                             [self.game_window[0] + self.game_window[2] + 10, 2 * self.indent - 25, 5, 30])
             pygame.draw.rect(screen, (255, 0, 0), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
-                                                   2*self.indent-25, 5, 30])
+                                                   2 * self.indent - 25, 5, 30])
             # field food
             pygame.draw.rect(screen, (0, 0, 0),
-                             [self.game_window[0] + self.game_window[2] + 10, 3 * self.indent-25, 5, 30])
+                             [self.game_window[0] + self.game_window[2] + 10, 3 * self.indent - 25, 5, 30])
             pygame.draw.rect(screen, (0, 255, 0), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
-                                                   3 * self.indent-25, 5, 30])
+                                                   3 * self.indent - 25, 5, 30])
 
             # cell humidity
-            pygame.draw.rect(screen, (0, 0, 0), [self.game_window[0] + self.game_window[2] + 10, 4*self.indent, 5, 30])
+            pygame.draw.rect(screen, (0, 0, 0),
+                             [self.game_window[0] + self.game_window[2] + 10, 4 * self.indent, 5, 30])
             pygame.draw.rect(screen, (0, 0, 255), [self.game_window[0] + self.game_window[2] + self.WIDTH - 15,
-                                                   4*self.indent, 5, 30])
+                                                   4 * self.indent, 5, 30])
             # cell radioactivity
             pygame.draw.rect(screen, (0, 0, 0),
                              [self.game_window[0] + self.game_window[2] + 10, 5 * self.indent, 5, 30])
@@ -323,16 +338,20 @@ class Settings(Interface):
             print_text(screen, self.field_text, self.text_color, self.game_window[0] + self.game_window[2] + 100, 50,
                        18)
             print_text(screen, self.cell_text, self.text_color, self.game_window[0] + self.game_window[2] + 100,
-                       self.indent*3.75, 18)
+                       self.indent * 3.75, 18)
 
             # drawing rect that shows pen area
             self.pen.draw(screen)
             if self.pen.pressed:
-                pygame.draw.rect(screen, 'red', self.pen_rect, 4)
+                # pygame.draw.rect(screen, 'red', self.pen_rect, 4)
                 self.cell_button.draw(screen)
                 self.field_button.draw(screen)
         else:
             self.game_window[2] = self.game_window_width
+
+    def draw_pen_rect(self, screen):
+        if self.pen.pressed:
+            pygame.draw.rect(screen, 'red', self.pen_rect, 4)
 
     def update(self):
         """changes values of cells and field in settings"""
@@ -356,7 +375,8 @@ class Settings(Interface):
             self.cell_radioactivity_slider.change_value()
             self.cell.genes[1] = self.cell_radioactivity_slider.get_value()
 
-        self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food, self.cell.radioactivity)
+        self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food,
+                                                            self.cell.radioactivity)
 
     def update_slider(self):
 
@@ -368,8 +388,8 @@ class Settings(Interface):
                                                                * self.field_radioactivity_slider.scale
 
         self.field_food_slider.current_value_points = (self.cell.food
-                                                                + self.field_food_slider.minus_value) \
-                                                               * self.field_food_slider.scale
+                                                       + self.field_food_slider.minus_value) \
+                                                      * self.field_food_slider.scale
 
         self.cell_humidity_slider.current_value_points = (self.cell.genes[0] + self.cell_humidity_slider.minus_value) \
                                                          * self.cell_humidity_slider.scale
@@ -400,6 +420,48 @@ class Settings(Interface):
 
                 self.cell.color, self.cell.color_bg = change_colors(self.cell.genes, self.cell.humidity, self.cell.food,
                                                                     self.cell.radioactivity)
+
+
+class Menu(Interface):
+    def __init__(self, width, height, game_window):
+        super().__init__(width, height, game_window)
+        self.width = width
+        self.height = height
+        self.bg_color = (200, 200, 200)
+        self.rect_color = (100, 100, 100)
+        self.text_color = (0, 0, 0)
+        self.last = pygame.time.get_ticks()
+
+        self.start = Button([7.5 * width / 10, 7 * height / 10, width / 10, height / 20], (0, 0, 0), 'start',
+                            bg_color=(255, 255, 255),
+                            text_pressed='start', size=24)
+        self.small_field = Button([6.15 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'small',
+                                  bg_color=(255, 255, 255), text_pressed='small', size=20)
+        self.middle_field = Button([7.25 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'middle',
+                                   bg_color=(255, 255, 255),
+                                   text_pressed='middle', size=20)
+        self.large_field = Button([8.35 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'large',
+                                  bg_color=(255, 255, 255),
+                                  text_pressed='large', size=20)
+
+    def draw(self, screen):
+        screen.fill(self.bg_color)
+        print_text(screen, 'Evolution', self.text_color, self.width / 2, self.height / 10, 46)
+        # block of rules
+        pygame.draw.rect(screen, self.rect_color,
+                         (self.width / 20, 2 * self.height / 10, self.width / 2, 6 * self.height / 10))
+        # block of window settings
+        pygame.draw.rect(screen, self.rect_color,
+                         (6 * self.width / 10, 2 * self.height / 10, 3.5 * self.width / 10, 3 * self.height / 10))
+        # text
+        print_text(screen, 'Rules', self.text_color, 11 * self.width / 40, 2.5 * self.height / 10, 32)
+        print_text(screen, 'Choose window size:', self.text_color, 15.5 * self.width / 20, 2.5 * self.height / 10, 28)
+        # buttons
+        self.start.draw(screen)
+        self.small_field.draw(screen)
+        self.middle_field.draw(screen)
+        self.large_field.draw(screen)
+
 
 
 

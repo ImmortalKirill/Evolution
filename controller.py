@@ -27,8 +27,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
             settings.cell = field.cells[x_cell][y_cell]
             settings.update_slider()
-            if x_cell != None:
-                field.cells[x_cell][y_cell].live = 5
+
 
         else:
             # if pressed button is left mouse button
@@ -45,6 +44,8 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mouse on button pen
             if mouse_pos_check(pygame.mouse.get_pos(), settings.pen.bg_rect):
                 settings.pen.change_press()
+                settings.cell_button.pressed = 1
+                settings.field_button.pressed = 1
             if mouse_pos_check(pygame.mouse.get_pos(), settings.cell_button.bg_rect):
                 settings.cell_button.change_press()
             if mouse_pos_check(pygame.mouse.get_pos(), settings.field_button.bg_rect):
@@ -67,18 +68,23 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
 
-    if settings.pen.pressed and pygame.mouse.get_pressed()[2]:
+    # drawing pen square
+    if settings.pen.pressed and pygame.mouse.get_pressed()[2] and mouse_pos_check(array(pygame.mouse.get_pos()), interface.game_window):
+        print(event.type)
         x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
-        x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center, settings.game_window, 1)
-        r = settings.pen_radius.get_value() * field.scale
-        settings.pen_rect = (x - r, y - r, 2*r, 2*r)
-        for i in range(-settings.pen_radius.get_value(), settings.pen_radius.get_value()):
-            for j in range(-settings.pen_radius.get_value() + 1, settings.pen_radius.get_value() + 1):
-                settings.cell = field.cells[x_cell + i][y_cell + j]
-                settings.redraw()
-                if settings.cell_button.pressed:
-                    if x_cell is not None:
-                        field.cells[x_cell + i][y_cell + j].live = 5
+        if (x_cell is not None) and (y_cell is not None):
+            x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center, settings.game_window, 1)
+            r = settings.pen_radius.get_value() * field.scale
+            settings.pen_rect = (x - r, y - r, 2*r, 2*r)
+            for i in range(-settings.pen_radius.get_value(), settings.pen_radius.get_value()):
+                for j in range(-settings.pen_radius.get_value() + 1, settings.pen_radius.get_value() + 1):
+                    if (x_cell + i < field.size_x) and (x_cell + i >= 0) and (y_cell + j < field.size_y) and (y_cell + j >= 0):
+                        settings.cell = field.cells[x_cell + i][y_cell + j]
+                        settings.redraw()
+                        if settings.cell_button.pressed:
+                            if x_cell is not None:
+                                field.cells[x_cell + i][y_cell + j].live = 5
+
     # if mouse on speed_slider
     if pygame.mouse.get_pressed()[0]:
         interface.slider.change_value()
@@ -89,6 +95,28 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
 
 
     return field, pressed_mouse, interface, speed
+
+
+def menu_event_manage(event, main_menu, pressed_mouse, Main_menu):
+    """manages event from the game, changes field etc"""
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.start.bg_rect):
+            main_menu.start.change_press()
+            Main_menu = False
+        if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.small_field.bg_rect):
+            main_menu.small_field.change_press()
+            main_menu.large_field.pressed = 0
+            main_menu.middle_field.pressed = 0
+        if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.middle_field.bg_rect):
+            main_menu.middle_field.change_press()
+            main_menu.large_field.pressed = 0
+            main_menu.small_field.pressed = 0
+        if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.large_field.bg_rect):
+            main_menu.large_field.change_press()
+            main_menu.small_field.pressed = 0
+            main_menu.middle_field.pressed = 0
+
+    return Main_menu, pressed_mouse
 
 
 if __name__ == "__main__":
