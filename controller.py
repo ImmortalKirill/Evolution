@@ -100,7 +100,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
     return field, pressed_mouse, interface, speed
 
 
-def menu_event_manage(event, main_menu, pressed_mouse, Main_menu):
+def menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.start.bg_rect):
@@ -108,18 +108,21 @@ def menu_event_manage(event, main_menu, pressed_mouse, Main_menu):
             Main_menu = False
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.small_field.bg_rect):
             main_menu.small_field.change_press()
+            field_size = 100
             main_menu.large_field.pressed = 0
             main_menu.middle_field.pressed = 0
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.middle_field.bg_rect):
             main_menu.middle_field.change_press()
+            field_size = 150
             main_menu.large_field.pressed = 0
             main_menu.small_field.pressed = 0
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.large_field.bg_rect):
             main_menu.large_field.change_press()
+            field_size = 200
             main_menu.small_field.pressed = 0
             main_menu.middle_field.pressed = 0
 
-    return Main_menu, pressed_mouse
+    return Main_menu, pressed_mouse, field_size
 
 
 if __name__ == "__main__":
