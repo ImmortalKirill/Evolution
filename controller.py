@@ -76,7 +76,6 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
                     upload(field, interface.text_of_file)
                     interface.text_of_file = ''
 
-
     elif event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
             pressed_mouse = False

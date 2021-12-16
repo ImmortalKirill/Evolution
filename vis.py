@@ -3,6 +3,7 @@ from model import find_grid, change_coords
 import pygame
 import random
 
+
 def game_field(screen, field: Field, interface_game_window):
     """draws field on the screen in game-play window"""
     grid = find_grid(field, interface_game_window)
@@ -42,8 +43,7 @@ def draw_life_cells(screen, field, grid):
                                     (grid[4] * i + grid[0], grid[1] + j * grid[4],
                                      grid[4], grid[4]), 5)
 
-                
-                
+
 def draw_game(screen, field, interface, settings):
     """draws game screen on par screen with field"""
     game_field(screen, field, interface.game_window)
@@ -52,11 +52,10 @@ def draw_game(screen, field, interface, settings):
     settings.draw(screen)
 
 
-
-
 def draw_menu(main_menu, screen):
     """draws menu"""
     main_menu.draw(screen)
-    
+
+
 if __name__ == "__main__":
     print("This module is not for direct call!")

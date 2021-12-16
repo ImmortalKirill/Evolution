@@ -9,6 +9,7 @@ from numpy import array, zeros
 from numba import njit
 from numba.experimental import jitclass
 
+
 class Cell:
     """ class of one cell on a Field"""
 
@@ -29,11 +30,8 @@ class Cell:
         y = self.y = y0
 
 
-
-
-
 class Cloud:
-    '''
+    """
     Create cloud with parametrs:
     cells - information about radiation
     size_x, size_y - sizes of cloud
@@ -42,7 +40,7 @@ class Cloud:
     count - periodic of changing speed
     time - self time of cloud
     slow - how often cloud moves
-    '''
+    """
 
     def __init__(self, x, y, slow):
         size_x = self.size_x = x
@@ -56,7 +54,6 @@ class Cloud:
         time = self.time = 0
         self.slow = slow
         self.old_cells = zeros((self.size_x, self.size_y))
-
 
     def new_cloud(self):
         self.cells = [[0] * self.size_x for i in range(self.size_y)]
@@ -72,10 +69,9 @@ class Cloud:
         if self.count % 20 == 0:
             self.speed_x = randint(-2, 3)
             self.speed_y = randint(-2, 3)
-            
-            
+
     def mod(self, field):
-        #modified field
+        # modified field
         for i in range(self.size_x):
             for j in range(self.size_y):
                 temp = field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity
@@ -83,11 +79,9 @@ class Cloud:
                 temp2 = self.cells[i][j] + temp
                 if temp2 > field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity:
                     field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity = min(temp2, 100)
-               
-
 
     def clear(self, field):
-        #clear itself
+        # clear itself
         field_x = field.size_x
         field_y = field.size_y
         for i in range(self.size_x):
@@ -198,16 +192,17 @@ class Slider(Button):
     def change_value(self):
         """allows users to change value of the slider by dragging it"""
         # If mouse is pressed and mouse is inside the slider
-        mousePos = pygame.mouse.get_pos()
-        if mouse_pos_check(array(mousePos), self.bg_rect):
+        mouse_pos = pygame.mouse.get_pos()
+        if mouse_pos_check(array(mouse_pos), self.bg_rect):
             # the size of the slider
-            self.current_value_points = mousePos[0] - self.bg_rect[0]
+            self.current_value_points = mouse_pos[0] - self.bg_rect[0]
 
             # limit the size of the slider
             if self.current_value_points < 1:
                 self.current_value_points = 0
             if self.current_value_points > self.bg_rect[2]:
                 self.current_value_points = self.bg_rect[2]
+
 
 class Interface:
     """creates class with all buttons and sliders in the bottom part of window"""
@@ -485,8 +480,6 @@ class Menu(Interface):
         self.large_field.draw(screen)
 
 
-
-
 class Field:
     """ class Field, consists of cells"""
 
@@ -501,13 +494,14 @@ class Field:
         neighbors_exist_start = self.neighbors_exist_start = 2
         neighbors_exist_end = self.neighbors_exist_end = 3
         cloud = self.cloud = Cloud(33, 33, 3)
-        #live_cells = self.live_cells = []
+        # live_cells = self.live_cells = []
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
         self.size_x = x
         self.size_y = y
+
         def midpoint_displacement(x, upper_point, bottom_point, sharpest):
             size = x
             heightmap = [[0]*size for i in range(size)]
@@ -544,9 +538,7 @@ class Field:
                     q.append((centerY, centerX, bottom, right, randomness // 2))
             return heightmap
 
-
-        #cloud generation
-        #self.cloud = Cloud(33, 33, 3)
+        # cloud generation
         massive = midpoint_displacement(self.cloud.size_x, -90, -100, 700)
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
@@ -554,15 +546,6 @@ class Field:
                     self.cloud.cells[i][j] = min(massive[i][j], 100)
                 else:
                     self.cloud.cells[i][j] = max(massive[i][j], -100)
-
-
-        '''for i in range(self.cloud.size_x):
-            for j in range(self.cloud.size_y):
-                if self.cloud.cells[i][j] > 0:
-                    self.cloud.cells[i][j] = min(self.cloud.cells[i][j], 100)
-                else:
-                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)'''
-
 
         def generate_field(cells:list, x, y):
             """generates field initial conditions"""
@@ -576,9 +559,8 @@ class Field:
                         cells[i][l].live = 5
                         cells[i][l].genes[0] = -100
                         cells[i][l].genes[1] = 50
-                        #self.live_cells.append([i, l])
-                        #cells[i][l].food = randint(0, 1)
-            #generate humadity
+
+            # generate humidity
             massive = midpoint_displacement(x, 100, -100, 200)
             for i in range(x):
                 for j in range(y):
@@ -586,14 +568,7 @@ class Field:
                         self.cells[i][j].humidity = min(massive[i][j], 100)
                     else:
                         self.cells[i][j].humidity = max(massive[i][j], -100)
-            #generate radioactivity
-            '''massive = midpoint_displacement(x, 0, -100, 200)
-            for i in range(x):
-                for j in range(y):
-                    if massive[i][j] > 0:
-                        self.cells[i][j].radioactivity = min(massive[i][j], 100)
-                    else:
-                        self.cells[i][j].radioactivity = max(massive[i][j], -100)'''
+            # generate radioactivity
             self.cloud.mod(self)
         generate_field(self.cells, x, y)
         self.x_center = x / 2
@@ -601,13 +576,10 @@ class Field:
         self.size_x = x
         self.size_y = y
 
-
     def change_cors(self, vector):
         """shift of center coordinates on vector(x, y)"""
         self.x_center += vector[0]
         self.y_center += vector[1]
-
-
 
 
 if __name__ == "__main__":
