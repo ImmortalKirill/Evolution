@@ -2,6 +2,7 @@ from random import randint
 import pygame
 import pygame.freetype
 import math
+from model import saving, upload
 from pygame.draw import *
 from collections import deque
 from numpy import array, zeros
@@ -462,7 +463,7 @@ class Field:
 
         #cloud generation
         #self.cloud = Cloud(33, 33, 3)
-        massive = midpoint_displacement(self.cloud.size_x, -80, -100, 500)
+        massive = midpoint_displacement(self.cloud.size_x, -90, -100, 700)
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
                 if self.cloud.cells[i][j] > 0:
@@ -471,12 +472,12 @@ class Field:
                     self.cloud.cells[i][j] = max(massive[i][j], -100)
 
 
-        for i in range(self.cloud.size_x):
+        '''for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
                 if self.cloud.cells[i][j] > 0:
                     self.cloud.cells[i][j] = min(self.cloud.cells[i][j], 100)
                 else:
-                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)
+                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)'''
 
 
         def generate_field(cells:list, x, y):
@@ -487,7 +488,7 @@ class Field:
                     cells[i][l].new_cell(i, l)
                     cells[i][l].radioactivity = -90
                     cells[i][l].food = 30
-                    if randint(0, 2):
+                    if randint(0, 1):
                         cells[i][l].live = 5
                         cells[i][l].genes[0] = -100
                         cells[i][l].genes[1] = 50
@@ -515,6 +516,7 @@ class Field:
         self.y_center = y / 2
         self.size_x = x
         self.size_y = y
+
 
     def change_cors(self, vector):
         """shift of center coordinates on vector(x, y)"""
