@@ -2,12 +2,12 @@ from random import randint
 import pygame
 import pygame.freetype
 import math
+from model import saving, upload
 from pygame.draw import *
 from collections import deque
 from numpy import array, zeros
 from numba import njit
 from numba.experimental import jitclass
-
 
 class Cell:
     """ class of one cell on a Field"""
@@ -27,6 +27,9 @@ class Cell:
     def new_cell(self, x0, y0):
         x = self.x = x0
         y = self.y = y0
+
+
+
 
 
 class Cloud:
@@ -59,7 +62,7 @@ class Cloud:
         self.cells = [[0] * self.size_x for i in range(self.size_y)]
         for i in range(self.size_x):
             for j in range(self.size_y):
-                self.cells[i][j] = math.floor((self.size_x * self.size_y / 4 - abs((i - self.size_x / 2) * (j - self.size_y / 2)))
+                self.cells[i][j] = math.floor((self.size_x * self.size_y / 4 - abs((i - self.size_x / 2) * (j - self.size_y / 2))) 
                                          / (self.size_x * self.size_y / 4) * 200 - 100)
 
     def move(self, size_x, size_y):
@@ -69,10 +72,10 @@ class Cloud:
         if self.count % 20 == 0:
             self.speed_x = randint(-2, 3)
             self.speed_y = randint(-2, 3)
-
-
+            
+            
     def mod(self, field):
-        # modified field
+        #modified field
         for i in range(self.size_x):
             for j in range(self.size_y):
                 temp = field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity
@@ -80,26 +83,18 @@ class Cloud:
                 temp2 = self.cells[i][j] + temp
                 if temp2 > field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity:
                     field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity = min(temp2, 100)
-
+               
 
 
     def clear(self, field):
-        # clear itself
+        #clear itself
         field_x = field.size_x
         field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
+<<<<<<< HEAD
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.old_cells[i][j]
-
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
-
-    def change_colors(self):
-        """changes color of cell and cell_bg according to genes"""
-        self.color = (math.floor(255 * (self.genes[1] + 100) / 200),
-                      0,
-                      math.floor(255 * (self.genes[0] + 100) / 200))
-        self.color_bg = (
-            math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
 
 
 class Button:
@@ -531,7 +526,7 @@ class Field:
 
         #cloud generation
         #self.cloud = Cloud(33, 33, 3)
-        massive = midpoint_displacement(self.cloud.size_x, -80, -100, 500)
+        massive = midpoint_displacement(self.cloud.size_x, -90, -100, 700)
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
                 if self.cloud.cells[i][j] > 0:
@@ -540,12 +535,12 @@ class Field:
                     self.cloud.cells[i][j] = max(massive[i][j], -100)
 
 
-        for i in range(self.cloud.size_x):
+        '''for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
                 if self.cloud.cells[i][j] > 0:
                     self.cloud.cells[i][j] = min(self.cloud.cells[i][j], 100)
                 else:
-                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)
+                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)'''
 
 
         def generate_field(cells:list, x, y):
@@ -556,9 +551,9 @@ class Field:
                     cells[i][l].new_cell(i, l)
                     cells[i][l].radioactivity = -90
                     cells[i][l].food = 30
-                    if randint(0, 2):
+                    if randint(0, 1):
                         cells[i][l].live = 5
-                        cells[i][l].genes[0] = 0
+                        cells[i][l].genes[0] = -100
                         cells[i][l].genes[1] = 50
                         #self.live_cells.append([i, l])
                         #cells[i][l].food = randint(0, 1)
@@ -584,6 +579,7 @@ class Field:
         self.y_center = y / 2
         self.size_x = x
         self.size_y = y
+
 
     def change_cors(self, vector):
         """shift of center coordinates on vector(x, y)"""
