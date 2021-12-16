@@ -161,6 +161,7 @@ from model import mouse_pos_check, print_text, change_coords, change_colors
 
 
 class Slider(Button):
+    """class of sliders that can change some parameter smoothly"""
     def __init__(self, bg_rect, text_color=(0, 0, 0), text='Parameter', bg_color=(0, 0, 0), text_pressed='', angle=0,
                  upper_value: int = 10, current_value_points: int = 30, minus_value=0):
         """position - tuple of left top angle coors of slider - (x, y)
@@ -178,10 +179,12 @@ class Slider(Button):
 
     # returns the current value of the slider
     def get_value(self) -> float:
+        """function gives rounded value of slider's parameter"""
         return round(self.current_value_points / self.scale - self.minus_value)
 
     # renders slider and the text showing the value of the slider
-    def draw(self, screen: pygame.display) -> None:
+    def draw(self, screen: pygame.display):
+        """ draws slider on the screen"""
         # draw outline and slider rectangles
         pygame.draw.rect(screen, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
                                                  self.bg_rect[2], self.bg_rect[3]), 1)
@@ -192,8 +195,8 @@ class Slider(Button):
         print_text(screen, f"{self.text}: {self.get_value()}", self.text_color, self.bg_rect[0] + (self.bg_rect[2] / 2),
                    self.bg_rect[1] + self.bg_rect[3] * 1.5, int(self.bg_rect[3] / 2))
 
-    # allows users to change value of the slider by dragging it.
-    def change_value(self) -> None:
+    def change_value(self):
+        """allows users to change value of the slider by dragging it"""
         # If mouse is pressed and mouse is inside the slider
         mousePos = pygame.mouse.get_pos()
         if mouse_pos_check(array(mousePos), self.bg_rect):
@@ -207,10 +210,10 @@ class Slider(Button):
                 self.current_value_points = self.bg_rect[2]
 
 class Interface:
-    """creates class with all buttons"""
+    """creates class with all buttons and sliders in the bottom part of window"""
 
     def __init__(self, width, height, game_window):
-        """WIDTH, HEIGHT - size of the game"""
+        """WIDTH, HEIGHT - size of the app window"""
         self.game_window = game_window
         self.WIDTH = width
         self.HEIGHT = height
@@ -223,7 +226,7 @@ class Interface:
         self.background_color = (129, 129, 144)
 
     def draw(self, screen):
-        """draws interface"""
+        """draws interface on the screen"""
         # drawing interface background
         # top rect
         pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 0)
@@ -248,7 +251,7 @@ class Interface:
 
 
 class Settings(Interface):
-    """creates class of additional menu with buttons"""
+    """creates class of additional menu that controls pen and cell and field settings"""
 
     def __init__(self, width, height, game_window, game_window_width, status,
                  indent=100, slider_width=150):
@@ -256,7 +259,9 @@ class Settings(Interface):
         self.font = 0
         self.width = width
         self.slider_width = slider_width
+        # is settings activated
         self.status = status
+        # headers text
         self.field_text = 'Field'
         self.cell_text = 'Cell'
         self.text_color = 'black'
@@ -266,6 +271,7 @@ class Settings(Interface):
         self.pen_rect = (0, 0, 0, 0)
         self.indent = indent
         self.background_color = (129, 129, 144)
+        # sliders
         self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] +
                                                      (self.width - self.slider_width) / 2, indent - 25,
                                                      self.slider_width, 30],
@@ -285,6 +291,7 @@ class Settings(Interface):
         self.pen_radius = Slider(
             bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width) / 2, 6.5 * indent,
                      self.slider_width, 30], text='pen radius', upper_value=10, minus_value=0)
+        # buttons
         self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 40, 30], (0, 0, 0), 'pen',
                           text_pressed='pen', angle=0, size=16)
         self.cell_button = Button([self.game_window[0] + self.game_window[2] + 60, 6 * indent, 40, 30], (0, 0, 0),
@@ -293,6 +300,7 @@ class Settings(Interface):
                                    'field', text_pressed='field', size=16)
 
     def draw(self, screen):
+        """ draws settings on the screen if it is activated (button + is pressed)"""
         if (self.status % 2) == 1:
 
             self.game_window[2] = self.game_window_width - self.width
@@ -343,13 +351,13 @@ class Settings(Interface):
             # drawing rect that shows pen area
             self.pen.draw(screen)
             if self.pen.pressed:
-                # pygame.draw.rect(screen, 'red', self.pen_rect, 4)
                 self.cell_button.draw(screen)
                 self.field_button.draw(screen)
         else:
             self.game_window[2] = self.game_window_width
 
     def draw_pen_rect(self, screen):
+        """ draws red square with pen_rect coors - pen area"""
         if self.pen.pressed:
             pygame.draw.rect(screen, 'red', self.pen_rect, 4)
 
@@ -379,6 +387,7 @@ class Settings(Interface):
                                                             self.cell.radioactivity)
 
     def update_slider(self):
+        """ gets parameters of cells and field when pen is not activated"""
 
         self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value) \
                                                           * self.field_humidity_slider.scale
@@ -398,6 +407,7 @@ class Settings(Interface):
                                                               * self.cell_radioactivity_slider.scale
 
     def redraw(self):
+        """ draws new cells with given parameters with pen"""
         if self.pen.pressed:
             if self.cell_button.pressed:
                 self.cell_humidity_slider.change_value()
@@ -423,6 +433,7 @@ class Settings(Interface):
 
 
 class Menu(Interface):
+    """ class of all buttons and text - main menu that introduce our game"""
     def __init__(self, width, height, game_window):
         super().__init__(width, height, game_window)
         self.width = width
@@ -431,10 +442,11 @@ class Menu(Interface):
         self.rect_color = (100, 100, 100)
         self.text_color = (0, 0, 0)
         self.last = pygame.time.get_ticks()
-
+        # buttons
         self.start = Button([7.5 * width / 10, 7 * height / 10, width / 10, height / 20], (0, 0, 0), 'start',
                             bg_color=(255, 255, 255),
                             text_pressed='start', size=24)
+        # buttons to choose field size
         self.small_field = Button([6.15 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'small',
                                   bg_color=(255, 255, 255), text_pressed='small', size=20)
         self.middle_field = Button([7.25 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'middle',
@@ -445,6 +457,7 @@ class Menu(Interface):
                                   text_pressed='large', size=20)
 
     def draw(self, screen):
+        """ draws menu on the screen"""
         screen.fill(self.bg_color)
         print_text(screen, 'Evolution', self.text_color, self.width / 2, self.height / 10, 46)
         # block of rules
