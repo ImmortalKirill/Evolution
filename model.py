@@ -314,7 +314,7 @@ def print_text(screen, text: str, text_color, x, y, size, bg_color=None):
 def search(strings, name):
     '''
     Search string 'name' in the list 'strings'.
-    Return position of element in list or -1 if it's doesn't exist
+    Return position of element in list or -1 if it doesn't exist
     '''
     for i in range(len(strings)):
         if strings[i] == name:
@@ -325,7 +325,7 @@ def search(strings, name):
 
 def saving(field, name):
     '''
-    Function saving field in order: size_x, size_y, cells(humidity, food, live, genes), cloud.
+    Function saves field in order: size_x, size_y, cells(humidity, food, live, genes), cloud.
     Returns True if name of file doesn't exist in file and False if exist
     '''
     with open ('list.txt', 'r') as file:
@@ -352,7 +352,7 @@ import objects
                
 def upload(field, name):
     '''
-    Function upload data of field with that name and return True. If this name doesn't exist return False
+    Function uploads data of field with that name and return True. If this name doesn't exist return False
     '''
     with open('list.txt', 'r') as file:
         temp = file.read()
@@ -368,10 +368,10 @@ def upload(field, name):
                 field.cells[i][j] = objects.Cell()
                 s = strings[i * field.size_x + j + begin + 3].split()
                 field.cells[i][j].humidity = float(s[0])
-                field.cells[i][j].food = int(s[1])
-                field.cells[i][j].live = int(s[2])
-                field.cells[i][j].genes[0] = int(s[3])
-                field.cells[i][j].genes[1] = int(s[4])
+                field.cells[i][j].food = float(s[1])
+                field.cells[i][j].live = float(s[2])
+                field.cells[i][j].genes[0] = float(s[3])
+                field.cells[i][j].genes[1] = float(s[4])
         return True    
     else:
         return False
