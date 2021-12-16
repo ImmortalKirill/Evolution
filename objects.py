@@ -224,6 +224,10 @@ class Interface:
         self.population_spawn = Button([100, 710, 80, 30], (0, 0, 0), 'new field', text_pressed='new field', size=16)
         self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
         self.background_color = (129, 129, 144)
+        self.save = Button([700, 710, 50, 30], (0, 0, 0), 'save', text_pressed='accept', size=16)
+        self.upload = Button([760, 710, 60, 30], (0, 0, 0), 'upload', text_pressed='accept', size=16)
+        self.text_of_file = ''
+        self.font = pygame.font.Font(None, 30)
 
     def draw(self, screen):
         """draws interface on the screen"""
@@ -248,6 +252,11 @@ class Interface:
         self.slider.draw(screen)
         self.clear.draw(screen)
         self.population_spawn.draw(screen)
+        self.save.draw(screen)
+        self.upload.draw(screen)
+        
+        text = self.font.render(self.text_of_file, True, (0, 0, 0))
+        screen.blit(text, (720, 760))
 
 
 class Settings(Interface):

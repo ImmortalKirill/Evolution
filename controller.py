@@ -1,4 +1,4 @@
-from model import change_scale, mouse_pos_check, find_cell, change_coords
+from model import change_scale, mouse_pos_check, find_cell, change_coords, saving, upload
 import pygame
 from numpy import array
 
@@ -59,6 +59,22 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mouse on button create new field with new population
             if mouse_pos_check(array(pygame.mouse.get_pos()), interface.population_spawn.bg_rect):
                 field.new_field(field.size_x, field.size_y)
+            # if mouse on button start or end input of name
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.save.bg_rect):
+                if interface.save.pressed == 0:
+                    interface.save.pressed = 1
+                else:
+                    interface.save.pressed = 0
+                    saving(field, interface.text_of_file)
+                    interface.text_of_file = ''
+            # if mouse on button upload field
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.upload.bg_rect):
+                if interface.upload.pressed == 0:
+                    interface.upload.pressed = 1
+                else:
+                    interface.upload.pressed = 0
+                    upload(field, interface.text_of_file)
+                    interface.text_of_file = ''
 
 
     elif event.type == pygame.MOUSEBUTTONUP:
@@ -68,7 +84,9 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         if pressed_mouse and mouse_pos_check(array(pygame.mouse.get_pos()), interface.game_window):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
-
+    elif event.type == pygame.KEYDOWN and (interface.save.pressed == 1 or interface.upload.pressed == 1):
+        interface.text_of_file += str(event.unicode)
+        print(str(event.unicode))
     # drawing pen square
     if (event.type == pygame.MOUSEBUTTONDOWN) or (event.type == pygame.MOUSEMOTION):
         if settings.pen.pressed and pygame.mouse.get_pressed()[2] and mouse_pos_check(array(pygame.mouse.get_pos()),
