@@ -111,7 +111,7 @@ def born_survive(genes, live, food, radioactivity, neighbors, neighbors_born, ne
                 genes[0] = 0
                 genes[1] = 0
                 # drop of food with some chance
-                food += 3
+                food += 1
         else:
             # Influence of radiation
             if dif < edge_of_inf:
@@ -125,7 +125,7 @@ def born_survive(genes, live, food, radioactivity, neighbors, neighbors_born, ne
             genes[1] = gen_out_of_range(genes[1])
             # if cell has food on it
             if food > 0:
-                food -= 1
+                food -= 2
     # if dead cell has enough parents
     elif neighbors == neighbors_born:
         if food > 2:
@@ -135,6 +135,9 @@ def born_survive(genes, live, food, radioactivity, neighbors, neighbors_born, ne
         for i in range(len(genes)):
             genes[i] = genes_to_pass[i] / neighbors + randint(-3, 3)
             genes[i] = gen_out_of_range(genes[i])
+    if food < 20:
+        food += 0.3
+    food = gen_out_of_range(food)
     return genes, live, food
 
 def step(Field):

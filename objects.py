@@ -90,19 +90,8 @@ class Cloud:
         field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
-<<<<<<< HEAD
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.old_cells[i][j]
-
-=======
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
-    def change_colors(self):
-        """changes color of cell and cell_bg according to genes"""
-        self.color = (math.floor(255 * (self.genes[1] + 100) / 200),
-                      0,
-                      math.floor(255 * (self.genes[0] + 100) / 200))
-        self.color_bg = (
-            math.floor(255 * (100 + self.radioactivity) / 200), 0, math.floor(255 * (100 + self.humidity) / 200))
->>>>>>> b511e4a1adfe7a1450c6ca1e8700e8e27739b0d8
 
 
 class Button:
@@ -500,7 +489,7 @@ class Field:
                     cells[i][l].food = 30
                     if randint(0, 2):
                         cells[i][l].live = 5
-                        cells[i][l].genes[0] = 0
+                        cells[i][l].genes[0] = -100
                         cells[i][l].genes[1] = 50
                         #self.live_cells.append([i, l])
                         #cells[i][l].food = randint(0, 1)
