@@ -24,7 +24,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mode is cell_spawn
 
         if interface.cell_spawn.pressed and (not settings.pen.pressed) and (event.button == 3):
-            x_cell, y_cell = find_cell(event.pos, field, interface.game_window)
+            x_cell, y_cell = find_cell(pygame.mouse.get_pos(), field, interface.game_window)
             settings.cell = field.cells[x_cell][y_cell]
             settings.update_slider()
 
