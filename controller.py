@@ -87,7 +87,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
             
     elif event.type == pygame.KEYDOWN and (interface.save.pressed == 1 or interface.upload.pressed == 1):
-        if event.key == pygame.K_BACKSPACE and interface.name_of_file != '': #Backscape
+        if event.key == pygame.K_BACKSPACE and interface.name_of_file != '':   # Backscape
             interface.name_of_file = interface.name_of_file[:len(interface.name_of_file)-1]
         elif event.key == pygame.K_RETURN:
             if interface.save.pressed == 1:
@@ -133,12 +133,13 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
     return field, pressed_mouse, interface, speed
 
 
-def menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size):
+def menu_event_manage(event, main_menu, pressed_mouse, Main_menu, Game, field_size):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.start.bg_rect):
             main_menu.start.change_press()
             Main_menu = False
+            Game = True
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.small_field.bg_rect):
             main_menu.small_field.change_press()
             field_size = 100
@@ -146,16 +147,16 @@ def menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size):
             main_menu.middle_field.pressed = 0
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.middle_field.bg_rect):
             main_menu.middle_field.change_press()
-            field_size = 160
+            field_size = 129
             main_menu.large_field.pressed = 0
             main_menu.small_field.pressed = 0
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.large_field.bg_rect):
             main_menu.large_field.change_press()
-            field_size = 220
+            field_size = 200
             main_menu.small_field.pressed = 0
             main_menu.middle_field.pressed = 0
 
-    return Main_menu, pressed_mouse, field_size
+    return Game, Main_menu, pressed_mouse, field_size
 
 
 if __name__ == "__main__":
