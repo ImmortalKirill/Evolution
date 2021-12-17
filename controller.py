@@ -65,17 +65,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
                     interface.save.pressed = 1
                 else:
                     interface.save.pressed = 0
-                    interface.upload.pressed = 0
                     saving(field, interface.name_of_file)
-                    interface.name_of_file = ''
-            # if mouse on button upload field
-            if mouse_pos_check(pygame.mouse.get_pos(), interface.upload.bg_rect):
-                if interface.upload.pressed == 0:
-                    interface.upload.pressed = 1
-                else:
-                    interface.upload.pressed = 0
-                    interface.save.pressed = 0
-                    upload(field, interface.name_of_file)
                     interface.name_of_file = ''
 
     elif event.type == pygame.MOUSEBUTTONUP:
@@ -87,17 +77,12 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
             
     elif event.type == pygame.KEYDOWN and (interface.save.pressed == 1 or interface.upload.pressed == 1):
-        if event.key == pygame.K_BACKSPACE and interface.name_of_file != '':   # Backscape
+        if event.key == pygame.K_BACKSPACE and interface.name_of_file != '':   # Backspace
             interface.name_of_file = interface.name_of_file[:len(interface.name_of_file)-1]
         elif event.key == pygame.K_RETURN:
             if interface.save.pressed == 1:
                 interface.save.pressed = 0
-                interface.upload.pressed = 0
                 saving(field, interface.name_of_file)
-            elif interface.upload.pressed == 1:
-                interface.upload.pressed = 0
-                interface.save.pressed = 0
-                upload(field, interface.name_of_file)                
             interface.name_of_file = ''
         elif event.key != pygame.K_BACKSPACE:
             interface.name_of_file += str(event.unicode)
