@@ -1,5 +1,5 @@
 # Evolution
-Model of life evolution, full python
+Model of life evolution, full python\
 Used libraries
 1. numpy
 2. pygame
