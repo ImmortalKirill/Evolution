@@ -441,8 +441,8 @@ class Menu(Interface):
         super().__init__(width, height, game_window)
         self.width = width
         self.height = height
-        self.bg_color = (200, 200, 200)
-        self.rect_color = (100, 100, 100)
+        self.bg_color = (210, 210, 220)
+        self.rect_color = (129, 129, 144)
         self.text_color = (0, 0, 0)
         self.last = pygame.time.get_ticks()
         self.name_of_file = ''
