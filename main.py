@@ -51,7 +51,6 @@ def game(field_size, name):
     field = Field()
     field.new_field(field_size, field_size)
     if name != '':
-        print(name)
         upload(field, name)
 
     clock = pygame.time.Clock()
