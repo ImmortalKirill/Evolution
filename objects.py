@@ -445,10 +445,14 @@ class Menu(Interface):
         self.rect_color = (100, 100, 100)
         self.text_color = (0, 0, 0)
         self.last = pygame.time.get_ticks()
+        self.name_of_file = ''
         # buttons
-        self.start = Button([7.5 * width / 10, 7 * height / 10, width / 10, height / 20], (0, 0, 0), 'start',
+        self.start = Button([7.5 * width / 10, 9 * height / 10, width / 10, height / 20], (0, 0, 0), 'start',
                             bg_color=(255, 255, 255),
                             text_pressed='start', size=24)
+        self.upload = Button([7.5 * width / 10, 6 * height / 10, width / 10, height / 20], (0, 0, 0), 'upload',
+                            bg_color=(255, 255, 255),
+                            text_pressed='accept', size=24)
         # buttons to choose field size
         self.small_field = Button([6.15 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'small',
                                   bg_color=(255, 255, 255), text_pressed='small', size=20)
@@ -469,11 +473,28 @@ class Menu(Interface):
         # block of window settings
         pygame.draw.rect(screen, self.rect_color,
                          (6 * self.width / 10, 2 * self.height / 10, 3.5 * self.width / 10, 3 * self.height / 10))
-        # text
+        # headers
         print_text(screen, 'Rules', self.text_color, 11 * self.width / 40, 2.5 * self.height / 10, 32)
         print_text(screen, 'Choose window size:', self.text_color, 15.5 * self.width / 20, 2.5 * self.height / 10, 28)
+        # rules text
+        print_text(screen, 'Every cell of field can be dead or alive', self.text_color, 11 * self.width / 40,
+                   3 * self.height / 10, 18)
+        print_text(screen, 'Every cell interacts with its eight neighbours', self.text_color, 11 * self.width / 40,
+                   3.2 * self.height / 10, 18)
+        print_text(screen, 'If alive cell has 2 or 3 neighbours it remains alive', self.text_color, 11 * self.width / 40,
+                   3.4 * self.height / 10, 18)
+        print_text(screen, 'If dead cell has 3 neighbours it become alive', self.text_color,
+                   11 * self.width / 40,
+                   3.6 * self.height / 10, 18)
+        print_text(screen, 'Otherwise cell become dead', self.text_color,
+                   11 * self.width / 40,
+                   3.8 * self.height / 10, 18)
+
+
+
         # buttons
         self.start.draw(screen)
+        self.upload.draw(screen)
         self.small_field.draw(screen)
         self.middle_field.draw(screen)
         self.large_field.draw(screen)

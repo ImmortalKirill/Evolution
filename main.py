@@ -19,6 +19,7 @@ field_size = 150
 def menu(field_size):
     """loop for menu, draws menu screen and reads events from user"""
     global Main_menu, Main, Game, screen
+    field = Field()
     main_menu = Menu(WIDTH, HEIGHT, game_window)
     clock = pygame.time.Clock()
     pressed_mouse = False
@@ -31,18 +32,18 @@ def menu(field_size):
             if event.type == pygame.QUIT:
                 Main_menu = False
             else:
-                Main_menu, pressed_mouse, field_size = menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size)
-    return field_size
+                Main_menu, pressed_mouse, field_size, field = menu_event_manage(event, field, main_menu, pressed_mouse, Main_menu, field_size)
+    return field_size, field
 
 
 
 
-def game(field_size):
+def game(field_size, field):
     """loop for the game, draws game interface and reads events from user"""
     global Game, Main, screen
     # creating initial field
-    field = Field()
-    field.new_field(field_size, field_size)
+    # field = Field()
+    # field.new_field(field_size, field_size)
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
@@ -89,10 +90,10 @@ def main():
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         Main_menu = True
         # loop for menu
-        field_size = menu(field_size)
+        field_size, field = menu(field_size)
         Game = True
         # loop for main game
-        game(field_size)
+        game(field_size, field)
         Main = False
 
     pygame.quit()
