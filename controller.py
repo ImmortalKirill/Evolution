@@ -133,7 +133,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
     return field, pressed_mouse, interface, speed
 
 
-def menu_event_manage(event, field, main_menu, pressed_mouse, Main_menu, field_size):
+def menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.start.bg_rect):
@@ -159,21 +159,16 @@ def menu_event_manage(event, field, main_menu, pressed_mouse, Main_menu, field_s
                 main_menu.upload.pressed = 1
             else:
                 main_menu.upload.pressed = 0
-                upload(field, main_menu.name_of_file)
-                main_menu.name_of_file = ''
 
     if event.type == pygame.KEYDOWN and main_menu.upload.pressed:
         if event.key == pygame.K_BACKSPACE and main_menu.name_of_file != '':  # Backspace
             main_menu.name_of_file = main_menu.name_of_file[:len(main_menu.name_of_file)-1]
         elif event.key == pygame.K_RETURN:
             main_menu.upload.pressed = 0
-            main_menu.save.pressed = 0
-            upload(field, main_menu.name_of_file)
-            main_menu.name_of_file = ''
         elif event.key != pygame.K_BACKSPACE:
             main_menu.name_of_file += str(event.unicode)
 
-    return Main_menu, pressed_mouse, field_size, field
+    return Main_menu, pressed_mouse, field_size, main_menu.name_of_file
 
 
 if __name__ == "__main__":

@@ -479,7 +479,7 @@ class Menu(Interface):
         # rules text
         print_text(screen, 'Every cell of field can be dead or alive', self.text_color, 11 * self.width / 40,
                    3 * self.height / 10, 18)
-        print_text(screen, 'Every cell interacts with its eight neighbours', self.text_color, 11 * self.width / 40,
+        print_text(screen, 'Every cell interacts with its neighbours', self.text_color, 11 * self.width / 40,
                    3.2 * self.height / 10, 18)
         print_text(screen, 'If alive cell has 2 or 3 neighbours it remains alive', self.text_color, 11 * self.width / 40,
                    3.4 * self.height / 10, 18)
@@ -490,7 +490,9 @@ class Menu(Interface):
                    11 * self.width / 40,
                    3.8 * self.height / 10, 18)
 
-
+        # upload print
+        text = self.font.render(self.name_of_file, True, (0, 0, 0))
+        screen.blit(text, (7.5 * self.width / 10, 7 * self.height / 10))
 
         # buttons
         self.start.draw(screen)

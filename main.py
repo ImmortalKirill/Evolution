@@ -13,7 +13,7 @@ WIDTH = 1000
 game_window = array([0, 0, 800, 700])
 FPS = 30
 # default middle field size
-field_size = 150
+field_size = 160
 
 
 def menu(field_size):
@@ -32,18 +32,24 @@ def menu(field_size):
             if event.type == pygame.QUIT:
                 Main_menu = False
             else:
-                Main_menu, pressed_mouse, field_size, field = menu_event_manage(event, field, main_menu, pressed_mouse, Main_menu, field_size)
-    return field_size, field
+                Main_menu, pressed_mouse, field_size, name = menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size)
+                print(name)
+    return field_size, name
 
 
 
 
-def game(field_size, field):
+def game(field_size, name):
     """loop for the game, draws game interface and reads events from user"""
     global Game, Main, screen
     # creating initial field
-    # field = Field()
-    # field.new_field(field_size, field_size)
+    field = Field()
+    if name == '':
+        field.new_field(field_size, field_size)
+    else:
+        print(name)
+        upload(field, name)
+
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
@@ -90,10 +96,10 @@ def main():
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         Main_menu = True
         # loop for menu
-        field_size, field = menu(field_size)
+        field_size, name = menu(field_size)
         Game = True
         # loop for main game
-        game(field_size, field)
+        game(field_size, name)
         Main = False
 
     pygame.quit()
