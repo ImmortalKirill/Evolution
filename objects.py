@@ -9,6 +9,7 @@ from numpy import array, zeros
 from numba import njit
 from numba.experimental import jitclass
 
+
 class Cell:
     """ class of one cell on a Field"""
 
@@ -29,11 +30,8 @@ class Cell:
         y = self.y = y0
 
 
-
-
-
 class Cloud:
-    '''
+    """
     Create cloud with parametrs:
     cells - information about radiation
     size_x, size_y - sizes of cloud
@@ -42,7 +40,7 @@ class Cloud:
     count - periodic of changing speed
     time - self time of cloud
     slow - how often cloud moves
-    '''
+    """
 
     def __init__(self, x, y, slow):
         size_x = self.size_x = x
@@ -56,7 +54,6 @@ class Cloud:
         time = self.time = 0
         self.slow = slow
         self.old_cells = zeros((self.size_x, self.size_y))
-
 
     def new_cloud(self):
         self.cells = [[0] * self.size_x for i in range(self.size_y)]
@@ -72,10 +69,9 @@ class Cloud:
         if self.count % 20 == 0:
             self.speed_x = randint(-2, 3)
             self.speed_y = randint(-2, 3)
-            
-            
+
     def mod(self, field):
-        #modified field
+        # modified field
         for i in range(self.size_x):
             for j in range(self.size_y):
                 temp = field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity
@@ -83,17 +79,14 @@ class Cloud:
                 temp2 = self.cells[i][j] + temp
                 if temp2 > field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity:
                     field.cells[(self.x + i) % field.size_x][(self.y + j) % field.size_y].radioactivity = min(temp2, 100)
-               
-
 
     def clear(self, field):
-        #clear itself
+        # clear itself
         field_x = field.size_x
         field_y = field.size_y
         for i in range(self.size_x):
             for j in range(self.size_y):
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.old_cells[i][j]
-                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
 
 
 class Button:
@@ -161,6 +154,7 @@ from model import mouse_pos_check, print_text, change_coords, change_colors
 
 
 class Slider(Button):
+    """class of sliders that can change some parameter smoothly"""
     def __init__(self, bg_rect, text_color=(0, 0, 0), text='Parameter', bg_color=(0, 0, 0), text_pressed='', angle=0,
                  upper_value: int = 10, current_value_points: int = 30, minus_value=0):
         """position - tuple of left top angle coors of slider - (x, y)
@@ -178,10 +172,12 @@ class Slider(Button):
 
     # returns the current value of the slider
     def get_value(self) -> float:
+        """function gives rounded value of slider's parameter"""
         return round(self.current_value_points / self.scale - self.minus_value)
 
     # renders slider and the text showing the value of the slider
-    def draw(self, screen: pygame.display) -> None:
+    def draw(self, screen: pygame.display):
+        """ draws slider on the screen"""
         # draw outline and slider rectangles
         pygame.draw.rect(screen, self.bg_color, (self.bg_rect[0], self.bg_rect[1],
                                                  self.bg_rect[2], self.bg_rect[3]), 1)
@@ -192,13 +188,13 @@ class Slider(Button):
         print_text(screen, f"{self.text}: {self.get_value()}", self.text_color, self.bg_rect[0] + (self.bg_rect[2] / 2),
                    self.bg_rect[1] + self.bg_rect[3] * 1.5, int(self.bg_rect[3] / 2))
 
-    # allows users to change value of the slider by dragging it.
-    def change_value(self) -> None:
+    def change_value(self):
+        """allows users to change value of the slider by dragging it"""
         # If mouse is pressed and mouse is inside the slider
-        mousePos = pygame.mouse.get_pos()
-        if mouse_pos_check(array(mousePos), self.bg_rect):
+        mouse_pos = pygame.mouse.get_pos()
+        if mouse_pos_check(array(mouse_pos), self.bg_rect):
             # the size of the slider
-            self.current_value_points = mousePos[0] - self.bg_rect[0]
+            self.current_value_points = mouse_pos[0] - self.bg_rect[0]
 
             # limit the size of the slider
             if self.current_value_points < 1:
@@ -206,11 +202,12 @@ class Slider(Button):
             if self.current_value_points > self.bg_rect[2]:
                 self.current_value_points = self.bg_rect[2]
 
+
 class Interface:
-    """creates class with all buttons"""
+    """creates class with all buttons and sliders in the bottom part of window"""
 
     def __init__(self, width, height, game_window):
-        """WIDTH, HEIGHT - size of the game"""
+        """WIDTH, HEIGHT - size of the app window"""
         self.game_window = game_window
         self.WIDTH = width
         self.HEIGHT = height
@@ -221,9 +218,13 @@ class Interface:
         self.population_spawn = Button([100, 710, 80, 30], (0, 0, 0), 'new field', text_pressed='new field', size=16)
         self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
         self.background_color = (129, 129, 144)
+        self.save = Button([700, 710, 50, 30], (0, 0, 0), 'save', text_pressed='accept', size=16)
+        self.upload = Button([760, 710, 60, 30], (0, 0, 0), 'upload', text_pressed='accept', size=16)
+        self.name_of_file = ''
+        self.font = pygame.font.Font(None, 30)
 
     def draw(self, screen):
-        """draws interface"""
+        """draws interface on the screen"""
         # drawing interface background
         # top rect
         pygame.draw.rect(screen, self.background_color, [0, 0, self.WIDTH, self.game_window[1]], 0)
@@ -245,10 +246,15 @@ class Interface:
         self.slider.draw(screen)
         self.clear.draw(screen)
         self.population_spawn.draw(screen)
+        self.save.draw(screen)
+        self.upload.draw(screen)
+        
+        text = self.font.render(self.name_of_file, True, (0, 0, 0))
+        screen.blit(text, (720, 760))
 
 
 class Settings(Interface):
-    """creates class of additional menu with buttons"""
+    """creates class of additional menu that controls pen and cell and field settings"""
 
     def __init__(self, width, height, game_window, game_window_width, status,
                  indent=100, slider_width=150):
@@ -256,7 +262,9 @@ class Settings(Interface):
         self.font = 0
         self.width = width
         self.slider_width = slider_width
+        # is settings activated
         self.status = status
+        # headers text
         self.field_text = 'Field'
         self.cell_text = 'Cell'
         self.text_color = 'black'
@@ -266,6 +274,7 @@ class Settings(Interface):
         self.pen_rect = (0, 0, 0, 0)
         self.indent = indent
         self.background_color = (129, 129, 144)
+        # sliders
         self.field_humidity_slider = Slider(bg_rect=[self.game_window[0] + self.game_window[2] +
                                                      (self.width - self.slider_width) / 2, indent - 25,
                                                      self.slider_width, 30],
@@ -285,6 +294,7 @@ class Settings(Interface):
         self.pen_radius = Slider(
             bg_rect=[self.game_window[0] + self.game_window[2] + (self.width - self.slider_width) / 2, 6.5 * indent,
                      self.slider_width, 30], text='pen radius', upper_value=10, minus_value=0)
+        # buttons
         self.pen = Button([self.game_window[0] + self.game_window[2] + 10, 6 * indent, 40, 30], (0, 0, 0), 'pen',
                           text_pressed='pen', angle=0, size=16)
         self.cell_button = Button([self.game_window[0] + self.game_window[2] + 60, 6 * indent, 40, 30], (0, 0, 0),
@@ -293,6 +303,7 @@ class Settings(Interface):
                                    'field', text_pressed='field', size=16)
 
     def draw(self, screen):
+        """ draws settings on the screen if it is activated (button + is pressed)"""
         if (self.status % 2) == 1:
 
             self.game_window[2] = self.game_window_width - self.width
@@ -343,13 +354,13 @@ class Settings(Interface):
             # drawing rect that shows pen area
             self.pen.draw(screen)
             if self.pen.pressed:
-                # pygame.draw.rect(screen, 'red', self.pen_rect, 4)
                 self.cell_button.draw(screen)
                 self.field_button.draw(screen)
         else:
             self.game_window[2] = self.game_window_width
 
     def draw_pen_rect(self, screen):
+        """ draws red square with pen_rect coors - pen area"""
         if self.pen.pressed:
             pygame.draw.rect(screen, 'red', self.pen_rect, 4)
 
@@ -379,6 +390,7 @@ class Settings(Interface):
                                                             self.cell.radioactivity)
 
     def update_slider(self):
+        """ gets parameters of cells and field when pen is not activated"""
 
         self.field_humidity_slider.current_value_points = (self.cell.humidity + self.field_humidity_slider.minus_value) \
                                                           * self.field_humidity_slider.scale
@@ -398,6 +410,7 @@ class Settings(Interface):
                                                               * self.cell_radioactivity_slider.scale
 
     def redraw(self):
+        """ draws new cells with given parameters with pen"""
         if self.pen.pressed:
             if self.cell_button.pressed:
                 self.cell_humidity_slider.change_value()
@@ -423,6 +436,7 @@ class Settings(Interface):
 
 
 class Menu(Interface):
+    """ class of all buttons and text - main menu that introduce our game"""
     def __init__(self, width, height, game_window):
         super().__init__(width, height, game_window)
         self.width = width
@@ -431,10 +445,11 @@ class Menu(Interface):
         self.rect_color = (100, 100, 100)
         self.text_color = (0, 0, 0)
         self.last = pygame.time.get_ticks()
-
+        # buttons
         self.start = Button([7.5 * width / 10, 7 * height / 10, width / 10, height / 20], (0, 0, 0), 'start',
                             bg_color=(255, 255, 255),
                             text_pressed='start', size=24)
+        # buttons to choose field size
         self.small_field = Button([6.15 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'small',
                                   bg_color=(255, 255, 255), text_pressed='small', size=20)
         self.middle_field = Button([7.25 * width / 10, 3 * height / 10, width / 10, height / 20], (0, 0, 0), 'middle',
@@ -445,6 +460,7 @@ class Menu(Interface):
                                   text_pressed='large', size=20)
 
     def draw(self, screen):
+        """ draws menu on the screen"""
         screen.fill(self.bg_color)
         print_text(screen, 'Evolution', self.text_color, self.width / 2, self.height / 10, 46)
         # block of rules
@@ -463,8 +479,6 @@ class Menu(Interface):
         self.large_field.draw(screen)
 
 
-
-
 class Field:
     """ class Field, consists of cells"""
 
@@ -479,13 +493,14 @@ class Field:
         neighbors_exist_start = self.neighbors_exist_start = 2
         neighbors_exist_end = self.neighbors_exist_end = 3
         cloud = self.cloud = Cloud(33, 33, 3)
-        #live_cells = self.live_cells = []
+        # live_cells = self.live_cells = []
 
     def new_field(self, x, y):
         """ creates new field with size x:y cells"""
         self.cells = [[0] * y for l in range(x)]
         self.size_x = x
         self.size_y = y
+
         def midpoint_displacement(x, upper_point, bottom_point, sharpest):
             size = x
             heightmap = [[0]*size for i in range(size)]
@@ -522,9 +537,7 @@ class Field:
                     q.append((centerY, centerX, bottom, right, randomness // 2))
             return heightmap
 
-
-        #cloud generation
-        #self.cloud = Cloud(33, 33, 3)
+        # cloud generation
         massive = midpoint_displacement(self.cloud.size_x, -90, -100, 700)
         for i in range(self.cloud.size_x):
             for j in range(self.cloud.size_y):
@@ -532,15 +545,6 @@ class Field:
                     self.cloud.cells[i][j] = min(massive[i][j], 100)
                 else:
                     self.cloud.cells[i][j] = max(massive[i][j], -100)
-
-
-        '''for i in range(self.cloud.size_x):
-            for j in range(self.cloud.size_y):
-                if self.cloud.cells[i][j] > 0:
-                    self.cloud.cells[i][j] = min(self.cloud.cells[i][j], 100)
-                else:
-                    self.cloud.cells[i][j] = max(self.cloud.cells[i][j], -100)'''
-
 
         def generate_field(cells:list, x, y):
             """generates field initial conditions"""
@@ -554,9 +558,8 @@ class Field:
                         cells[i][l].live = 5
                         cells[i][l].genes[0] = -100
                         cells[i][l].genes[1] = 50
-                        #self.live_cells.append([i, l])
-                        #cells[i][l].food = randint(0, 1)
-            #generate humadity
+
+            # generate humidity
             massive = midpoint_displacement(x, 100, -100, 200)
             for i in range(x):
                 for j in range(y):
@@ -564,14 +567,7 @@ class Field:
                         self.cells[i][j].humidity = min(massive[i][j], 100)
                     else:
                         self.cells[i][j].humidity = max(massive[i][j], -100)
-            #generate radioactivity
-            '''massive = midpoint_displacement(x, 0, -100, 200)
-            for i in range(x):
-                for j in range(y):
-                    if massive[i][j] > 0:
-                        self.cells[i][j].radioactivity = min(massive[i][j], 100)
-                    else:
-                        self.cells[i][j].radioactivity = max(massive[i][j], -100)'''
+            # generate radioactivity
             self.cloud.mod(self)
         generate_field(self.cells, x, y)
         self.x_center = x / 2
@@ -579,13 +575,10 @@ class Field:
         self.size_x = x
         self.size_y = y
 
-
     def change_cors(self, vector):
         """shift of center coordinates on vector(x, y)"""
         self.x_center += vector[0]
         self.y_center += vector[1]
-
-
 
 
 if __name__ == "__main__":

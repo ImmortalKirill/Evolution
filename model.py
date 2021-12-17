@@ -6,10 +6,12 @@ import concurrent.futures
 from numba import njit, prange
 import time
 from itertools import repeat
+
+
 # not in use for now
 
-@njit(fastmath=True, cache=True)
 
+@njit(fastmath=True, cache=True)
 def gen_out_of_range(gen):
     """checks if gen is in -100 to 100 range, else changes it"""
     if gen > 100:
@@ -17,88 +19,98 @@ def gen_out_of_range(gen):
     elif gen < -100:
         gen = -100
     return gen
+
+
 @njit(fastmath=True, cache=True)
 def muavr_neighbors(cell_genes: list, neighbors1: list, genes_to_pass1: list, x, y, field_size_x, field_size_y):
-        '''Count neighbors in area of nearest 8 cells'''
-        for i in range(x - 1, (x + 2) % field_size_x, 1):
-            for j in range(y - 1, (y + 2) % field_size_y, 1):
-                neighbors1[i][j] += 1
-                # adding parent gene
-                genes_to_pass1[i][j][0] += cell_genes[0]
-        neighbors1[x][y] -= 1
-        genes_to_pass1[x][y][0] -= cell_genes[0]
-        return neighbors1, genes_to_pass1
+    """Count neighbors in area of nearest 8 cells"""
+    for i in range(x - 1, (x + 2) % field_size_x, 1):
+        for j in range(y - 1, (y + 2) % field_size_y, 1):
+            neighbors1[i][j] += 1
+            # adding parent gene
+            genes_to_pass1[i][j][0] += cell_genes[0]
+    neighbors1[x][y] -= 1
+    genes_to_pass1[x][y][0] -= cell_genes[0]
+    return neighbors1, genes_to_pass1
+
 
 @njit(fastmath=True, cache=True)
 def fraun_neighbors(cell_genes: list, neighbors1: list, genes_to_pass1: list, x, y, field_size_x, field_size_y):
-        '''Count neighbors in 4 bordered cells'''
-        neighbors1[x - 1][y] += 1
-        genes_to_pass1[x - 1][y][0] += cell_genes[0]
+    """Count neighbors in 4 bordered cells"""
+    neighbors1[x - 1][y] += 1
+    genes_to_pass1[x - 1][y][0] += cell_genes[0]
 
-        neighbors1[x][(y + 1) % field_size_y] += 1
-        genes_to_pass1[x][(y + 1) % field_size_y][0] += cell_genes[0]
+    neighbors1[x][(y + 1) % field_size_y] += 1
+    genes_to_pass1[x][(y + 1) % field_size_y][0] += cell_genes[0]
 
-        neighbors1[x][y - 1] += 1
-        genes_to_pass1[x][y - 1][0] += cell_genes[0]
+    neighbors1[x][y - 1] += 1
+    genes_to_pass1[x][y - 1][0] += cell_genes[0]
 
-        neighbors1[(x + 1) % field_size_x][y] += 1
-        genes_to_pass1[(x + 1) % field_size_x][y][0] += cell_genes[0]
-        return neighbors1, genes_to_pass1
+    neighbors1[(x + 1) % field_size_x][y] += 1
+    genes_to_pass1[(x + 1) % field_size_x][y][0] += cell_genes[0]
+    return neighbors1, genes_to_pass1
+
 
 @njit(fastmath=True, cache=True)
 def long_neighbors(cell_genes: list, neighbors1: list, genes_to_pass1: list, x, y, field_size_x, field_size_y):
-        '''Count neighbors in area of nearest 8 cells and more 4 cells on the distance 2cells away'''
-        # closest 8 cells
-        for i in range(x - 1, (x + 2) % field_size_x, 1):
-            for j in range(y - 1, (y + 2) % field_size_y, 1):
-                neighbors1[i][j] += 1
-                # adding parent gene
-                genes_to_pass1[i][j][0] += cell_genes[0]
-        # additional 4 cells
-        neighbors1[x - 2][y] += 1
-        genes_to_pass1[x - 2][y][0] += cell_genes[0]
+    """Count neighbors in area of nearest 8 cells and more 4 cells on the distance 2cells away"""
+    # closest 8 cells
+    for i in range(x - 1, (x + 2) % field_size_x, 1):
+        for j in range(y - 1, (y + 2) % field_size_y, 1):
+            neighbors1[i][j] += 1
+            # adding parent gene
+            genes_to_pass1[i][j][0] += cell_genes[0]
+    # additional 4 cells
+    neighbors1[x - 2][y] += 1
+    genes_to_pass1[x - 2][y][0] += cell_genes[0]
 
-        neighbors1[x][(y + 2) % field_size_y] += 1
-        genes_to_pass1[x][(y + 2) % field_size_y][0] += cell_genes[0]
+    neighbors1[x][(y + 2) % field_size_y] += 1
+    genes_to_pass1[x][(y + 2) % field_size_y][0] += cell_genes[0]
 
-        neighbors1[x][y - 2] += 1
-        genes_to_pass1[x][y - 2][0] += cell_genes[0]
+    neighbors1[x][y - 2] += 1
+    genes_to_pass1[x][y - 2][0] += cell_genes[0]
 
-        neighbors1[(x + 2) % field_size_x][y] += 1
-        genes_to_pass1[(x + 2) % field_size_x][y][0] += cell_genes[0]
+    neighbors1[(x + 2) % field_size_x][y] += 1
+    genes_to_pass1[(x + 2) % field_size_x][y][0] += cell_genes[0]
 
-        neighbors1[x][y] -= 1
-        genes_to_pass1[x][y][0] -= cell_genes[0]
-        return neighbors1, genes_to_pass1
+    neighbors1[x][y] -= 1
+    genes_to_pass1[x][y][0] -= cell_genes[0]
+    return neighbors1, genes_to_pass1
+
 
 @njit(fastmath=True, cache=True)
 def divide_manager(cell_genes: list, neighbors1: list, genes_to_pass1: list,
-                       x, y, hum_int, stage_1, stage_2, stage_3, field_size_x, field_size_y):
-        """decides how good cell(x, y) will be dividing
+                   x, y, hum_int, stage_1, stage_2, stage_3, field_size_x, field_size_y):
+    """decides how good cell(x, y) will be dividing
         stage_i - rules of goodness"""
-        if hum_int ** 2 <= stage_1 ** 2:
-            neighbors1, genes_to_pass1 =  long_neighbors(cell_genes, neighbors1, genes_to_pass1,
-                                                        x, y, field_size_x, field_size_y)
-        elif hum_int ** 2 <= stage_2 ** 2:
-            neighbors1, genes_to_pass1 = muavr_neighbors(cell_genes, neighbors1, genes_to_pass1,
-                                                        x, y, field_size_x, field_size_y)
-        elif hum_int ** 2 <= stage_3 ** 2:
-            neighbors1, genes_to_pass1 = fraun_neighbors(cell_genes, neighbors1, genes_to_pass1,
-                                                         x, y, field_size_x, field_size_y)
-        return neighbors1, genes_to_pass1
+    if hum_int ** 2 <= stage_1 ** 2:
+        neighbors1, genes_to_pass1 = long_neighbors(cell_genes, neighbors1, genes_to_pass1,
+                                                    x, y, field_size_x, field_size_y)
+    elif hum_int ** 2 <= stage_2 ** 2:
+        neighbors1, genes_to_pass1 = muavr_neighbors(cell_genes, neighbors1, genes_to_pass1,
+                                                     x, y, field_size_x, field_size_y)
+    elif hum_int ** 2 <= stage_3 ** 2:
+        neighbors1, genes_to_pass1 = fraun_neighbors(cell_genes, neighbors1, genes_to_pass1,
+                                                     x, y, field_size_x, field_size_y)
+    return neighbors1, genes_to_pass1
+
+
 @njit(fastmath=True, cache=True)
 def find_rand_mut(gene1, radioactivity, edge_of_inf, max_inf):
-    '''calculates parameter for random_mutation'''
+    """calculates parameter for random_mutation"""
     dif = gene1 - radioactivity
     if dif > edge_of_inf:
         rand_mut = 0
     else:
         rand_mut = math.floor(-max_inf / 2 / edge_of_inf * (dif - edge_of_inf))
     return rand_mut, dif
+
+
 @njit(fastmath=True, cache=True)
-def born_survive(genes, live, food, radioactivity, neighbors, neighbors_born, neighbors_exist_start, neighbors_exist_end,
+def born_survive(genes, live, food, radioactivity, neighbors, neighbors_born, neighbors_exist_start,
+                 neighbors_exist_end,
                  max_inf, edge_of_inf, genes_to_pass):
-    '''Decides future for cell'''
+    """Decides future for cell"""
     # calculating random mutation parameter
     # according to cell_radio-resistance and environment radioactivity
     rand_mut, dif = find_rand_mut(genes[1], radioactivity, edge_of_inf, max_inf)
@@ -140,13 +152,13 @@ def born_survive(genes, live, food, radioactivity, neighbors, neighbors_born, ne
     food = gen_out_of_range(food)
     return genes, live, food
 
+
 def step(Field):
-    '''
+    """
     Field - class of Field
 
     Method generate new field by basics rules
-    '''
-
+    """
 
     # Main constants of the game
     # conditions of birth
@@ -175,38 +187,41 @@ def step(Field):
     for x in range(Field.size_x):
         for y in range(Field.size_y):
             cell = Field.cells[x][y]
-            #counting number of neighbors
+            # counting number of neighbors
             if cell.live > 0:
                 # calculating humidity interaction parameter
                 # tells how close humidity and corresponding genes are
                 hum_int = cell.genes[0] - cell.humidity
                 # condition decider, calculates how good cell will divide
-                neighbors, genes_to_pass = divide_manager(cell.genes, neighbors,genes_to_pass, x, y, hum_int,
-                                stage_1, stage_2, stage_3, Field.size_x, Field.size_y)
-    print(time.perf_counter() - k)
+                neighbors, genes_to_pass = divide_manager(cell.genes, neighbors, genes_to_pass, x, y, hum_int,
+                                                          stage_1, stage_2, stage_3, Field.size_x, Field.size_y)
     k = time.perf_counter()
     for x in range(Field.size_x):
         for y in range(Field.size_y):
             # Decide if cell will be born, stay the same or die
             cell = Field.cells[x][y]
-            cell.genes, cell.live, cell.food = born_survive(cell.genes, cell.live, cell.food, cell.radioactivity, neighbors[x][y],
-                             neighbors_born, neighbors_exist_start, neighbors_exist_end,
-                             max_inf, edge_of_inf, genes_to_pass[x][y])
+            cell.genes, cell.live, cell.food = born_survive(cell.genes, cell.live, cell.food, cell.radioactivity,
+                                                            neighbors[x][y],
+                                                            neighbors_born, neighbors_exist_start, neighbors_exist_end,
+                                                            max_inf, edge_of_inf, genes_to_pass[x][y])
             cell.color, cell.color_bg = change_colors(cell.genes, cell.humidity, cell.food, cell.radioactivity)
-    print(time.perf_counter() - k)
     return Field
+
+
 @njit(fastmath=True, cache=True)
 def change_colors(genes, humidity, food, radioactivity):
     """changes color of cell and cell_bg according to genes"""
     color = (floor(255 * (genes[1] + 100) / 200),
-                    0,
-                    floor(255 * (genes[0] + 100) / 200))
+             0,
+             floor(255 * (genes[0] + 100) / 200))
     green = math.floor(255 * (food + 100) / 200)
     if green > 255:
         green = 255
     color_bg = (
-    ceil(255 * (100 + radioactivity) / 200), green, ceil(255 * (100 + humidity) / 200))
+        ceil(255 * (100 + radioactivity) / 200), green, ceil(255 * (100 + humidity) / 200))
     return color, color_bg
+
+
 def change_scale(field, par):
     """changes scale of field, increases it if par = 1, decreases it if par = -1"""
     change_step = 5
@@ -232,7 +247,7 @@ def find_grid(field, game_window):
     dist_y = (game_window_y_center - game_window[1]) / cell_size
     y = field.y_center + dist_y
     Y = math.ceil(y) + 2
-    # cheking edges
+    # checking edges
     if X >= field.size_x:
         X = field.size_x - 1
     elif X < 0:
@@ -253,6 +268,7 @@ def find_grid(field, game_window):
 
     return grid
 
+
 @njit(fastmath=True, cache=True)
 def mouse_pos_check(mouse_pos, rect):
     """checks if mouse is on rect(left up angle, width, height)"""
@@ -261,6 +277,7 @@ def mouse_pos_check(mouse_pos, rect):
         return True
     else:
         return False
+
 
 @njit(fastmath=True, cache=True)
 def get_steps(loop_counter, speed):
@@ -283,6 +300,7 @@ def find_cell(pos, field, game_window):
     else:
         return math.floor(x), math.ceil(y)
 
+
 @njit(fastmath=True, cache=True)
 def change_coords(pos: list, cell_size, field_x_center, field_y_center, game_window: list, par_of_change):
     """changes coordinates from field coors to pygame coors
@@ -301,6 +319,7 @@ def change_coords(pos: list, cell_size, field_x_center, field_y_center, game_win
         Y = game_window_y_center - (y - field_y_center * cell_size)
         return X, Y
 
+
 def print_text(screen, text: str, text_color, x, y, size, bg_color=None):
     """function that prints given text with pygame
     x,y - coors of text center"""
@@ -312,10 +331,10 @@ def print_text(screen, text: str, text_color, x, y, size, bg_color=None):
 
 
 def search(strings, name):
-    '''
+    """
     Search string 'name' in the list 'strings'.
     Return position of element in list or -1 if it doesn't exist
-    '''
+    """
     for i in range(len(strings)):
         if strings[i] == name:
             begin = i
@@ -324,58 +343,70 @@ def search(strings, name):
 
 
 def saving(field, name):
-    '''
+    """
     Function saves field in order: size_x, size_y, cells(humidity, food, live, genes), cloud.
     Returns True if name of file doesn't exist in file and False if exist
-    '''
-    with open ('list.txt', 'r') as file:
-        text = file.read()
-        strings = text.split('\n')
-    begin = search(strings, name)
-    if begin == -1:
-        with open('list.txt', 'w') as file:
-            text += name + '\n'
-            text += str(field.size_x) + '\n'
-            text += str(field.size_y) + '\n'
+    """
+    if name != '':
+        with open('list.txt', 'r') as file:
+            text = file.read()
+            strings = text.split('\n')
+            begin = search(strings, name)
+        if begin == -1:
+            with open('list.txt', 'w') as file:
+                text += name + '\n'
+                text += str(field.size_x) + '\n'
+                text += str(field.size_y) + '\n'
+                for i in range(field.size_x):
+                    for j in range(field.size_y):
+                        text += (str(field.cells[i][j].humidity) + ' ' + str(field.cells[i][j].food) + ' ' + str(
+                            field.cells[i][j].live) + ' '
+                                 + str(field.cells[i][j].genes[0]) + ' ' + str(field.cells[i][j].genes[1]) + '\n')
+                text += 'End of ' + name + '\n'
+                file.write(text)
+            with open('titles.txt', 'r') as file:
+                text = file.read()
+            with open('titles.txt', 'w') as file:
+                text += name + '\n'
+                file.write(text)
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+import objects
+
+
+def upload(field, name):
+    """
+    Function uploads data of field with that name and return True. If this name doesn't exist return False
+    """
+    if name != '':
+        with open('list.txt', 'r') as file:
+            temp = file.read()
+            strings = temp.split('\n')
+
+        begin = search(strings, name)
+        if begin >= 0:
+            field.size_x = int(strings[begin + 1])
+            field.size_y = int(strings[begin + 2])
+            field.cells = [[0] * field.size_y for l in range(field.size_x)]
             for i in range(field.size_x):
                 for j in range(field.size_y):
-                    text += (str(field.cells[i][j].humidity) + ' ' + str(field.cells[i][j].food) + ' ' + str(field.cells[i][j].live) + ' '
-                               + str(field.cells[i][j].genes[0]) + ' ' + str(field.cells[i][j].genes[1]) + '\n')
-            text += 'End of ' + name + '\n'
-            file.write(text)
-        return True
+                    field.cells[i][j] = objects.Cell()
+                    s = strings[i * field.size_x + j + begin + 3].split()
+                    field.cells[i][j].humidity = float(s[0])
+                    field.cells[i][j].food = float(s[1])
+                    field.cells[i][j].live = float(s[2])
+                    field.cells[i][j].genes[0] = float(s[3])
+                    field.cells[i][j].genes[1] = float(s[4])
+            return True
+        else:
+            return False
     else:
         return False
-                
-import objects                
 
-               
-def upload(field, name):
-    '''
-    Function uploads data of field with that name and return True. If this name doesn't exist return False
-    '''
-    with open('list.txt', 'r') as file:
-        temp = file.read()
-        strings = temp.split('\n')
-        
-    begin = search(strings, name)
-    if begin >= 0:
-        field.size_x = int(strings[begin + 1])
-        field.size_y = int(strings[begin + 2])
-        field.cells = [[0] * field.size_y for l in range(field.size_x)]
-        for i in range(field.size_x):
-            for j in range(field.size_y):
-                field.cells[i][j] = objects.Cell()
-                s = strings[i * field.size_x + j + begin + 3].split()
-                field.cells[i][j].humidity = float(s[0])
-                field.cells[i][j].food = float(s[1])
-                field.cells[i][j].live = float(s[2])
-                field.cells[i][j].genes[0] = float(s[3])
-                field.cells[i][j].genes[1] = float(s[4])
-        return True    
-    else:
-        return False
-    
-                
 if __name__ == "__main__":
     print("This module is not for direct call!")

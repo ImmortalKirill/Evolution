@@ -4,17 +4,19 @@ from model import *
 from objects import *
 from controller import *
 from numpy import array
-BLACK = (0,0,0)
+BLACK = (0, 0, 0)
 # Game screen Height and Width
 HEIGHT = 800
 WIDTH = 1000
 
-# window with game, rectangle(left up angle cors, width, height)
+# window with game, rectangle(left up angle coors, width, height)
 game_window = array([0, 0, 800, 700])
 FPS = 30
+# default middle field size
+field_size = 150
 
 
-def menu():
+def menu(field_size):
     """loop for menu, draws menu screen and reads events from user"""
     global Main_menu, Main, Game, screen
     main_menu = Menu(WIDTH, HEIGHT, game_window)
@@ -22,8 +24,6 @@ def menu():
     pressed_mouse = False
     while Main_menu:
         clock.tick(FPS)
-
-
         draw_menu(main_menu, screen)
         pygame.display.update()
 
@@ -31,17 +31,18 @@ def menu():
             if event.type == pygame.QUIT:
                 Main_menu = False
             else:
-                Main_menu, pressed_mouse = menu_event_manage(event, main_menu, pressed_mouse, Main_menu)
+                Main_menu, pressed_mouse, field_size = menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size)
+    return field_size
 
 
 
 
-def game():
+def game(field_size):
     """loop for the game, draws game interface and reads events from user"""
     global Game, Main, screen
     # creating initial field
     field = Field()
-    field.new_field(100, 100)
+    field.new_field(field_size, field_size)
     clock = pygame.time.Clock()
     # creating interface
     interface = Interface(WIDTH, HEIGHT, game_window)
@@ -77,7 +78,7 @@ def game():
 
 def main():
     """main function of the game, everything starts here"""
-    global Main, Game, screen, Main_menu
+    global Main, Game, screen, Main_menu, field_size
     pygame.init()
     Main = True
     Game = False
@@ -88,10 +89,10 @@ def main():
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         Main_menu = True
         # loop for menu
-        menu()
+        field_size = menu(field_size)
         Game = True
         # loop for main game
-        game()
+        game(field_size)
         Main = False
 
     pygame.quit()

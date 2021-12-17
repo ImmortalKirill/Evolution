@@ -1,6 +1,7 @@
-from model import change_scale, mouse_pos_check, find_cell, change_coords
+from model import change_scale, mouse_pos_check, find_cell, change_coords, saving, upload
 import pygame
 from numpy import array
+
 
 def zoom(event: pygame.MOUSEBUTTONDOWN, field):
     """checks if event is wheel rolling and changes scale of field(zoom in or out)"""
@@ -58,7 +59,24 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # if mouse on button create new field with new population
             if mouse_pos_check(array(pygame.mouse.get_pos()), interface.population_spawn.bg_rect):
                 field.new_field(field.size_x, field.size_y)
-
+            # if mouse on button start or end input of name
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.save.bg_rect):
+                if interface.save.pressed == 0:
+                    interface.save.pressed = 1
+                else:
+                    interface.save.pressed = 0
+                    interface.upload.pressed = 0
+                    saving(field, interface.name_of_file)
+                    interface.name_of_file = ''
+            # if mouse on button upload field
+            if mouse_pos_check(pygame.mouse.get_pos(), interface.upload.bg_rect):
+                if interface.upload.pressed == 0:
+                    interface.upload.pressed = 1
+                else:
+                    interface.upload.pressed = 0
+                    interface.save.pressed = 0
+                    upload(field, interface.name_of_file)
+                    interface.name_of_file = ''
 
     elif event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
@@ -67,23 +85,43 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         if pressed_mouse and mouse_pos_check(array(pygame.mouse.get_pos()), interface.game_window):
             # moving the map
             field.change_cors([event.rel[i] * 0.1 * (-1) ** (i + 1) for i in (0, 1)])
-
+            
+    elif event.type == pygame.KEYDOWN and (interface.save.pressed == 1 or interface.upload.pressed == 1):
+        if event.key == pygame.K_BACKSPACE and interface.name_of_file != '': #Backscape
+            interface.name_of_file = interface.name_of_file[:len(interface.name_of_file)-1]
+        elif event.key == pygame.K_RETURN:
+            if interface.save.pressed == 1:
+                interface.save.pressed = 0
+                interface.upload.pressed = 0
+                saving(field, interface.name_of_file)
+            elif interface.upload.pressed == 1:
+                interface.upload.pressed = 0
+                interface.save.pressed = 0
+                upload(field, interface.name_of_file)                
+            interface.name_of_file = ''
+        elif event.key != pygame.K_BACKSPACE:
+            interface.name_of_file += str(event.unicode)
+            
     # drawing pen square
-    if settings.pen.pressed and pygame.mouse.get_pressed()[2] and mouse_pos_check(array(pygame.mouse.get_pos()), interface.game_window):
-        print(event.type)
-        x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
-        if (x_cell is not None) and (y_cell is not None):
-            x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center, settings.game_window, 1)
-            r = settings.pen_radius.get_value() * field.scale
-            settings.pen_rect = (x - r, y - r, 2*r, 2*r)
-            for i in range(-settings.pen_radius.get_value(), settings.pen_radius.get_value()):
-                for j in range(-settings.pen_radius.get_value() + 1, settings.pen_radius.get_value() + 1):
-                    if (x_cell + i < field.size_x) and (x_cell + i >= 0) and (y_cell + j < field.size_y) and (y_cell + j >= 0):
-                        settings.cell = field.cells[x_cell + i][y_cell + j]
-                        settings.redraw()
-                        if settings.cell_button.pressed:
-                            if x_cell is not None:
-                                field.cells[x_cell + i][y_cell + j].live = 5
+    if (event.type == pygame.MOUSEBUTTONDOWN) or (event.type == pygame.MOUSEMOTION):
+        if settings.pen.pressed and pygame.mouse.get_pressed()[2] and mouse_pos_check(array(pygame.mouse.get_pos()),
+                                                                                      interface.game_window):
+            # finds a square of cells which we change
+            x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
+            if (x_cell is not None) and (y_cell is not None):  # if cell is in field
+                x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center,
+                                     settings.game_window, 1)
+                r = settings.pen_radius.get_value() * field.scale  # radius of pen - 1/2 of square side in cells
+                settings.pen_rect = (x - r, y - r, 2 * r, 2 * r)
+                for i in range(-settings.pen_radius.get_value(), settings.pen_radius.get_value()):
+                    for j in range(-settings.pen_radius.get_value() + 1, settings.pen_radius.get_value() + 1):
+                        if (x_cell + i < field.size_x) and (x_cell + i >= 0) and (y_cell + j < field.size_y) and \
+                                (y_cell + j >= 0):
+                            settings.cell = field.cells[x_cell + i][y_cell + j]
+                            settings.redraw()
+                            if settings.cell_button.pressed:
+                                if x_cell is not None:
+                                    field.cells[x_cell + i][y_cell + j].live = 5
 
     # if mouse on speed_slider
     if pygame.mouse.get_pressed()[0]:
@@ -91,13 +129,11 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         if not interface.pause.pressed:
             speed = interface.slider.get_value()
         settings.update()
-        
-
 
     return field, pressed_mouse, interface, speed
 
 
-def menu_event_manage(event, main_menu, pressed_mouse, Main_menu):
+def menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size):
     """manages event from the game, changes field etc"""
     if event.type == pygame.MOUSEBUTTONDOWN:
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.start.bg_rect):
@@ -105,18 +141,21 @@ def menu_event_manage(event, main_menu, pressed_mouse, Main_menu):
             Main_menu = False
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.small_field.bg_rect):
             main_menu.small_field.change_press()
+            field_size = 100
             main_menu.large_field.pressed = 0
             main_menu.middle_field.pressed = 0
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.middle_field.bg_rect):
             main_menu.middle_field.change_press()
+            field_size = 160
             main_menu.large_field.pressed = 0
             main_menu.small_field.pressed = 0
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.large_field.bg_rect):
             main_menu.large_field.change_press()
+            field_size = 220
             main_menu.small_field.pressed = 0
             main_menu.middle_field.pressed = 0
 
-    return Main_menu, pressed_mouse
+    return Main_menu, pressed_mouse, field_size
 
 
 if __name__ == "__main__":
