@@ -65,6 +65,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
                     interface.save.pressed = 1
                 else:
                     interface.save.pressed = 0
+                    interface.upload.pressed = 0
                     saving(field, interface.name_of_file)
                     interface.name_of_file = ''
             # if mouse on button upload field
@@ -73,6 +74,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
                     interface.upload.pressed = 1
                 else:
                     interface.upload.pressed = 0
+                    interface.save.pressed = 0
                     upload(field, interface.name_of_file)
                     interface.name_of_file = ''
 
@@ -90,9 +92,11 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
         elif event.key == pygame.K_RETURN:
             if interface.save.pressed == 1:
                 interface.save.pressed = 0
+                interface.upload.pressed = 0
                 saving(field, interface.name_of_file)
             elif interface.upload.pressed == 1:
                 interface.upload.pressed = 0
+                interface.save.pressed = 0
                 upload(field, interface.name_of_file)                
             interface.name_of_file = ''
         elif event.key != pygame.K_BACKSPACE:
@@ -142,12 +146,12 @@ def menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size):
             main_menu.middle_field.pressed = 0
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.middle_field.bg_rect):
             main_menu.middle_field.change_press()
-            field_size = 150
+            field_size = 160
             main_menu.large_field.pressed = 0
             main_menu.small_field.pressed = 0
         if mouse_pos_check(array(pygame.mouse.get_pos()), main_menu.large_field.bg_rect):
             main_menu.large_field.change_press()
-            field_size = 200
+            field_size = 220
             main_menu.small_field.pressed = 0
             main_menu.middle_field.pressed = 0
 

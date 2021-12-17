@@ -195,7 +195,6 @@ def step(Field):
                 # condition decider, calculates how good cell will divide
                 neighbors, genes_to_pass = divide_manager(cell.genes, neighbors, genes_to_pass, x, y, hum_int,
                                                           stage_1, stage_2, stage_3, Field.size_x, Field.size_y)
-    print(time.perf_counter() - k)
     k = time.perf_counter()
     for x in range(Field.size_x):
         for y in range(Field.size_y):
@@ -206,7 +205,6 @@ def step(Field):
                                                             neighbors_born, neighbors_exist_start, neighbors_exist_end,
                                                             max_inf, edge_of_inf, genes_to_pass[x][y])
             cell.color, cell.color_bg = change_colors(cell.genes, cell.humidity, cell.food, cell.radioactivity)
-    print(time.perf_counter() - k)
     return Field
 
 
@@ -349,28 +347,31 @@ def saving(field, name):
     Function saves field in order: size_x, size_y, cells(humidity, food, live, genes), cloud.
     Returns True if name of file doesn't exist in file and False if exist
     """
-    with open('list.txt', 'r') as file:
-        text = file.read()
-        strings = text.split('\n')
-    begin = search(strings, name)
-    if begin == -1:
-        with open('list.txt', 'w') as file:
-            text += name + '\n'
-            text += str(field.size_x) + '\n'
-            text += str(field.size_y) + '\n'
-            for i in range(field.size_x):
-                for j in range(field.size_y):
-                    text += (str(field.cells[i][j].humidity) + ' ' + str(field.cells[i][j].food) + ' ' + str(
-                        field.cells[i][j].live) + ' '
-                             + str(field.cells[i][j].genes[0]) + ' ' + str(field.cells[i][j].genes[1]) + '\n')
-            text += 'End of ' + name + '\n'
-            file.write(text)
-        with open('titles.txt', 'r') as file:
+    if name != '':
+        with open('list.txt', 'r') as file:
             text = file.read()
-        with open('titles.txt', 'w') as file:
-            text += name + '\n'
-            file.write(text)
-        return True
+            strings = text.split('\n')
+            begin = search(strings, name)
+        if begin == -1:
+            with open('list.txt', 'w') as file:
+                text += name + '\n'
+                text += str(field.size_x) + '\n'
+                text += str(field.size_y) + '\n'
+                for i in range(field.size_x):
+                    for j in range(field.size_y):
+                        text += (str(field.cells[i][j].humidity) + ' ' + str(field.cells[i][j].food) + ' ' + str(
+                            field.cells[i][j].live) + ' '
+                                 + str(field.cells[i][j].genes[0]) + ' ' + str(field.cells[i][j].genes[1]) + '\n')
+                text += 'End of ' + name + '\n'
+                file.write(text)
+            with open('titles.txt', 'r') as file:
+                text = file.read()
+            with open('titles.txt', 'w') as file:
+                text += name + '\n'
+                file.write(text)
+            return True
+        else:
+            return False
     else:
         return False
 
@@ -382,28 +383,30 @@ def upload(field, name):
     """
     Function uploads data of field with that name and return True. If this name doesn't exist return False
     """
-    with open('list.txt', 'r') as file:
-        temp = file.read()
-        strings = temp.split('\n')
+    if name != '':
+        with open('list.txt', 'r') as file:
+            temp = file.read()
+            strings = temp.split('\n')
 
-    begin = search(strings, name)
-    if begin >= 0:
-        field.size_x = int(strings[begin + 1])
-        field.size_y = int(strings[begin + 2])
-        field.cells = [[0] * field.size_y for l in range(field.size_x)]
-        for i in range(field.size_x):
-            for j in range(field.size_y):
-                field.cells[i][j] = objects.Cell()
-                s = strings[i * field.size_x + j + begin + 3].split()
-                field.cells[i][j].humidity = float(s[0])
-                field.cells[i][j].food = float(s[1])
-                field.cells[i][j].live = float(s[2])
-                field.cells[i][j].genes[0] = float(s[3])
-                field.cells[i][j].genes[1] = float(s[4])
-        return True
+        begin = search(strings, name)
+        if begin >= 0:
+            field.size_x = int(strings[begin + 1])
+            field.size_y = int(strings[begin + 2])
+            field.cells = [[0] * field.size_y for l in range(field.size_x)]
+            for i in range(field.size_x):
+                for j in range(field.size_y):
+                    field.cells[i][j] = objects.Cell()
+                    s = strings[i * field.size_x + j + begin + 3].split()
+                    field.cells[i][j].humidity = float(s[0])
+                    field.cells[i][j].food = float(s[1])
+                    field.cells[i][j].live = float(s[2])
+                    field.cells[i][j].genes[0] = float(s[3])
+                    field.cells[i][j].genes[1] = float(s[4])
+            return True
+        else:
+            return False
     else:
         return False
-
 
 if __name__ == "__main__":
     print("This module is not for direct call!")

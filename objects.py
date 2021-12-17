@@ -87,7 +87,6 @@ class Cloud:
         for i in range(self.size_x):
             for j in range(self.size_y):
                 field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = self.old_cells[i][j]
-                field.cells[(self.x + i) % field_x][(self.y + j) % field_y].radioactivity = -100
 
 
 class Button:
