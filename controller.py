@@ -109,7 +109,7 @@ def event_manage(event, field, pressed_mouse, interface, speed, settings):
             # finds a square of cells which we change
             x_cell, y_cell = find_cell(event.pos, field, settings.game_window)
             if (x_cell is not None) and (y_cell is not None):  # if cell is in field
-                x, y = change_coords([x_cell, y_cell], field.scale, field.x_center, field.y_center,
+                x, y = change_coords(array([x_cell, y_cell]), field.scale, field.x_center, field.y_center,
                                      settings.game_window, 1)
                 r = settings.pen_radius.get_value() * field.scale  # radius of pen - 1/2 of square side in cells
                 settings.pen_rect = (x - r, y - r, 2 * r, 2 * r)
