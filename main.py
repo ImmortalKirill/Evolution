@@ -1,6 +1,6 @@
 import pygame
 from vis import draw_game, draw_menu
-from model import step, get_steps
+from model import step, get_steps, upload
 from objects import Field, Menu, Interface, Settings
 from controller import menu_event_manage, event_manage
 from numpy import array
