@@ -13,13 +13,12 @@ WIDTH = 1000
 game_window = array([0, 0, 800, 700])
 FPS = 30
 # default middle field size
-field_size = 160
+field_size = 100
 
 
 def menu(field_size):
     """loop for menu, draws menu screen and reads events from user"""
     global Main_menu, Main, Game, screen
-    field = Field()
     main_menu = Menu(WIDTH, HEIGHT, game_window)
     clock = pygame.time.Clock()
     pressed_mouse = False
@@ -31,9 +30,12 @@ def menu(field_size):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 Main_menu = False
+                Game = False
+                Main = False
+
             else:
-                Main_menu, pressed_mouse, field_size, name = menu_event_manage(event, main_menu, pressed_mouse, Main_menu, field_size)
-                print(name)
+                Game, Main_menu, pressed_mouse, field_size, name =\
+                    menu_event_manage(event, main_menu, pressed_mouse, Main_menu, Game, field_size)
     return field_size, name
 
 
@@ -78,9 +80,7 @@ def game(field_size, name):
                     event_manage(event, field, pressed_mouse, interface, speed, settings)
 
         if get_steps(loop_counter, speed):
-            k = time.perf_counter()
             field = step(field)
-            print('entire time', time.perf_counter() - k)
 
 
 def main():
@@ -97,7 +97,6 @@ def main():
         Main_menu = True
         # loop for menu
         field_size, name = menu(field_size)
-        Game = True
         # loop for main game
         game(field_size, name)
         Main = False

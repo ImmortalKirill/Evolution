@@ -447,7 +447,7 @@ class Menu(Interface):
         self.last = pygame.time.get_ticks()
         self.name_of_file = ''
         # buttons
-        self.start = Button([7.5 * width / 10, 9 * height / 10, width / 10, height / 20], (0, 0, 0), 'start',
+        self.start = Button([7.25 * width / 10, 3 * height / 10 + 100, width / 10, height / 20], (0, 0, 0), 'start',
                             bg_color=(255, 255, 255),
                             text_pressed='start', size=24)
         self.upload = Button([7.5 * width / 10, 6 * height / 10, width / 10, height / 20], (0, 0, 0), 'upload',
@@ -476,30 +476,53 @@ class Menu(Interface):
         # headers
         print_text(screen, 'Rules', self.text_color, 11 * self.width / 40, 2.5 * self.height / 10, 32)
         print_text(screen, 'Choose window size:', self.text_color, 15.5 * self.width / 20, 2.5 * self.height / 10, 28)
-        # rules text
-        print_text(screen, 'Every cell of field can be dead or alive', self.text_color, 11 * self.width / 40,
-                   3 * self.height / 10, 18)
-        print_text(screen, 'Every cell interacts with its neighbours', self.text_color, 11 * self.width / 40,
-                   3.2 * self.height / 10, 18)
-        print_text(screen, 'If alive cell has 2 or 3 neighbours it remains alive', self.text_color, 11 * self.width / 40,
-                   3.4 * self.height / 10, 18)
-        print_text(screen, 'If dead cell has 3 neighbours it become alive', self.text_color,
-                   11 * self.width / 40,
-                   3.6 * self.height / 10, 18)
-        print_text(screen, 'Otherwise cell become dead', self.text_color,
-                   11 * self.width / 40,
-                   3.8 * self.height / 10, 18)
-
-        # upload print
-        text = self.font.render(self.name_of_file, True, (0, 0, 0))
-        screen.blit(text, (7.5 * self.width / 10, 7 * self.height / 10))
-
         # buttons
         self.start.draw(screen)
         self.upload.draw(screen)
         self.small_field.draw(screen)
         self.middle_field.draw(screen)
         self.large_field.draw(screen)
+
+        # upload print
+        text = self.font.render(self.name_of_file, True, (0, 0, 0))
+        screen.blit(text, (7.5 * self.width / 10, 7 * self.height / 10))
+
+        # rules text
+        print_text(screen, 'Every cell of field can be dead or alive', self.text_color, 11 * self.width / 40,
+                   3 * self.height / 10, 18)
+        print_text(screen, 'Every cell interacts with neighbours', self.text_color, 11 * self.width / 40,
+                   3.2 * self.height / 10, 18)
+        print_text(screen, 'If alive cell has 2 or 3 neighbours it remains alive', self.text_color,
+                   11 * self.width / 40,
+                   3.4 * self.height / 10, 18)
+        print_text(screen, 'If dead cell has 3 neighbours it becomes alive', self.text_color,
+                   11 * self.width / 40,
+                   3.6 * self.height / 10, 18)
+        print_text(screen, 'Otherwise cell is dead', self.text_color,
+                   11 * self.width / 40,
+                   3.8 * self.height / 10, 18)
+        print_text(screen, 'cells have 2 genes', self.text_color,
+                   11 * self.width / 40,
+                   4 * self.height / 10, 18)
+        print_text(screen, 'field has 2 parameters which correspond to genes', self.text_color,
+                   11 * self.width / 40,
+                   4.2 * self.height / 10, 18)
+        print_text(screen, 'For more detailed information', self.text_color,
+                   11 * self.width / 40,
+                   4.4 * self.height / 10+ 10, 18)
+        print_text(screen, 'visit our wiki on github repository.', self.text_color,
+                   11 * self.width / 40,
+                   4.6 * self.height / 10+ 10, 18)
+        print_text(screen, 'github.com/ImmortalKirill/Evolution/wiki/Game-mechanics', self.text_color,
+                   11 * self.width / 40,
+                   4.8 * self.height / 10+ 10, 16)
+        print_text(screen, 'For the manual go and see our Manual wiki page', self.text_color,
+                   11 * self.width / 40 + 25,
+                   5 * self.height / 10 + 10+ 10, 20)
+        print_text(screen, 'github.com/ImmortalKirill/Evolution/wiki/User-manual', self.text_color,
+                   11 * self.width / 40,
+                   5.2 * self.height / 10 + 10+ 10, 16)
+
 
 
 class Field:
