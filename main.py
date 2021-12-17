@@ -1,7 +1,7 @@
 import pygame
 from vis import draw_game, draw_menu
-from model import step
-from objects import Field, Menu, Interface
+from model import step, get_steps
+from objects import Field, Menu, Interface, Settings
 from controller import menu_event_manage, event_manage
 from numpy import array
 BLACK = (0, 0, 0)
