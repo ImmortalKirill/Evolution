@@ -3,7 +3,7 @@ import pygame
 import pygame.freetype
 import math
 from model import saving, upload
-from pygame.draw import *
+from pygame.draw import rect
 from collections import deque
 from numpy import array, zeros
 from numba import njit
@@ -549,7 +549,7 @@ class Field:
         neighbors_born = self.neighbors_born = 3
         neighbors_exist_start = self.neighbors_exist_start = 2
         neighbors_exist_end = self.neighbors_exist_end = 3
-        cloud = self.cloud = Cloud(33, 33, 3)
+        cloud = self.cloud = Cloud(33, 33, 1)
         # live_cells = self.live_cells = []
 
     def new_field(self, x, y):

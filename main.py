@@ -1,8 +1,8 @@
 import pygame
 from vis import draw_game, draw_menu
-from model import *
-from objects import *
-from controller import *
+from model import step
+from objects import Field, Menu, Interface
+from controller import menu_event_manage, event_manage
 from numpy import array
 BLACK = (0, 0, 0)
 # Game screen Height and Width

@@ -1,4 +1,4 @@
-from objects import *
+from objects import Field
 from model import find_grid, change_coords
 import pygame
 import random
