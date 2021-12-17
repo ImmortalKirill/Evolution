@@ -20,6 +20,9 @@ def menu(field_size):
     """loop for menu, draws menu screen and reads events from user"""
     global Main_menu, Main, Game, screen
     main_menu = Menu(WIDTH, HEIGHT, game_window)
+    with open('titles.txt') as f:
+        for line in f.readlines():
+            main_menu.names.append(line[:len(line) -1])
     clock = pygame.time.Clock()
     pressed_mouse = False
     while Main_menu:
@@ -46,9 +49,8 @@ def game(field_size, name):
     global Game, Main, screen
     # creating initial field
     field = Field()
-    if name == '':
-        field.new_field(field_size, field_size)
-    else:
+    field.new_field(field_size, field_size)
+    if name != '':
         print(name)
         upload(field, name)
 

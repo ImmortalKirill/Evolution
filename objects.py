@@ -218,8 +218,8 @@ class Interface:
         self.population_spawn = Button([100, 710, 80, 30], (0, 0, 0), 'new field', text_pressed='new field', size=16)
         self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
         self.background_color = (129, 129, 144)
-        self.save = Button([700, 710, 50, 30], (0, 0, 0), 'save', text_pressed='accept', size=16)
-        self.upload = Button([760, 710, 60, 30], (0, 0, 0), 'upload', text_pressed='accept', size=16)
+        self.save = Button([680, 710, 50, 30], (0, 0, 0), 'save', text_pressed='accept', size=16)
+        self.upload = Button([740, 710, 60, 30], (0, 0, 0), 'upload', text_pressed='accept', size=16)
         self.name_of_file = ''
         self.font = pygame.font.Font(None, 30)
 
@@ -446,11 +446,12 @@ class Menu(Interface):
         self.text_color = (0, 0, 0)
         self.last = pygame.time.get_ticks()
         self.name_of_file = ''
+        self.names = []
         # buttons
         self.start = Button([7.25 * width / 10, 3 * height / 10 + 100, width / 10, height / 20], (0, 0, 0), 'start',
                             bg_color=(255, 255, 255),
                             text_pressed='start', size=24)
-        self.upload = Button([7.5 * width / 10, 6 * height / 10, width / 10, height / 20], (0, 0, 0), 'upload',
+        self.upload = Button([7.25 * width / 10, 6 * height / 10 - 75, width / 10, height / 20], (0, 0, 0), 'upload',
                             bg_color=(255, 255, 255),
                             text_pressed='accept', size=24)
         # buttons to choose field size
@@ -465,6 +466,14 @@ class Menu(Interface):
 
     def draw(self, screen):
         """ draws menu on the screen"""
+
+        def draw_names(display, names):
+            """ draws list of names of saved maps"""
+            for i in range(len(names)):
+                print_text(display, names[i], (0, 0, 0),
+                           6 * self.width / 10 + 3.5 * self.width / 20, 2 * self.height / 10 + 350 + 28 * i, 25,
+                           bg_color=(255, 255, 255))
+
         screen.fill(self.bg_color)
         print_text(screen, 'Evolution', self.text_color, self.width / 2, self.height / 10, 46)
         # block of rules
@@ -476,6 +485,8 @@ class Menu(Interface):
         # headers
         print_text(screen, 'Rules', self.text_color, 11 * self.width / 40, 2.5 * self.height / 10, 32)
         print_text(screen, 'Choose window size:', self.text_color, 15.5 * self.width / 20, 2.5 * self.height / 10, 28)
+        if self.upload.pressed == 1:
+            draw_names(screen, self.names)
         # buttons
         self.start.draw(screen)
         self.upload.draw(screen)
@@ -485,7 +496,7 @@ class Menu(Interface):
 
         # upload print
         text = self.font.render(self.name_of_file, True, (0, 0, 0))
-        screen.blit(text, (7.5 * self.width / 10, 7 * self.height / 10))
+        screen.blit(text, (7.25 * self.width / 10, 7 * self.height / 10 - 100))
 
         # rules text
         print_text(screen, 'Every cell of field can be dead or alive', self.text_color, 11 * self.width / 40,
