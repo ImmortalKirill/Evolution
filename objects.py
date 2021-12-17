@@ -219,7 +219,6 @@ class Interface:
         self.slider = Slider(bg_rect=[200, 710, 300, 30], text='speed')
         self.background_color = (129, 129, 144)
         self.save = Button([700, 710, 50, 30], (0, 0, 0), 'save', text_pressed='accept', size=16)
-        self.upload = Button([760, 710, 60, 30], (0, 0, 0), 'upload', text_pressed='accept', size=16)
         self.name_of_file = ''
         self.font = pygame.font.Font(None, 30)
 
@@ -247,7 +246,6 @@ class Interface:
         self.clear.draw(screen)
         self.population_spawn.draw(screen)
         self.save.draw(screen)
-        self.upload.draw(screen)
         
         text = self.font.render(self.name_of_file, True, (0, 0, 0))
         screen.blit(text, (720, 760))
